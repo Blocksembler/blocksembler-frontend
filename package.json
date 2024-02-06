@@ -1,0 +1,26 @@
+{
+  "name": "blocksembler-frontend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vitest --run && vite build",
+    "preview": "vite preview",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "@codemirror/theme-one-dark": "^6.1.2",
+    "@popperjs/core": "^2.11.8",
+    "blockly": "^10.3.1",
+    "bootstrap": "^5.3.2",
+    "codemirror": "^6.0.1",
+    "vue": "^3.3.4"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.2.3",
+    "sass": "^1.69.5",
+    "vite": "^4.4.5",
+    "vitest": "^0.34.6"
+  }
+}
