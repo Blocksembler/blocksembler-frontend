@@ -1,4 +1,4 @@
-# Blocksambler
+![](/img/logo2.png)
 
 ## Getting started with Blocksambler
 
