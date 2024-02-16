@@ -1,4 +1,4 @@
-<img src="img/logo2.png" alt="drawing" width="100"/>
+<img src="img/logo2.png" alt="drawing" width="200"/>
 
 ## Getting started with Blocksambler
 
