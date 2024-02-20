@@ -1,5 +1,8 @@
 ## <img src="img/logo.png" alt="drawing" width="200"/>
 
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
+
 ## Getting Started
 
 To get started with the Assembler Programming Learning Environment, follow these steps:
@@ -14,11 +17,7 @@ To get started with the Assembler Programming Learning Environment, follow these
 
 ## Contributing
 
-Contributions to this project are welcome! If you have ideas for new features, improvements, or bug fixes, feel free to open an issue or submit a pull request. Make sure to follow the [code of conduct](CODE_OF_CONDUCT.md) and the guidelines outlined in the [contributing guide](CONTRIBUTING.md).
-
-## License
-
-This project is licensed under the [MIT License](LICENSE).
+Contributions to this project are welcome! If you have ideas for new features, improvements, or bug fixes, feel free to open an issue or submit a pull request.
 
 ## Acknowledgements
 
