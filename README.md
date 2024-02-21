@@ -19,12 +19,6 @@ To get started with the Assembler Programming Learning Environment, follow these
 
 Contributions to this project are welcome! If you have ideas for new features, improvements, or bug fixes, feel free to open an issue or submit a pull request.
 
-## Acknowledgements
-
-- **Blockly**: Special thanks to the Blockly community for providing the powerful block-based programming library.
-- **Vue.js**: Thanks to the Vue.js framework for enabling the development of interactive user interfaces.
-- **Other Dependencies**: We acknowledge the use of various open-source dependencies that contribute to the functionality of this project.
-
 ## Contact
 
 Florian Wörister | University of Vienna | Faculty of Computer Science
