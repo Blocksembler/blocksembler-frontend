@@ -32,7 +32,7 @@ on:
 
 env:
   AWS_REGION: eu-north-1                   # set this to your preferred AWS region, e.g. us-west-1
-  ECR_REPOSITORY: blocksembler           # set this to your Amazon ECR repository name
+  ECR_REPOSITORY: blocksembler-reg          # set this to your Amazon ECR repository name
   ECS_SERVICE: blocksembler                 # set this to your Amazon ECS service name
   ECS_CLUSTER: blocksembler-dev-cluster           # set this to your Amazon ECS cluster name
   ECS_TASK_DEFINITION: blocksemblerDeployTask # set this to the path to your Amazon ECS task definition
