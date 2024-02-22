@@ -1,6 +1,7 @@
 ## <img src="img/logo.png" alt="drawing" width="200"/>
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Deploy to Amazon ECS](https://github.com/Blocksembler/blocksembler-frontend/actions/workflows/aws.yml/badge.svg)](https://github.com/Blocksembler/blocksembler-frontend/actions/workflows/aws.yml)
 
 
 ## Getting Started
