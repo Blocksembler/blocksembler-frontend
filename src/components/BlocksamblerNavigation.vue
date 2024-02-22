@@ -19,12 +19,14 @@ let supportedPlattforms = reactive([
     <div class="px-3 text-bg-dark">
       <div class="container-fluid">
         <div class="d-flex flex-wrap align-items-center justify-content-center">
-          <h1
+          <img
             href="/#"
-            class="d-flex align-items-center my-2 my-lg-0 me-lg-auto"
-          >
-            Blocksembler
-          </h1>
+            class="d-flex align-items-center my-lg-0 me-lg-auto"
+            src="https://github.com/Blocksembler/blocksembler-frontend/raw/main/img/logo.png"
+            width="150px"
+          />
+            
+          
           <ul class="nav col-12 col-lg-auto my-2 my-md-0">
             <li v-for="item in menuItems">
               <a :href="item.href" class="nav-link text-white">
