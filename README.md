@@ -8,7 +8,7 @@
 
 To get started with the Assembler Programming Learning Environment, follow these steps:
 
-1. **Clone the Repository**: Clone this repository to your local machine using `git clone https://github.com/your-username/repository-name.git`.
+1. **Clone the Repository**: Clone this repository to your local machine using `git clone https://github.com/Blocksembler/blocksembler-frontend.git`.
 
 2. **Install Dependencies**: Navigate to the project directory and install the necessary dependencies by running `npm install`.
 
