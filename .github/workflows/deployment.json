@@ -34,32 +34,8 @@
     "family": "blocksembler-task-family",
     "executionRoleArn": "arn:aws:iam::381492006640:role/ecsTaskExecutionRole",
     "networkMode": "awsvpc",
-    "revision": 2,
     "volumes": [],
-    "requiresAttributes": [
-        {
-            "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
-        },
-        {
-            "name": "ecs.capability.execution-role-awslogs"
-        },
-        {
-            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
-        },
-        {
-            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
-        },
-        {
-            "name": "ecs.capability.task-eni"
-        },
-        {
-            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.29"
-        }
-    ],
     "placementConstraints": [],
-    "compatibilities": [
-        "FARGATE"
-    ],
     "requiresCompatibilities": [
         "FARGATE"
     ],
