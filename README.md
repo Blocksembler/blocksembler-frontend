@@ -22,4 +22,4 @@ Contributions to this project are welcome! If you have ideas for new features, i
 
 ## Contact
 
-Florian Wörister | University of Vienna | Faculty of Computer Science
+Florian Wörister | florian[dot]woerister[at]univie[dot]ac[dot]at
