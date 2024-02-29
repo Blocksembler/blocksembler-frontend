@@ -33,11 +33,11 @@ on:
 env:
   AWS_REGION: eu-north-1                   # set this to your preferred AWS region, e.g. us-west-1
   ECR_REPOSITORY: blocksembler-reg          # set this to your Amazon ECR repository name
-  ECS_SERVICE: blocksembler-service                # set this to your Amazon ECS service name
-  ECS_CLUSTER: blocksembler-dev-cluster           # set this to your Amazon ECS cluster name
+  ECS_SERVICE: blocksembler-ec2-service                # set this to your Amazon ECS service name
+  ECS_CLUSTER: blocksembler-ec2-dev-cluster           # set this to your Amazon ECS cluster name
   ECS_TASK_DEFINITION: .github/workflows/deployment.json # set this to the path to your Amazon ECS task definition
                                                # file, e.g. .aws/task-definition.json
-  CONTAINER_NAME: blocksembler           # set this to the name of the container in the
+  CONTAINER_NAME: blocksembler-frontend           # set this to the name of the container in the
                                                # containerDefinitions section of your task definition
 
 permissions:

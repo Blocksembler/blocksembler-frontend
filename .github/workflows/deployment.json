@@ -1,12 +1,12 @@
 {
     "containerDefinitions": [
         {
-            "name": "blocksembler",
-            "image": "public.ecr.aws/e8c9n2b2/blocksembler-public-registry:latest",
+            "name": "blocksembler-frontend",
+            "image": "public.ecr.aws/e8c9n2b2/blocksembler-public-registry",
             "cpu": 0,
             "portMappings": [
                 {
-                    "name": "blocksembler-80-tcp",
+                    "name": "blocksembler-frontend-80-tcp",
                     "containerPort": 80,
                     "hostPort": 80,
                     "protocol": "tcp",
@@ -23,7 +23,7 @@
                 "logDriver": "awslogs",
                 "options": {
                     "awslogs-create-group": "true",
-                    "awslogs-group": "/ecs/blocksembler-task-family",
+                    "awslogs-group": "/ecs/blocksembler-ec2-task-family",
                     "awslogs-region": "eu-north-1",
                     "awslogs-stream-prefix": "ecs"
                 },
@@ -31,16 +31,16 @@
             }
         }
     ],
-    "family": "blocksembler-task-family",
+    "family": "blocksembler-ec2-task-family",
     "executionRoleArn": "arn:aws:iam::381492006640:role/ecsTaskExecutionRole",
     "networkMode": "awsvpc",
     "volumes": [],
     "placementConstraints": [],
     "requiresCompatibilities": [
-        "FARGATE"
+        "EC2"
     ],
     "cpu": "512",
-    "memory": "1024",
+    "memory": "512",
     "runtimePlatform": {
         "cpuArchitecture": "X86_64",
         "operatingSystemFamily": "LINUX"
