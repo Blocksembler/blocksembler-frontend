@@ -1,6 +1,6 @@
 import * as Blockly from "blockly/core";
 
-const storageKey = "blocksambler-local-storage";
+const storageKey = "blocksembler-local-storage";
 
 export const save = function (workspace) {
     const data = Blockly.serialization.workspaces.save(workspace);
