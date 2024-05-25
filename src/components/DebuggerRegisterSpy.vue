@@ -1,0 +1,29 @@
+<script setup>
+import {reactive} from "vue";
+import {emulator} from "../state";
+
+const registers = reactive(emulator.registers);
+</script>
+<template>
+  <div class="card">
+    <div class="card-header"><h4>Registers</h4></div>
+    <div class="card-body">
+      <table class="table">
+        <thead>
+        <tr>
+          <th scope="col" style="width: 15%">Name</th>
+          <th scope="col" style="width: 85%">Value</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="(value, name) in registers">
+          <td>{{ name }}</td>
+          <td>
+            <pre>{{ value.toBitString() }} ({{ value }})</pre>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</template>
