@@ -5,14 +5,8 @@ import BaseIcon from "./BaseIcon.vue";
 let menuItems = reactive([
   {label: "Editor", href: "/#/editor", icon: "pencil"},
   {label: "Debugger", href: "/#/debugger", icon: "bug"},
-  // { label: "Download", href: "/#/download", icon: "cloud-download" },
-  // { label: "Settings", href: "/#/settings", icon: "gear" },
 ]);
 
-let supportedPlattforms = reactive([
-  {name: "ANNA"},
-  {name: "ARM (64-bit)"},
-]);
 </script>
 <template>
   <header>
@@ -43,10 +37,10 @@ let supportedPlattforms = reactive([
 
 <style scoped>
 h1 {
-  font-family: "PressStart2P",sans-serif;
+  font-family: "PressStart2P", sans-serif;
 }
 
 header div {
-  height: 80px;
+  height: 100px;
 }
 </style>
