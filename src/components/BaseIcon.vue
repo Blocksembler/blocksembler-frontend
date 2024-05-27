@@ -48,7 +48,7 @@ defineProps({
   </svg>
   <svg
       v-else-if="name === 'gear'"
-      class="bi bi-gear d-block mx-auto mb-1"
+      class="bi bi-gear"
       fill="currentColor"
       height="16"
       viewBox="0 0 16 16"

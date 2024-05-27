@@ -1,17 +1,10 @@
 <script setup>
-import {computed, reactive} from "vue";
+import {reactive} from "vue";
 import BaseButton from "./BaseButton.vue";
-import {annaCodeParser, emulator, generatedCode} from "../state";
+import {annaCodeParser, emulator, generatedCode, settings} from "../state";
+import BaseModal from "./BaseModal.vue";
 
 const output = reactive(emulator.output);
-
-const props = defineProps({
-  consoleModalId: String,
-});
-
-const consoleModel = computed(() => {
-  return `#${props.consoleModalId}`;
-});
 
 const assembleHandler = () => {
   console.log("start parsing...");
@@ -22,6 +15,7 @@ const assembleHandler = () => {
 };
 
 const runProgram = () => {
+  emulator.executionSpeed = settings.executionSpeed
   emulator.startExecution()
 }
 
@@ -50,6 +44,27 @@ const reset = () => {
 </script>
 
 <template>
+  <BaseModal id="outputConsole" title="Output Console">
+    <textarea
+        id="output"
+        class="form-control"
+        readonly=""
+        rows="10"
+        wrap="soft"
+    >{{ output.join("\n") }}</textarea>
+  </BaseModal>
+
+  <BaseModal id="settingsModal" title="Settings" savable>
+    <label for="customRange1" class="form-label">Milliseconds per Instruction</label>
+    <input type="range"
+           class="form-range"
+           id="customRange1"
+           min="1"
+           max="2000"
+           v-model.number="settings.executionSpeed">
+    <a>{{ settings.executionSpeed }}ms per instruction</a>
+  </BaseModal>
+
   <div
       class="py-3 m-0 navbar sticky-top background-white"
       style="background-color: white"
@@ -69,12 +84,19 @@ const reset = () => {
       </BaseButton>
       <BaseButton icon-name="reply" @click="reset"> Reset</BaseButton>
       <BaseButton
-          :data-bs-target="consoleModel"
+          data-bs-target="#outputConsole"
           :notification-count="output.length"
           data-bs-toggle="modal"
           icon-name="terminal"
       >
         Output Console
+      </BaseButton>
+      <BaseButton
+          data-bs-target="#settingsModal"
+          data-bs-toggle="modal"
+          icon-name="gear"
+      >
+        Settings
       </BaseButton>
     </div>
   </div>

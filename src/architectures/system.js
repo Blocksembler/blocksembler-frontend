@@ -8,7 +8,7 @@ export class BaseEmulator {
         this.isTerminated = false;
         this.isPaused = true;
         this.executionIntervalId = -1;
-        this.secondsToNextInstruction = 500;
+        this.executionSpeed = 500;
         this.output = [];
 
         this.registers = {
@@ -70,7 +70,7 @@ export class BaseEmulator {
         this.isPaused = false;
         this.executionIntervalId = setInterval(() => {
             this.executeSingleInstruction();
-        }, this.secondsToNextInstruction)
+        }, this.executionSpeed)
     }
 
     pauseExecution() {
