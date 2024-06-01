@@ -57,18 +57,66 @@ export const toolbox = {
                 {
                     kind: "block",
                     type: "bez",
+                    inputs: {
+                        rd: {
+                            shadow: {
+                                type: "r0"
+                            }
+                        },
+                        label: {
+                            shadow: {
+                                type: "labeldescriptor"
+                            }
+                        }
+                    }
                 },
                 {
                     kind: "block",
                     type: "bgz",
+                    inputs: {
+                        rd: {
+                            shadow: {
+                                type: "r0"
+                            }
+                        },
+                        label: {
+                            shadow: {
+                                type: "labeldescriptor"
+                            }
+                        }
+                    }
                 },
                 {
                     kind: "block",
                     type: "jalr",
+                    inputs: {
+                        rs: {
+                            shadow: {
+                                type: "r7"
+                            }
+                        },
+                        label: {
+                            shadow: {
+                                type: "labeldescriptor"
+                            }
+                        }
+                    }
                 },
                 {
                     kind: "block",
                     type: "labelsection",
+                    inputs: {
+                        label: {
+                            shadow: {
+                                type: "labeldescriptor"
+                            }
+                        },
+                        statements: {
+                            shadow: {
+                                type: "halt"
+                            }
+                        }
+                    },
                 },
                 {
                     kind: "block",
@@ -85,38 +133,156 @@ export const toolbox = {
                 {
                     kind: "block",
                     type: "add",
+                    inputs: {
+                        rs1: {
+                            shadow: {
+                                type: "r0"
+                            }
+                        },
+                        rs2: {
+                            shadow: {
+                                type: "r0"
+                            }
+                        },
+                        rd: {
+                            shadow: {
+                                type: "r0"
+                            }
+                        },
+                    }
                 },
                 {
                     kind: "block",
                     type: "addi",
+                    inputs: {
+                        rs1: {
+                            shadow: {
+                                type: "r0"
+                            }
+                        },
+                        rd: {
+                            shadow: {
+                                type: "r0"
+                            }
+                        },
+                    }
                 },
                 {
                     kind: "block",
                     type: "sub",
+                    inputs: {
+                        rs1: {
+                            shadow: {
+                                type: "r0"
+                            }
+                        },
+                        rs2: {
+                            shadow: {
+                                type: "r0"
+                            }
+                        },
+                        rd: {
+                            shadow: {
+                                type: "r0"
+                            }
+                        },
+                    }
                 },
                 {
                     kind: "block",
                     type: "and",
+                    inputs: {
+                        rs1: {
+                            shadow: {
+                                type: "r0"
+                            }
+                        },
+                        rs2: {
+                            shadow: {
+                                type: "r0"
+                            }
+                        },
+                        rd: {
+                            shadow: {
+                                type: "r0"
+                            }
+                        },
+                    }
                 },
                 {
                     kind: "block",
                     type: "or",
+                    inputs: {
+                        rs1: {
+                            shadow: {
+                                type: "r0"
+                            }
+                        },
+                        rs2: {
+                            shadow: {
+                                type: "r0"
+                            }
+                        },
+                        rd: {
+                            shadow: {
+                                type: "r0"
+                            }
+                        },
+                    }
                 },
                 {
                     kind: "block",
                     type: "not",
+                    inputs: {
+                        rs: {
+                            shadow: {
+                                type: "r0"
+                            }
+                        },
+                        rd: {
+                            shadow: {
+                                type: "r0"
+                            }
+                        },
+                    }
                 },
                 {
                     kind: "block",
                     type: "shf",
+                    inputs: {
+                        rs: {
+                            shadow: {
+                                type: "r0"
+                            }
+                        },
+                        rd: {
+                            shadow: {
+                                type: "r0"
+                            }
+                        }
+                    }
                 },
                 {
                     kind: "block",
                     type: "lli",
+                    inputs: {
+                        rd: {
+                            shadow: {
+                                type: "r0"
+                            }
+                        },
+                    }
                 },
                 {
                     kind: "block",
                     type: "lui",
+                    inputs: {
+                        rd: {
+                            shadow: {
+                                type: "r0"
+                            }
+                        },
+                    }
                 },
             ],
         },
@@ -129,10 +295,24 @@ export const toolbox = {
                 {
                     kind: "block",
                     type: "in",
+                    inputs: {
+                        rd: {
+                            shadow: {
+                                type: "r0"
+                            }
+                        },
+                    }
                 },
                 {
                     kind: "block",
                     type: "out",
+                    inputs: {
+                        rd: {
+                            shadow: {
+                                type: "r0"
+                            }
+                        },
+                    }
                 },
             ],
         },
@@ -145,10 +325,34 @@ export const toolbox = {
                 {
                     kind: "block",
                     type: "lw",
+                    inputs: {
+                        rs: {
+                            shadow: {
+                                type: "r0"
+                            }
+                        },
+                        rd: {
+                            shadow: {
+                                type: "r0"
+                            }
+                        },
+                    }
                 },
                 {
                     kind: "block",
                     type: "sw",
+                    inputs: {
+                        rs: {
+                            shadow: {
+                                type: "r0"
+                            }
+                        },
+                        rd: {
+                            shadow: {
+                                type: "r0"
+                            }
+                        },
+                    }
                 },
             ],
         },
