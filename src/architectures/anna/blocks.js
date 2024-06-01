@@ -351,7 +351,7 @@ export const blocks = Blockly.common.createBlockDefinitionsFromJsonArray([
             },
             {
                 type: "input_value",
-                name: "Label",
+                name: "label",
                 check: "label",
             },
         ],
@@ -395,7 +395,8 @@ export const blocks = Blockly.common.createBlockDefinitionsFromJsonArray([
             },
             {
                 type: "input_value",
-                name: "rd",
+                name: "label",
+                check: "label",
             },
         ],
         inputsInline: true,
