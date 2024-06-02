@@ -16,7 +16,7 @@ let options = ref({
   toolboxPosition: "start",
   css: true,
   rtl: false,
-  scrollbars: false,
+  scrollbars: true,
   sounds: true,
   oneBasedIndex: true,
 });
