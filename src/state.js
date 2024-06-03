@@ -4,6 +4,7 @@ import {BaseAssemblerParser} from "./architectures/parser";
 import {BlocksemblerSettings} from "./settings.js";
 
 export const generatedCode = ref("");
+export const jsonWorkspace = ref({});
 
 export const settings = reactive(new BlocksemblerSettings())
 
