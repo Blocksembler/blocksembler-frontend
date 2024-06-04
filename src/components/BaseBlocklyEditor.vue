@@ -84,7 +84,7 @@ onMounted(() => {
 
 <style scoped>
 .blocklyDiv {
-  height: calc(100vh - 80px);
+  height: calc(100vh - 100px);
   width: 100%;
 }
 </style>
