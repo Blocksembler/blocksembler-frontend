@@ -13,8 +13,4 @@ COPY docker/default.conf.template /etc/nginx/templates/
 EXPOSE 80
 EXPOSE 443
 
-RUN export SSL_CERTIFICATE
-RUN export SSL_CERTIFICATE_KEY
-RUN export SERVER_NAME
-
 CMD ["nginx", "-g", "daemon off;"]
