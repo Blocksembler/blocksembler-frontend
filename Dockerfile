@@ -17,4 +17,4 @@ RUN export SSL_CERTIFICATE
 RUN export SSL_CERTIFICATE_KEY
 RUN export SERVER_NAME
 
-CMD ["EXPORT SSL_CERTIFICATE", "&&", "nginx", "-g", "daemon off;"]
+CMD ["nginx", "-g", "daemon off;"]
