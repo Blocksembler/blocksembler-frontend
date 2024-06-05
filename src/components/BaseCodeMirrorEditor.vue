@@ -25,7 +25,7 @@ onMounted(() => {
       EditorState.readOnly.of(true),
       EditorView.theme({
         "&": {
-          minHeight: "calc(100vh - 80px)",
+          minHeight: "calc(100vh - 100px)",
           height: "100%",
           width: "100%",
         },
