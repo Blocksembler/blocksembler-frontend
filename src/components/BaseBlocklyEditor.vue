@@ -39,11 +39,6 @@ onMounted(() => {
     Blockly.Events.enable();
   }
 
-  console.log(workspace.value.getTopBlocks())
-  if (workspace.value.getTopBlocks().length === 0) {
-    workspace.value.newBlock('start');
-  }
-
   runCode();
 
   workspace.value.addChangeListener((e) => {
