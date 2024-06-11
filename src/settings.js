@@ -1,6 +1,9 @@
 export class BlocksemblerSettings {
-    constructor()
-    {
+    constructor() {
+        /* General Settings */
+        this.audioEnabled = false;
+
+        /* Debugger Settings*/
         this.executionSpeed = 500;
     }
 }
