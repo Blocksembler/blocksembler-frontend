@@ -4,6 +4,7 @@ import {toolbox} from "../architectures/armlet/toolbox";
 
 import BaseBlocklyEditor from "./BaseBlocklyEditor.vue";
 import BaseCodeMirrorEditor from "./BaseCodeMirrorEditor.vue";
+import {settings} from "@/state.js";
 
 let options = ref({
   toolbox: toolbox,
@@ -17,7 +18,7 @@ let options = ref({
   css: true,
   rtl: false,
   scrollbars: true,
-  sounds: true,
+  sounds: settings.audioEnabled,
   oneBasedIndex: true,
 });
 </script>
