@@ -1,14 +1,10 @@
 <script setup>
-import BaseIcon from "./BaseIcon.vue";
-
 let props = defineProps({
-  iconName: String,
   notificationCount: Number,
 });
 </script>
 <template>
   <button class="btn btn-secondary position-relative me-2">
-    <BaseIcon :name="props.iconName"/>
     <slot></slot>
     <span
         v-if="notificationCount > 0"
