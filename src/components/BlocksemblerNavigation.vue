@@ -1,9 +1,13 @@
 <script setup>
-import BaseIcon from "./BaseIcon.vue";
 import {saveAs} from "file-saver";
 import {load, save} from "../util/serialization.js";
 import {jsonWorkspace} from "../state.js";
 import BlocksemblerSettings from "./BlocksemblerSettings.vue";
+import PencilIcon from "@/components/icons/PencilIcon.vue";
+import BugIcon from "@/components/icons/BugIcon.vue";
+import CloudDownloadIcon from "@/components/icons/CloudDownloadIcon.vue";
+import GearIcon from "@/components/icons/GearIcon.vue";
+import CloudUploadIcon from "@/components/icons/CloudUploadIcon.vue";
 
 let export_project = () => {
   saveAs(new Blob([JSON.stringify(load())]), `blocksembler-project-${Date.now()}.json`)
@@ -38,32 +42,32 @@ let import_project = () => {
           <ul class="nav col-12 col-lg-auto my-2 my-md-0">
             <li>
               <a href="/#/editor" class="nav-link text-white">
-                <BaseIcon name="pencil"/>
+                <PencilIcon class="d-block mx-auto mb-1"/>
                 Editor
               </a>
             </li>
             <li>
               <a href="/#/debugger" class="nav-link text-white">
-                <BaseIcon name="bug"/>
+                <BugIcon class="d-block mx-auto mb-1"/>
                 Debugger
               </a>
             </li>
             <li>
               <a href="#" class="nav-link text-white" @click="export_project">
-                <BaseIcon name="cloud-download"/>
+                <CloudDownloadIcon class="d-block mx-auto mb-1"/>
                 Export Project
               </a>
             </li>
             <li>
               <a href="#" class="nav-link text-white" onclick="document.getElementById('file-input').click();">
-                <BaseIcon name="cloud-download"/>
+                <CloudUploadIcon class="d-block mx-auto mb-1"/>
                 Import Project
                 <input id="file-input" type="file" name="name" style="display: none;" @change="import_project"/>
               </a>
             </li>
             <li>
               <a href="#" class="nav-link text-white" data-bs-target="#settingsModal" data-bs-toggle="modal">
-                <BaseIcon name="gear"/>
+                <GearIcon class="d-block mx-auto mb-1"/>
                 Settings
               </a>
             </li>

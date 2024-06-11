@@ -3,6 +3,12 @@ import {reactive} from "vue";
 import BaseButton from "./BaseButton.vue";
 import {annaCodeParser, emulator, generatedCode, settings} from "../state";
 import BaseModal from "./BaseModal.vue";
+import PlayCircleIcon from "@/components/icons/PlayCircleIcon.vue";
+import PlayIcon from "@/components/icons/PlayIcon.vue";
+import PauseIcon from "@/components/icons/PauseIcon.vue";
+import ArrowRightSquareIcon from "@/components/icons/ArrowRightSquareIcon.vue";
+import ReplyIcon from "@/components/icons/ReplyIcon.vue";
+import TerminalIcon from "@/components/icons/TerminalIcon.vue";
 
 const output = reactive(emulator.output);
 
@@ -59,25 +65,32 @@ const reset = () => {
       style="background-color: white"
   >
     <div>
-      <BaseButton icon-name="play-circle" @click="assembleHandler">
+      <BaseButton @click="assembleHandler">
+        <PlayCircleIcon/>
         Assemble & Load to Memory
       </BaseButton>
-      <BaseButton v-if="emulator.isPaused" @click="runProgram" icon-name="play">
+      <BaseButton v-if="emulator.isPaused" @click="runProgram">
+        <PlayIcon/>
         Run
       </BaseButton>
-      <BaseButton v-else @click="pauseProgram" icon-name="pause">
+      <BaseButton v-else @click="pauseProgram">
+        <PauseIcon/>
         Pause
       </BaseButton>
-      <BaseButton icon-name="arrow-right-square" @click="executeNext">
+      <BaseButton @click="executeNext">
+        <ArrowRightSquareIcon/>
         Execute & Fetch Next
       </BaseButton>
-      <BaseButton icon-name="reply" @click="reset"> Reset</BaseButton>
+      <BaseButton @click="reset">
+        <ReplyIcon/>
+        Reset
+      </BaseButton>
       <BaseButton
-          data-bs-target="#outputConsole"
           :notification-count="output.length"
+          data-bs-target="#outputConsole"
           data-bs-toggle="modal"
-          icon-name="terminal"
       >
+        <TerminalIcon/>
         Output Console
       </BaseButton>
     </div>
