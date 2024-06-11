@@ -1,14 +1,9 @@
 <script setup>
-import {reactive} from "vue";
 import BaseIcon from "./BaseIcon.vue";
 import {saveAs} from "file-saver";
 import {load, save} from "../util/serialization.js";
 import {jsonWorkspace} from "../state.js";
-
-let menuItems = reactive([
-  {label: "Editor", href: "/#/editor", icon: "pencil"},
-  {label: "Debugger", href: "/#/debugger", icon: "bug"},
-]);
+import BlocksemblerSettings from "./BlocksemblerSettings.vue";
 
 let export_project = () => {
   saveAs(new Blob([JSON.stringify(load())]), `blocksembler-project-${Date.now()}.json`)
@@ -27,6 +22,7 @@ let import_project = () => {
 
 </script>
 <template>
+  <BlocksemblerSettings/>
   <header>
     <div class="px-3 text-bg-dark">
       <div class="container-fluid">
@@ -40,10 +36,16 @@ let import_project = () => {
 
 
           <ul class="nav col-12 col-lg-auto my-2 my-md-0">
-            <li v-for="item in menuItems">
-              <a :href="item.href" class="nav-link text-white">
-                <BaseIcon :name="item.icon"/>
-                {{ item.label }}
+            <li>
+              <a href="/#/editor" class="nav-link text-white">
+                <BaseIcon name="pencil"/>
+                Editor
+              </a>
+            </li>
+            <li>
+              <a href="/#/debugger" class="nav-link text-white">
+                <BaseIcon name="bug"/>
+                Debugger
               </a>
             </li>
             <li>
@@ -58,7 +60,12 @@ let import_project = () => {
                 Import Project
                 <input id="file-input" type="file" name="name" style="display: none;" @change="import_project"/>
               </a>
-
+            </li>
+            <li>
+              <a href="#" class="nav-link text-white" data-bs-target="#settingsModal" data-bs-toggle="modal">
+                <BaseIcon name="gear"/>
+                Settings
+              </a>
             </li>
           </ul>
         </div>
