@@ -140,6 +140,50 @@ export const blocks = Blockly.common.createBlockDefinitionsFromJsonArray([
         helpUrl: "",
     },
     {
+        type: "lli_label",
+        message0: "load lower 8-bits of label %1 to register %2",
+        args0: [
+            {
+                type: "input_value",
+                name: "label",
+                check: "label"
+            },
+            {
+                type: "input_value",
+                name: "rd",
+                check: "register"
+            }
+        ],
+        inputsInline: true,
+        previousStatement: null,
+        nextStatement: null,
+        colour: 230,
+        tooltip: "",
+        helpUrl: ""
+    },
+    {
+        type: "lui_label",
+        message0: "load upper 8-bits of label %1 to register %2",
+        args0: [
+            {
+                type: "input_value",
+                name: "label",
+                check: "label"
+            },
+            {
+                type: "input_value",
+                name: "rd",
+                check: "register"
+            }
+        ],
+        inputsInline: true,
+        previousStatement: null,
+        nextStatement: null,
+        colour: 230,
+        tooltip: "",
+        helpUrl: ""
+    },
+    {
         type: "and",
         message0: 'Do bit-wise "and" between  %1 and %2 and store result to %3',
         args0: [

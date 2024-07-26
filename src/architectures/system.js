@@ -222,8 +222,8 @@ export class Word {
         return Word.fromSignedIntValue(result, this.size);
     }
 
-    addImmedate(immedate) {
-        let immedateWord = Word.fromSignedIntValue(immedate);
+    addImmedate(immediate) {
+        let immedateWord = Word.fromSignedIntValue(immediate);
         return this.add(immedateWord);
     }
 
@@ -246,21 +246,21 @@ export class Word {
         return Word.fromSignedIntValue(result, this.bits.length);
     }
 
-    shift(immidate) {
+    shift(immediate) {
         let size = this.bits.length;
 
         let newWord = Word.fromBitArray(this.bits);
 
-        if (immidate > 0) {
+        if (immediate > 0) {
             newWord.bits.reverse();
         }
-        for (let idx = 0; idx < Math.abs(immidate); idx++) {
+        for (let idx = 0; idx < Math.abs(immediate); idx++) {
             newWord.bits.shift();
         }
         while (newWord.bits.length < size) {
             newWord.bits.push(0);
         }
-        if (immidate > 0) {
+        if (immediate > 0) {
             newWord.bits.reverse();
         }
 
