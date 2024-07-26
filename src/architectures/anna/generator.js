@@ -60,6 +60,20 @@ annaGenerator.forBlock["lli"] = function (block, generator) {
     return `lli ${rd} ${immediate}`;
 };
 
+annaGenerator.forBlock["lli_label"] = function (block, generator) {
+    const rd = generator.valueToCode(block, "rd", Order.ATOMIC);
+    const label = generator.valueToCode(block, "label", Order.ATOMIC);
+
+    return `lli ${rd} ${label}`;
+};
+
+annaGenerator.forBlock["lui_label"] = function (block, generator) {
+    const rd = generator.valueToCode(block, "rd", Order.ATOMIC);
+    const label = generator.valueToCode(block, "label", Order.ATOMIC);
+
+    return `lui ${rd} ${label}`;
+};
+
 annaGenerator.forBlock["lui"] = function (block, generator) {
     const rd = generator.valueToCode(block, "rd", Order.ATOMIC);
     const immediate = block.getFieldValue("immediate");
@@ -127,7 +141,7 @@ annaGenerator.forBlock["out"] = function (block, generator) {
 
 annaGenerator.forBlock["bez"] = function (block, generator) {
     const rd = generator.valueToCode(block, "rd", Order.ATOMIC);
-    const label = generator.valueToCode(block, "Label", Order.ATOMIC);
+    const label = generator.valueToCode(block, "label", Order.ATOMIC);
 
     return `bez ${rd} ${label}`;
 };
