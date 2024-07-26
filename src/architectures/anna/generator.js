@@ -127,7 +127,7 @@ annaGenerator.forBlock["out"] = function (block, generator) {
 
 annaGenerator.forBlock["bez"] = function (block, generator) {
     const rd = generator.valueToCode(block, "rd", Order.ATOMIC);
-    const label = generator.valueToCode(block, "Label", Order.ATOMIC);
+    const label = generator.valueToCode(block, "label", Order.ATOMIC);
 
     return `bez ${rd} ${label}`;
 };
