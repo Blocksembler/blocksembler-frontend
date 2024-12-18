@@ -284,6 +284,16 @@ export const toolbox = {
                         },
                     }
                 },
+                {
+                    kind: "block",
+                    type: "lli_label",
+
+                },
+                {
+                    kind: "block",
+                    type: "lui_label",
+
+                },
             ],
         },
 
