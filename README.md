@@ -23,7 +23,7 @@ Blocksembler is also available on [Docker Hub](https://hub.docker.com/r/blocksem
 
 1. **Pull Docker Image**: Pull the blocksembler/blocksembler-frontned image `docker pull blocksembler/blocksembler-frontend:latest`
 
-2. **Run the Container**: Startup a new container instance that runs the blocksembler application `docker run blocksembler/blocksembler-frontend:latest -p 80 -d`. This will launch the application locally, and you can access it in your web browser at [http://localhost](http://localhost:5173).
+2. **Run the Container**: Startup a new container instance that runs the blocksembler application `docker run blocksembler/blocksembler-frontend:latest -p 80:80 -d`. This will launch the application locally, and you can access it in your web browser at [http://localhost](http://localhost:5173).
 
 3. **Explore and Learn**: Start exploring the block-based programming environment and dive into learning assembler programming with ease!
 
