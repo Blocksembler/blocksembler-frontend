@@ -1,6 +1,6 @@
 <script setup>
 import {onMounted, ref, shallowRef, watch} from "vue";
-import Blockly from "blockly";
+import * as Blockly from "blockly";
 
 import {blocks} from "../architectures/anna/blocks";
 import {annaGenerator} from "../architectures/anna/generator";
