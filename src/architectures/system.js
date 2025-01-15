@@ -12,7 +12,7 @@ export class BaseEmulator {
         this.output = [];
 
         this.registers = {
-            pc: Word.fromSignedIntValue(0, this.addressSize),
+            'pc': Word.fromSignedIntValue(0, this.addressSize),
             ...registers,
         };
 
@@ -49,21 +49,29 @@ export class BaseEmulator {
     }
 
     loadProgram(program) {
-        this.loadedProgramSize = program.length;
-        for (let address in program) {
-            let code = program[address].toMachineCode();
-            this.memory[address].set(Word.fromString(code));
+        let code = ""
+        for (let inst of program) {
+            code += inst.toMachineCode();
+        }
+
+        this.loadedProgramSize = Number(code.length / this.addressSize);
+
+        let addr = 0;
+
+        while (addr < this.loadedProgramSize) {
+            this.memory[addr] = Word.fromString(code.slice(addr * this.addressSize, (addr + 1) * this.addressSize));
+            addr += 1
         }
     }
 
     startExecution() {
         if (this.loadedProgramSize === 0) {
-            alert("Please ensure your program is assembled and loaded into memory before attempting execution.")
+            this.interruptHandler['alert']("Please ensure your program is assembled and loaded into memory before attempting execution.");
             return
         }
 
         if (this.isTerminated) {
-            alert("To execute the program again, please reset your hardware.")
+            this.interruptHandler['alert']("To execute the program again, please reset your hardware.")
             return
         }
 
@@ -80,24 +88,29 @@ export class BaseEmulator {
 
     executeSingleInstruction() {
         if (this.loadedProgramSize === 0) {
-            alert("Please ensure your program is assembled and loaded into memory before attempting execution.")
+            this.interruptHandler['alert']("Please ensure your program is assembled and loaded into memory before attempting execution.")
             return
         }
 
         if (this.isTerminated) {
-            alert("To execute the program again, please reset your hardware.")
+            this.interruptHandler['alert']("To execute the program again, please reset your hardware.")
             return
         }
 
         let nextInstruction = this.loadNextInstruction();
-        this.registers.pc.set(this.registers.pc.addImmedate(1));
         nextInstruction.executeOn(this);
+        this.registers.pc.set(this.registers.pc.addImmedate(1));
     }
 
     loadNextInstruction() {
         let nextInstructionAddress = this.registers.pc.toUnsignedIntValue();
-        let machineCode = this.memory[nextInstructionAddress].toBitString();
-        return this.instructionFactory.createFromOpCode(machineCode);
+        return this.instructionFactory.createFromOpCode(this.memory, nextInstructionAddress);
+    }
+
+    loadPreviousInstruction() {
+        let prevInstructionAddress = this.registers.pc.toUnsignedIntValue() - 1;
+
+        return this.instructionFactory.createFromOpCode(this.memory, prevInstructionAddress);
     }
 
     storeToMemory(address, register) {
@@ -142,7 +155,10 @@ export class BaseEmulator {
 export class Word {
     bits = [];
 
-    static fromString(bitString) {
+    static fromString(bitString, size = 16) {
+        if (size) {
+            bitString = bitString.padStart(size, "0").slice(0, size);
+        }
         return Word.fromBitArray([...bitString].reverse());
     }
 
@@ -241,6 +257,11 @@ export class Word {
         return Word.fromSignedIntValue(result, this.bits.length);
     }
 
+    xor(word) {
+        let result = this.toSignedIntValue() ^ word.toSignedIntValue();
+        return Word.fromSignedIntValue(result, this.bits.length);
+    }
+
     and(word) {
         let result = this.toSignedIntValue() & word.toSignedIntValue();
         return Word.fromSignedIntValue(result, this.bits.length);
@@ -265,6 +286,20 @@ export class Word {
         }
 
         return newWord;
+    }
+
+    arithmeticShift(immediate) {
+        let size = this.bits.length;
+
+        let val = this.toSignedIntValue();
+
+        if (immediate > 0) {
+            val = val << immediate;
+        } else {
+            val = val >> Math.abs(immediate);
+        }
+
+        return Word.fromSignedIntValue(val, size)
     }
 
     toBitString() {

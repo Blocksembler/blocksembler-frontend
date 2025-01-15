@@ -1,5 +1,5 @@
 export class BaseInstruction {
-    constructor(meta) {
-        this.meta = meta;
+    constructor(args) {
+        this.args = args;
     }
 }
