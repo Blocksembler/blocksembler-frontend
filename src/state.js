@@ -10,6 +10,6 @@ export const settings = reactive(new BlocksemblerSettings())
 
 export const emulator = reactive(new AnnaEmulator());
 
-export const annaCodeParser = reactive(
+export const codeParser = reactive(
     new BaseAssemblerParser(emulator.getInstructionFactory())
 );

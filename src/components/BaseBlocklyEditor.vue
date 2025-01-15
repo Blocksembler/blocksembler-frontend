@@ -3,7 +3,7 @@ import {onMounted, ref, shallowRef, watch} from "vue";
 import * as Blockly from "blockly";
 
 import {blocks} from "../architectures/anna/blocks";
-import {annaGenerator} from "../architectures/anna/generator";
+import {generator} from "../architectures/anna/generator";
 import {formatAnnaCode} from "../architectures/anna/formatter";
 import {load, save} from "../util/serialization";
 import {generatedCode, jsonWorkspace} from "../state";
@@ -26,7 +26,7 @@ onMounted(() => {
 
   const runCode = () => {
     generatedCode.value = formatAnnaCode(
-        annaGenerator.workspaceToCode(workspace.value),
+        generator.workspaceToCode(workspace.value),
         10
     );
   };

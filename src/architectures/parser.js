@@ -27,12 +27,10 @@ export class BaseAssemblerParser {
 
         let label = this.extractLabel(tokens);
         let type = this.extractType(tokens);
-        let instructionMeta = {
-            label: label,
-            args: tokens,
-        };
 
-        return this.instructionFactory.createFromMnemonic(type, instructionMeta);
+        let inst = this.instructionFactory.createFromMnemonic(type, tokens);
+        inst.label = label;
+        return inst;
     }
 
     extractLabel(tokens) {
@@ -54,8 +52,8 @@ export class BaseAssemblerParser {
         let labelAddresses = {};
 
         program.forEach((instruction, address) => {
-            if (instruction.meta.label) {
-                labelAddresses[instruction.meta.label] = address;
+            if (instruction.label) {
+                labelAddresses[instruction.label] = address;
             }
         });
 
@@ -64,8 +62,8 @@ export class BaseAssemblerParser {
             const absAddressingInstructions = ["lli", "lui"];
             const instructionMnemonic = instruction.constructor.mnemonic;
 
-            for (let idx in instruction.meta.args) {
-                let args = instruction.meta.args;
+            for (let idx in instruction.args) {
+                let args = instruction.args;
                 if (args[idx][0] === "&") {
                     if (relAddressingInstructions.includes(instructionMnemonic)) {
                         args[idx] = labelAddresses[args[idx].slice(1)] - address - 1;
