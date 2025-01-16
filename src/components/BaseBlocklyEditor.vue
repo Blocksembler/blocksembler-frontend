@@ -2,9 +2,9 @@
 import {onMounted, ref, shallowRef, watch} from "vue";
 import * as Blockly from "blockly";
 
-import {blocks} from "../architectures/anna/blocks";
-import {annaGenerator} from "../architectures/anna/generator";
-import {formatAnnaCode} from "../architectures/anna/formatter";
+import "../architectures/armlet/blocks";
+import {generator} from "../architectures/armlet/generator";
+import {formatAssemblyCode} from "../architectures/formatter.js";
 import {load, save} from "../util/serialization";
 import {generatedCode, jsonWorkspace} from "../state";
 
@@ -16,7 +16,7 @@ const workspace = shallowRef();
 defineExpose({workspace});
 
 onMounted(() => {
-  Blockly.common.defineBlocks(blocks);
+  //Blockly.common.defineBlocks(blocks);
 
   const options = props.options || {};
   if (!options.toolbox) {
@@ -25,8 +25,8 @@ onMounted(() => {
   workspace.value = Blockly.inject(blocklyDiv.value, options);
 
   const runCode = () => {
-    generatedCode.value = formatAnnaCode(
-        annaGenerator.workspaceToCode(workspace.value),
+    generatedCode.value = formatAssemblyCode(
+        generator.workspaceToCode(workspace.value),
         10
     );
   };

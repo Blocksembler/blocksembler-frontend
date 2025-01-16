@@ -1,15 +1,15 @@
 import {reactive, ref} from "vue";
-import {AnnaEmulator} from "./architectures/anna/system";
-import {BaseAssemblerParser} from "./architectures/parser";
+import {ArmletEmulator} from "./architectures/armlet/system";
 import {BlocksemblerSettings} from "./settings.js";
+import {ArmletAssemblyParser} from "@/architectures/armlet/parser.js";
 
 export const generatedCode = ref("");
 export const jsonWorkspace = ref({});
 
 export const settings = reactive(new BlocksemblerSettings())
 
-export const emulator = reactive(new AnnaEmulator());
+export const emulator = reactive(new ArmletEmulator());
 
-export const annaCodeParser = reactive(
-    new BaseAssemblerParser(emulator.getInstructionFactory())
+export const codeParser = reactive(
+    new ArmletAssemblyParser(emulator.getInstructionFactory())
 );
