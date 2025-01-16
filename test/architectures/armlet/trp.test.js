@@ -40,6 +40,10 @@ test("create trp instruction from machine code", () => {
 
 test("test execute trp instruction", () => {
     let mockSystem = generateMockSystem([0, 13, 17, 5, 3, 2, 67, 7, 1])
+    mockSystem.interruptHandler['alert'] = (system, msg) => {
+        console.log(msg)
+    };
+
     let instruction = new TrpInstruction();
 
     instruction.executeOn(mockSystem);

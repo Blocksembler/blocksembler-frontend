@@ -83,7 +83,7 @@ test("test execute jmp instruction", () => {
     let mockSystem = generateMockSystem([0, 0, 0, 10, 0, 0, 0, 0, 0], instruction)
     let expectedSystemState = generateMockSystem([0, 0, 0, 10, 0, 0, 0, 0, 0], instruction)
 
-    expectedSystemState.registers.pc.set(Word.fromSignedIntValue(10));
+    expectedSystemState.registers.pc.set(Word.fromSignedIntValue(9));
 
     instruction.executeOn(mockSystem);
 
@@ -95,7 +95,7 @@ test("execute jmp instruction with immediate", () => {
     let mockSystem = generateMockSystem([0, 0, 0, 0, 0, 0, 0, 0, 0], instruction)
     let expectedSystemState = generateMockSystem([0, 0, 0, 0, 0, 0, 0, 0, 0], instruction)
 
-    expectedSystemState.registers.pc.set(Word.fromSignedIntValue(12));
+    expectedSystemState.registers.pc.set(Word.fromSignedIntValue(11));
 
     instruction.executeOn(mockSystem);
 

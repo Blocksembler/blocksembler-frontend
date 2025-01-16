@@ -1,11 +1,11 @@
 import {expect, test, vi} from "vitest";
-import {BaseAssemblerParser} from "@/architectures/parser.js";
+import {AnnaAssemblyParser} from "@/architectures/anna/parser.js";
 import {BranchEqualZeroInstruction} from "@/architectures/anna/instructions.js";
 
 test("parse empty file", () => {
     let emptyFile = "";
 
-    let parser = new BaseAssemblerParser({});
+    let parser = new AnnaAssemblyParser({});
     let result = parser.parseCode(emptyFile);
 
     expect(result).toMatchObject([]);
@@ -20,7 +20,7 @@ test("parse single-line assembler code", () => {
         },
     };
 
-    let parser = new BaseAssemblerParser(mockFactory);
+    let parser = new AnnaAssemblyParser(mockFactory);
     let result = parser.parseCode(sourceCode);
 
     expect(result).toMatchObject(
@@ -40,7 +40,7 @@ test("parse addi instruction", () => {
         },
     };
 
-    let parser = new BaseAssemblerParser(mockFactory);
+    let parser = new AnnaAssemblyParser(mockFactory);
     let result = parser.parseCode(sourceCode);
 
     expect(result).toMatchObject(
@@ -61,7 +61,7 @@ test("parse multi-line assembler code", () => {
         },
     };
 
-    let parser = new BaseAssemblerParser(mockFactory);
+    let parser = new AnnaAssemblyParser(mockFactory);
     let result = parser.parseCode(emptyFile);
 
     expect(result).toMatchObject([
@@ -87,7 +87,7 @@ test("parse multi-line assembler code with comments", () => {
         },
     };
 
-    let parser = new BaseAssemblerParser(mockFactory);
+    let parser = new AnnaAssemblyParser(mockFactory);
     let result = parser.parseCode(emptyFile);
 
     expect(result).toMatchObject([
@@ -110,7 +110,7 @@ test("parse assembler code with labels", () => {
         }),
     };
 
-    let parser = new BaseAssemblerParser(mockFactory);
+    let parser = new AnnaAssemblyParser(mockFactory);
     let result = parser.parseCode(assemblerCode);
     expect(result).toMatchObject([
         {

@@ -11,7 +11,7 @@ import {
 
 test("test execution of a program", () => {
     let emulator = new ArmletEmulator();
-    emulator.interruptHandler['alert'] = (msg) => {
+    emulator.interruptHandler['alert'] = (system, msg) => {
         console.log(msg);
     };
 

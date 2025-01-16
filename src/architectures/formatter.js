@@ -4,7 +4,7 @@ const DEFAULT_HEADER = `
 ############################
 `;
 
-export const formatAnnaCode = (code, indent) => {
+export const formatAssemblyCode = (code, indent) => {
     const lines = code.split("\n");
 
     let formattedCode = "";

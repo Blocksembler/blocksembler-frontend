@@ -66,12 +66,12 @@ export class BaseEmulator {
 
     startExecution() {
         if (this.loadedProgramSize === 0) {
-            this.interruptHandler['alert']("Please ensure your program is assembled and loaded into memory before attempting execution.");
+            this.callInterrupt("alert", "Please ensure your program is assembled and loaded into memory before attempting execution.");
             return
         }
 
         if (this.isTerminated) {
-            this.interruptHandler['alert']("To execute the program again, please reset your hardware.")
+            this.callInterrupt("alert", "To execute the program again, please reset your hardware.")
             return
         }
 
@@ -88,12 +88,12 @@ export class BaseEmulator {
 
     executeSingleInstruction() {
         if (this.loadedProgramSize === 0) {
-            this.interruptHandler['alert']("Please ensure your program is assembled and loaded into memory before attempting execution.")
+            this.callInterrupt("alert", "Please ensure your program is assembled and loaded into memory before attempting execution.");
             return
         }
 
         if (this.isTerminated) {
-            this.interruptHandler['alert']("To execute the program again, please reset your hardware.")
+            this.callInterrupt('alert', "To execute the program again, please reset your hardware.")
             return
         }
 

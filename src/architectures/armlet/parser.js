@@ -1,18 +1,28 @@
-export class BaseAssemblerParser {
+export class ArmletAssemblyParser {
     constructor(factory) {
         this.instructionFactory = factory;
     }
 
     parseCode(code) {
-        let lines = code.split("\n").map((line) => line.trim());
+        let lines = code.split("\n").map((line) => line.trim()).filter((line) => line.length > 0);
         let parsedProgram = [];
 
-        lines.forEach((line) => {
-            let trimmedLine = this.trimComments(line);
+        let idx = 0;
+        while (idx < lines.length) {
+            let trimmedLine = this.trimComments(lines[idx]);
+
+            if (trimmedLine.endsWith(':')) {
+                let nextCommand = this.trimComments(lines[idx + 1])
+                idx += 1;
+                trimmedLine += " " + nextCommand;
+            }
+
             if (trimmedLine) {
                 parsedProgram.push(this.parseInstructionLine(trimmedLine));
             }
-        });
+
+            idx += 1;
+        }
 
         return this.resolveLabels(parsedProgram);
     }
@@ -51,25 +61,21 @@ export class BaseAssemblerParser {
     resolveLabels(program) {
         let labelAddresses = {};
 
-        program.forEach((instruction, address) => {
+        let address = 0
+        for (let instruction of program) {
             if (instruction.label) {
                 labelAddresses[instruction.label] = address;
             }
-        });
 
-        program.forEach((instruction, address) => {
-            const relAddressingInstructions = ["bgz", "bez", "jalr"];
-            const absAddressingInstructions = ["lli", "lui"];
-            const instructionMnemonic = instruction.constructor.mnemonic;
+            let instructionSize = instruction.toMachineCode().length / 16
+            address += instructionSize
+        }
 
+        program.forEach((instruction, _address) => {
             for (let idx in instruction.args) {
                 let args = instruction.args;
-                if (args[idx][0] === "&") {
-                    if (relAddressingInstructions.includes(instructionMnemonic)) {
-                        args[idx] = labelAddresses[args[idx].slice(1)] - address - 1;
-                    } else if (absAddressingInstructions.includes(instructionMnemonic)) {
-                        args[idx] = labelAddresses[args[idx].slice(1)];
-                    }
+                if (args[idx][0] === ">") {
+                    args[idx] = labelAddresses['@' + args[idx].slice(1)].toString();
                 }
             }
         });

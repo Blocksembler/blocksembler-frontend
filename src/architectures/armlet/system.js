@@ -12,7 +12,7 @@ export class ArmletEmulator extends BaseEmulator {
 
     static setUpRegistersStatic() {
         return {
-            'status': Word.fromSignedIntValue(0, addressSize),
+            'status': Word.fromSignedIntValue(0, 3),
             '$0': Word.fromSignedIntValue(0, addressSize),
             '$1': Word.fromSignedIntValue(0, addressSize),
             '$2': Word.fromSignedIntValue(0, addressSize),
@@ -30,9 +30,10 @@ export class ArmletEmulator extends BaseEmulator {
                 system.pauseExecution()
             },
             'hlt': (system) => {
-                system.halt()
+                system.callInterrupt('alert', 'The program terminated');
+                system.halt();
             },
-            'alert': (msg) => {
+            'alert': (system, msg) => {
                 alert(msg);
             }
         }
@@ -54,7 +55,7 @@ export class ArmletEmulator extends BaseEmulator {
         super.executeSingleInstruction();
 
         if (this.registers.pc.toUnsignedIntValue() !== 0) {
-        let prevInstruction = this.loadPreviousInstruction()
+            let prevInstruction = this.loadPreviousInstruction()
             if (prevInstruction instanceof AbstractImmediateArmletInstruction) {
                 this.registers.pc.set(this.registers.pc.addImmedate(1))
             }

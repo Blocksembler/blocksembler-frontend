@@ -38,9 +38,13 @@ export class ArmletInstructionFactory {
 
         let instructionClass = this.getInstructionClassByOpCode(instWord.slice(10, 16));
 
-        let immediateWord = memory[address + 1].toBitString()
+        if (address + 1 >= memory.length) {
+            return instructionClass.fromMachineCode(instWord, Word.fromSignedIntValue(0));
+        }
 
+        let immediateWord = memory[address + 1].toBitString()
         return instructionClass.fromMachineCode(instWord, immediateWord);
+
     }
 
     getInstructionClassByOpCode(opCode) {
@@ -281,6 +285,13 @@ export class MovImmediateInstruction extends AbstractImmediateArmletInstruction 
 
     static get opCode() {
         return intToOpCode(26)
+    }
+
+    static fromMachineCode(instWord, immediateWord) {
+        let l = this.extractL(instWord)
+        let immediate = `${parseInt(immediateWord, 2)}`
+
+        return new this([l, immediate])
     }
 
     executeOn(system) {
@@ -855,8 +866,7 @@ export class JmpInstruction extends AbstractArmletControlInstruction {
     }
 
     executeOn(system) {
-        let nextPc = system.registers[this.firstOperand]
-        system.registers['pc'].set(nextPc)
+        system.registers['pc'].set(this.getJmpTarget(system))
     }
 }
 
@@ -870,8 +880,7 @@ export class JmpImmediateInstruction extends AbstractArmletImmediateControlInstr
     }
 
     executeOn(system) {
-        let nextPc = system.memory[system.registers['pc'].toUnsignedIntValue() + 1]
-        system.registers['pc'].set(nextPc)
+        system.registers['pc'].set(this.getJmpTarget(system))
     }
 }
 
@@ -1215,7 +1224,8 @@ export class TrpInstruction extends AbstractArmletInstruction {
     }
 
     executeOn(system) {
-        system.interruptHandler['trp'](system)
+        system.callInterrupt('alert', 'Execution paused!');
+        system.pauseExecution()
     }
 }
 
@@ -1233,7 +1243,7 @@ export class HltInstruction extends AbstractArmletInstruction {
     }
 
     executeOn(system) {
-        system.interruptHandler['hlt'](system)
+        system.callInterrupt("hlt");
     }
 }
 
