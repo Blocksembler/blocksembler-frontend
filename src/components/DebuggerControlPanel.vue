@@ -60,17 +60,6 @@ const reset = () => {
     >{{ output.join("\n") }}</textarea>
   </BaseModal>
 
-  <BaseModal id="settingsModal" title="Settings" savable>
-    <label for="customRange1" class="form-label">Milliseconds per Instruction</label>
-    <input type="range"
-           class="form-range"
-           id="customRange1"
-           min="1"
-           max="2000"
-           v-model.number="settings.executionSpeed">
-    <a>{{ settings.executionSpeed }}ms per instruction</a>
-  </BaseModal>
-
   <div
       class="py-3 m-0 navbar sticky-top background-white"
       style="background-color: white"
@@ -103,13 +92,6 @@ const reset = () => {
       >
         <TerminalIcon/>
         Output Console
-      </BaseButton>
-      <BaseButton
-          data-bs-target="#settingsModal"
-          data-bs-toggle="modal"
-          icon-name="gear"
-      >
-        Settings
       </BaseButton>
     </div>
   </div>

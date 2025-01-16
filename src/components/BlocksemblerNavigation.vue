@@ -8,6 +8,7 @@ import BugIcon from "@/components/icons/BugIcon.vue";
 import CloudDownloadIcon from "@/components/icons/CloudDownloadIcon.vue";
 import GearIcon from "@/components/icons/GearIcon.vue";
 import CloudUploadIcon from "@/components/icons/CloudUploadIcon.vue";
+import BlocksemblerSettings from "./BlocksemblerSettings.vue";
 
 let export_project = () => {
   saveAs(new Blob([JSON.stringify(load())]), `blocksembler-project-${Date.now()}.json`)
@@ -26,6 +27,7 @@ let import_project = () => {
 
 </script>
 <template>
+  <BlocksemblerSettings/>
   <header>
     <div class="px-3 text-bg-dark">
       <div class="container-fluid">
