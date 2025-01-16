@@ -69,7 +69,7 @@ const instructions = computed(() => {
           </td>
           <td>0x{{ paddString(instruction.address.toString(16), 4) }}</td>
           <td>
-            <pre v-if="instruction.isInstruction">{{ instruction.inst.toMachineCode() }}</pre>
+            <pre v-if="instruction.isInstruction">{{ instruction.inst.toMachineCode().slice(0, 16) }}</pre>
             <pre v-else>{{ instruction.binaryValue }}</pre>
           </td>
           <td>
