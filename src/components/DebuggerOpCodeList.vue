@@ -1,20 +1,34 @@
 <script setup>
 import {computed} from "vue";
-import {annaCodeParser, emulator} from "../state";
-import {paddString} from "../util/string";
+import {codeParser, emulator} from "../state";
+import {paddString} from "../util/string.js";
+
+const memoryToInstructionObjects = (progMemory) => {
+  let instructions = [];
+
+  let address = 0;
+  while (address < progMemory.length) {
+    let inst = codeParser.instructionFactory.createFromOpCode(progMemory, address);
+
+    let size = inst.toMachineCode().length / emulator.addressSize;
+
+    instructions.push({address: address, isInstruction: true, inst: inst});
+
+    for (let offset = 1; offset < size; offset++) {
+      let binaryValue = progMemory[address + offset].toBitString()
+      instructions.push({address: address + offset, isInstruction: false, binaryValue: binaryValue});
+    }
+
+    address += size;
+  }
+
+  return instructions;
+}
 
 const instructions = computed(() => {
-  let programMemorySegment = emulator.memory.slice(
-      0,
-      emulator.loadedProgramSize
-  );
+  let programMemorySegment = emulator.memory.slice(0, emulator.loadedProgramSize);
 
-  return programMemorySegment.map((code, idx) => {
-    let inst = annaCodeParser.instructionFactory.createFromOpCode(
-        code.toBitString()
-    );
-    return {address: idx, inst: inst};
-  });
+  return memoryToInstructionObjects(programMemorySegment);
 });
 </script>
 <template>
@@ -55,9 +69,14 @@ const instructions = computed(() => {
           </td>
           <td>0x{{ paddString(instruction.address.toString(16), 4) }}</td>
           <td>
-            <pre>{{ instruction.inst.toMachineCode() }}</pre>
+            <pre v-if="instruction.isInstruction">{{ instruction.inst.toMachineCode() }}</pre>
+            <pre v-else>{{ instruction.binaryValue }}</pre>
           </td>
-          <td>{{ instruction.inst.toString() }}</td>
+          <td>
+            <a v-if="instruction.isInstruction">
+              {{ instruction.inst.toString() }}
+            </a>
+          </td>
         </tr>
         </tbody>
       </table>

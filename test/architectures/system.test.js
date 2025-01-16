@@ -1,9 +1,9 @@
 import {expect, test} from "vitest";
-import {ImmutableWord, Word} from "../../src/architectures/system";
+import {ImmutableWord, Word} from "@/architectures/system.js";
 
 test("initialize word with bit string", () => {
     let bitString = "1101";
-    let word = Word.fromString(bitString);
+    let word = Word.fromString(bitString, 4);
 
     expect(word.bits).toMatchObject([1, 0, 1, 1]);
     expect(word.bits.length).toBe(bitString.length);
@@ -57,8 +57,8 @@ test("test if 0b0001 + 0b0001 = 0b0010", () => {
 });
 
 test("test if 0b1111 + 0b0001 = 0b0000", () => {
-    let operand_one = Word.fromString("1111");
-    let operand_two = Word.fromString("0001");
+    let operand_one = Word.fromString("1111", 4);
+    let operand_two = Word.fromString("0001", 4);
 
     let result = operand_one.add(operand_two);
 
@@ -66,8 +66,8 @@ test("test if 0b1111 + 0b0001 = 0b0000", () => {
 });
 
 test("test if 0b0000 - 0b0001 = 0b1111", () => {
-    let operand_one = Word.fromString("0000");
-    let operand_two = Word.fromString("0001");
+    let operand_one = Word.fromString("0000", 4);
+    let operand_two = Word.fromString("0001", 4);
 
     let result = operand_one.subtract(operand_two);
 
@@ -75,8 +75,8 @@ test("test if 0b0000 - 0b0001 = 0b1111", () => {
 });
 
 test("test if 0b0101 | 0b1010 = 0b1111", () => {
-    let operand_one = Word.fromString("1010");
-    let operand_two = Word.fromString("0101");
+    let operand_one = Word.fromString("1010", 4);
+    let operand_two = Word.fromString("0101", 4);
 
     let result = operand_one.or(operand_two);
 
@@ -84,8 +84,8 @@ test("test if 0b0101 | 0b1010 = 0b1111", () => {
 });
 
 test("test if 0b10111110 & 0b11110000 = 0b10110000", () => {
-    let operand_one = Word.fromString("10111110");
-    let operand_two = Word.fromString("11110000");
+    let operand_one = Word.fromString("10111110", 8);
+    let operand_two = Word.fromString("11110000", 8);
 
     let result = operand_one.and(operand_two);
 
@@ -93,19 +93,19 @@ test("test if 0b10111110 & 0b11110000 = 0b10110000", () => {
 });
 
 test("test if pushing 0b1111 to the left by 1 = 0b1110", () => {
-    let word = Word.fromString("1111");
+    let word = Word.fromString("1111", 4);
     let result = word.shift(1);
     expect(result.bits).toMatchObject([0, 1, 1, 1]);
 });
 
 test("test if pushing 0b1111 to the right by 1 = 0b0111", () => {
-    let word = Word.fromString("1111");
+    let word = Word.fromString("1111", 4);
     let result = word.shift(-1);
     expect(result.bits).toMatchObject([1, 1, 1, 0]);
 });
 
 test("test if immutable word is not changed after set operation", () => {
-    let word = ImmutableWord.fromString("0000");
-    word.set(Word.fromString("1111"));
+    let word = ImmutableWord.fromString("0000", 4);
+    word.set(Word.fromString("1111", 4));
     expect(word.toSignedIntValue()).toBe(0);
 });

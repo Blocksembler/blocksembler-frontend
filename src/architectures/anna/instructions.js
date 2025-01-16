@@ -1,4 +1,4 @@
-import {paddString} from "../../util/string";
+import {paddString} from "@/util/string.js";
 import {BaseInstruction} from "../instructions";
 import {Word} from "../system";
 
@@ -12,7 +12,19 @@ export class AnnaInstructionFactory {
         return instructionClasses.filter((c) => c.mnemonic === mnemonic)[0];
     }
 
-    createFromOpCode(code) {
+    //Deprecated!!
+    createFromMachineCode(code) {
+        if (code === "1111000000000000") {
+            return HaltInstruction.fromMachineCode(code);
+        }
+
+        let instructionClass = this.getInstructionClassByOpCode(code.slice(0, 4));
+        return instructionClass.fromMachineCode(code);
+    }
+
+    createFromOpCode(memory, address) {
+        let code = memory[address].toBitString()
+
         if (code === "1111000000000000") {
             return HaltInstruction.fromMachineCode(code);
         }
@@ -28,30 +40,25 @@ export class AnnaInstructionFactory {
 }
 
 class AnnaRTypeInstruction extends BaseInstruction {
-    constructor(meta) {
-        super(meta);
-    }
 
     get rd() {
-        return this.meta.args[0] ? parseInt(this.meta.args[0][1]) : 0;
+        return this.args[0] ? parseInt(this.args[0][1]) : 0;
     }
 
     get rs1() {
-        return this.meta.args[1] ? parseInt(this.meta.args[1][1]) : 0;
+        return this.args[1] ? parseInt(this.args[1][1]) : 0;
     }
 
     get rs2() {
-        return this.meta.args[2] ? parseInt(this.meta.args[2][1]) : 0;
+        return this.args[2] ? parseInt(this.args[2][1]) : 0;
     }
 
-    static extractMeta(code) {
+    static extractArgs(code) {
         let rd = parseInt(code.slice(4, 7), 2);
         let rs1 = parseInt(code.slice(7, 10), 2);
         let rs2 = parseInt(code.slice(10, 13), 2);
 
-        return {
-            args: [`r${rd}`, `r${rs1}`, `r${rs2}`],
-        };
+        return [`r${rd}`, `r${rs1}`, `r${rs2}`];
     }
 
     toMachineCode() {
@@ -71,32 +78,27 @@ class AnnaRTypeInstruction extends BaseInstruction {
 }
 
 class AnnaI6TypeInstruction extends BaseInstruction {
-    constructor(meta) {
-        super(meta);
-    }
 
     get rd() {
-        return this.meta.args[0] ? parseInt(this.meta.args[0][1]) : 0;
+        return this.args[0] ? parseInt(this.args[0][1]) : 0;
     }
 
     get rs() {
-        return this.meta.args[1] ? parseInt(this.meta.args[1][1]) : 0;
+        return this.args[1] ? parseInt(this.args[1][1]) : 0;
     }
 
     get imm() {
-        return this.meta.args[2] ? parseInt(this.meta.args[2]) : 0;
+        return this.args[2] ? parseInt(this.args[2]) : 0;
     }
 
-    static extractMeta(code) {
+    static extractArgs(code) {
         let rd = parseInt(code.slice(4, 7), 2);
         let rs = parseInt(code.slice(7, 10), 2);
 
         let immStr = code.slice(10, 16);
-        let imm = Word.fromString(immStr).toSignedIntValue();
+        let imm = Word.fromString(immStr, 6).toSignedIntValue();
 
-        return {
-            args: [`r${rd}`, `r${rs}`, imm],
-        };
+        return [`r${rd}`, `r${rs}`, imm];
     }
 
     toMachineCode() {
@@ -114,27 +116,22 @@ class AnnaI6TypeInstruction extends BaseInstruction {
 }
 
 class AnnaI8TypeInstruction extends BaseInstruction {
-    constructor(meta) {
-        super(meta);
-    }
 
     get rd() {
-        return this.meta.args[0] ? parseInt(this.meta.args[0][1]) : 0;
+        return this.args[0] ? parseInt(this.args[0][1]) : 0;
     }
 
     get imm() {
-        return this.meta.args[1] ? parseInt(this.meta.args[1]) : 0;
+        return this.args[1] ? parseInt(this.args[1]) : 0;
     }
 
-    static extractMeta(code) {
+    static extractArgs(code) {
         let rd = parseInt(code.slice(4, 7), 2);
 
         let immStr = code.slice(8, 16);
-        let imm = Word.fromString(immStr).toSignedIntValue();
+        let imm = Word.fromString(immStr, 8).toSignedIntValue();
 
-        return {
-            args: [`r${rd}`, imm],
-        };
+        return [`r${rd}`, imm];
     }
 
     toMachineCode() {
@@ -157,8 +154,8 @@ export class AddInstruction extends AnnaRTypeInstruction {
     static opCode = "0000";
 
     static fromMachineCode(code) {
-        let meta = this.extractMeta(code);
-        return new AddInstruction(meta);
+        let args = this.extractArgs(code);
+        return new AddInstruction(args);
     }
 
     executeOn(system) {
@@ -176,8 +173,8 @@ export class AddImmedateInstruction extends AnnaI6TypeInstruction {
     static opCode = "1100";
 
     static fromMachineCode(code) {
-        let meta = AnnaI6TypeInstruction.extractMeta(code);
-        return new AddImmedateInstruction(meta);
+        let args = AnnaI6TypeInstruction.extractArgs(code);
+        return new AddImmedateInstruction(args);
     }
 
     executeOn(system) {
@@ -195,8 +192,8 @@ export class SubtractInstruction extends AnnaRTypeInstruction {
     static opCode = "0001";
 
     static fromMachineCode(code) {
-        let meta = this.extractMeta(code);
-        return new SubtractInstruction(meta);
+        let args = this.extractArgs(code);
+        return new SubtractInstruction(args);
     }
 
     executeOn(system) {
@@ -214,8 +211,8 @@ export class AndInstruction extends AnnaRTypeInstruction {
     static opCode = "0010";
 
     static fromMachineCode(code) {
-        let meta = this.extractMeta(code);
-        return new AndInstruction(meta);
+        let args = this.extractArgs(code);
+        return new AndInstruction(args);
     }
 
     executeOn(system) {
@@ -233,8 +230,8 @@ export class OrInstruction extends AnnaRTypeInstruction {
     static opCode = "0011";
 
     static fromMachineCode(code) {
-        let meta = this.extractMeta(code);
-        return new OrInstruction(meta);
+        let args = this.extractArgs(code);
+        return new OrInstruction(args);
     }
 
     executeOn(system) {
@@ -252,17 +249,15 @@ export class NotInstruction extends AnnaRTypeInstruction {
     static opCode = "0100";
 
     static fromMachineCode(code) {
-        let meta = this.extractMeta(code);
-        return new NotInstruction(meta);
+        let args = this.extractArgs(code);
+        return new NotInstruction(args);
     }
 
-    static extractMeta(code) {
+    static extractArgs(code) {
         let rd = parseInt(code.slice(4, 7), 2);
         let rs1 = parseInt(code.slice(7, 10), 2);
 
-        return {
-            args: [`r${rd}`, `r${rs1}`],
-        };
+        return [`r${rd}`, `r${rs1}`];
     }
 
     executeOn(system) {
@@ -278,8 +273,8 @@ export class ShiftInstruction extends AnnaI6TypeInstruction {
     static opCode = "0101";
 
     static fromMachineCode(code) {
-        let meta = this.extractMeta(code);
-        return new ShiftInstruction(meta);
+        let args = this.extractArgs(code);
+        return new ShiftInstruction(args);
     }
 
     executeOn(system) {
@@ -296,8 +291,8 @@ export class LoadLowerImmedateInstruction extends AnnaI8TypeInstruction {
     static opCode = "0110";
 
     static fromMachineCode(code) {
-        let meta = this.extractMeta(code);
-        return new LoadLowerImmedateInstruction(meta);
+        let args = this.extractArgs(code);
+        return new LoadLowerImmedateInstruction(args);
     }
 
     executeOn(system) {
@@ -316,8 +311,8 @@ export class LoadUpperImmedateInstruction extends AnnaI8TypeInstruction {
     static opCode = "0111";
 
     static fromMachineCode(code) {
-        let meta = this.extractMeta(code);
-        return new LoadUpperImmedateInstruction(meta);
+        let args = this.extractArgs(code);
+        return new LoadUpperImmedateInstruction(args);
     }
 
     executeOn(system) {
@@ -336,8 +331,8 @@ export class LoadWordInstruction extends AnnaI6TypeInstruction {
     static opCode = "1000";
 
     static fromMachineCode(code) {
-        let meta = this.extractMeta(code);
-        return new LoadWordInstruction(meta);
+        let args = this.extractArgs(code);
+        return new LoadWordInstruction(args);
     }
 
     executeOn(system) {
@@ -354,8 +349,8 @@ export class StoreWordInstruction extends AnnaI6TypeInstruction {
     static opCode = "1001";
 
     static fromMachineCode(code) {
-        let meta = this.extractMeta(code);
-        return new StoreWordInstruction(meta);
+        let args = this.extractArgs(code);
+        return new StoreWordInstruction(args);
     }
 
     executeOn(system) {
@@ -372,8 +367,8 @@ export class BranchEqualZeroInstruction extends AnnaI8TypeInstruction {
     static opCode = "1010";
 
     static fromMachineCode(code) {
-        let meta = this.extractMeta(code);
-        return new BranchEqualZeroInstruction(meta);
+        let args = this.extractArgs(code);
+        return new BranchEqualZeroInstruction(args);
     }
 
     executeOn(system) {
@@ -391,8 +386,8 @@ export class BranchGreaterZeroInstruction extends AnnaI8TypeInstruction {
     static opCode = "1011";
 
     static fromMachineCode(code) {
-        let meta = this.extractMeta(code);
-        return new BranchGreaterZeroInstruction(meta);
+        let args = this.extractArgs(code);
+        return new BranchGreaterZeroInstruction(args);
     }
 
     executeOn(system) {
@@ -410,17 +405,15 @@ export class JumpAndLinkRegisterInstruction extends AnnaRTypeInstruction {
     static opCode = "1101";
 
     static fromMachineCode(code) {
-        let meta = this.extractMeta(code);
-        return new JumpAndLinkRegisterInstruction(meta);
+        let args = this.extractArgs(code);
+        return new JumpAndLinkRegisterInstruction(args);
     }
 
-    static extractMeta(code) {
+    static extractArgs(code) {
         let rd = parseInt(code.slice(4, 7), 2);
         let rs1 = parseInt(code.slice(7, 10), 2);
 
-        return {
-            args: [`r${rd}`, `r${rs1}`],
-        };
+        return [`r${rd}`, `r${rs1}`];
     }
 
     executeOn(system) {
@@ -437,16 +430,14 @@ export class InputInstruction extends AnnaRTypeInstruction {
     static opCode = "1110";
 
     static fromMachineCode(code) {
-        let meta = this.extractMeta(code);
-        return new InputInstruction(meta);
+        let args = this.extractArgs(code);
+        return new InputInstruction(args);
     }
 
-    static extractMeta(code) {
+    static extractArgs(code) {
         let rd = parseInt(code.slice(4, 7), 2);
 
-        return {
-            args: [`r${rd}`],
-        };
+        return [`r${rd}`];
     }
 
     executeOn(system) {
@@ -462,16 +453,14 @@ export class OutputInstruction extends AnnaRTypeInstruction {
     static opCode = "1111";
 
     static fromMachineCode(code) {
-        let meta = this.extractMeta(code);
-        return new OutputInstruction(meta);
+        let args = this.extractArgs(code);
+        return new OutputInstruction(args);
     }
 
-    static extractMeta(code) {
+    static extractArgs(code) {
         let rd = parseInt(code.slice(4, 7), 2);
 
-        return {
-            args: [`r${rd}`],
-        };
+        return [`r${rd}`];
     }
 
     executeOn(system) {
@@ -485,17 +474,19 @@ export class HaltInstruction extends AnnaRTypeInstruction {
     static mnemonic = ".halt";
     static opCode = "1111";
 
-    static fromMachineCode(code) {
-        let meta = this.extractMeta(code);
-        return new HaltInstruction(meta);
+    constructor() {
+        super([])
     }
 
-    static extractMeta(code) {
+    static fromMachineCode(code) {
+        let args = this.extractArgs(code);
+        return new HaltInstruction(args);
+    }
+
+    static extractArgs(code) {
         let rd = parseInt(code.slice(4, 7), 2);
 
-        return {
-            args: [`r${rd}`],
-        };
+        return [`r${rd}`];
     }
 
     executeOn(system) {
