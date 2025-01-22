@@ -78,10 +78,6 @@ let import_project = () => {
 </template>
 
 <style scoped>
-h1 {
-  font-family: "PressStart2P", sans-serif;
-}
-
 header div {
   height: 100px;
 }

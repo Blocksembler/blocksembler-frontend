@@ -15,7 +15,4 @@
 </template>
 
 <style scoped>
-.card-header {
-  font-family: "PressStart2P",sans-serif;
-}
 </style>
