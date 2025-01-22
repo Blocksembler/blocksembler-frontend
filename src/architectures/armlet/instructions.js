@@ -1,5 +1,6 @@
-import {BaseInstruction} from "@/architectures/instructions.js";
+import {BaseInstruction, PseudoInstruction} from "@/architectures/instructions.js";
 import {Word} from "@/architectures/system.js";
+import {addressSize} from "@/architectures/armlet/system.js";
 
 const intToOpCode = (number) => {
     return Number(number).toString(2).padStart(6, '0')
@@ -22,6 +23,12 @@ const containsImmediate = (args) => {
 
 export class ArmletInstructionFactory {
     createFromMnemonic(mnemonic, args) {
+        let pseudoInstructionClass = this.getPseudoInstructionClassByMnemonic(mnemonic);
+
+        if (pseudoInstructionClass) {
+            return new pseudoInstructionClass(args);
+        }
+
         if (containsImmediate(args)) {
             let instructionClass = this.getImmediateInstructionClassByMnemonic(mnemonic);
             return new instructionClass(args);
@@ -31,11 +38,21 @@ export class ArmletInstructionFactory {
     }
 
     getRegisterInstructionClassByMnemonic(mnemonic) {
-        return instructionClasses.filter((c) => c.mnemonic === mnemonic)[0];
+        let result = instructionClasses.filter(c => c.mnemonic === mnemonic);
+
+        if (result.len < 0) {
+            return null;
+        }
+
+        return result[0]
     }
 
     getImmediateInstructionClassByMnemonic(mnemonic) {
-        return immediateInstructionClasses.filter((c) => c.mnemonic === mnemonic)[0];
+        return immediateInstructionClasses.filter(c => c.mnemonic === mnemonic)[0];
+    }
+
+    getPseudoInstructionClassByMnemonic(mnemonic) {
+        return pseudoInstructionClasses.filter(c => c.mnemonic === mnemonic)[0];
     }
 
     createFromOpCode(memory, address) {
@@ -64,6 +81,21 @@ export class ArmletInstructionFactory {
         }
 
         return result[0];
+    }
+}
+
+export class DataDirective extends PseudoInstruction {
+    static get mnemonic() {
+        return "%data"
+    }
+
+    toString() {
+        return `${this.constructor.mnemonic} ${this.args.join(", ")}`
+    }
+
+    toMachineCode() {
+        let immediate = Number(this.args[0]);
+        return Word.fromSignedIntValue(immediate, addressSize).toBitString()
     }
 }
 
@@ -1426,3 +1458,7 @@ const immediateInstructionClasses = [
     BaeImmediateInstruction,
     BbeImmediateInstruction,
 ];
+
+const pseudoInstructionClasses = [
+    DataDirective
+]
