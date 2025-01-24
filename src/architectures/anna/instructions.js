@@ -1,4 +1,3 @@
-import {paddString} from "@/util/string.js";
 import {BaseInstruction} from "../instructions";
 import {Word} from "../system";
 
@@ -62,12 +61,10 @@ class AnnaRTypeInstruction extends BaseInstruction {
     }
 
     toMachineCode() {
-        let machineInstruction =
-            this.constructor.opCode + paddString(this.rd.toString(2), 3);
-        machineInstruction += paddString(this.rs1.toString(2), 3);
-        machineInstruction += paddString(this.rs2.toString(2), 3);
+        let machineInstruction = this.constructor.opCode + this.rd.toString(2).padStart(3, "0");
+        machineInstruction += this.rs1.toString(2).padStart(3, "0");
+        machineInstruction += this.rs2.toString(2).padStart(3, "0");
         machineInstruction += "000";
-
         return machineInstruction;
     }
 
@@ -103,8 +100,8 @@ class AnnaI6TypeInstruction extends BaseInstruction {
 
     toMachineCode() {
         let machineInstruction =
-            this.constructor.opCode + paddString(this.rd.toString(2), 3);
-        machineInstruction += paddString(this.rs.toString(2), 3);
+            this.constructor.opCode + this.rd.toString(2).padStart(3, "0");
+        machineInstruction += this.rs.toString(2).padStart(3, "0");
         machineInstruction += Word.fromSignedIntValue(this.imm, 6).toBitString();
         return machineInstruction;
     }
@@ -136,7 +133,7 @@ class AnnaI8TypeInstruction extends BaseInstruction {
 
     toMachineCode() {
         let machineInstruction =
-            this.constructor.opCode + paddString(this.rd.toString(2), 3);
+            this.constructor.opCode + this.rd.toString(2).padStart(3, "0");
         machineInstruction += "0";
         machineInstruction += Word.fromSignedIntValue(this.imm, 8).toBitString();
 
