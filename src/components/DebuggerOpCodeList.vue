@@ -10,16 +10,12 @@ const memoryToInstructionObjects = (progMemory) => {
   while (address < progMemory.length) {
     let inst = codeParser.instructionFactory.createFromOpCode(progMemory, address);
 
-    let size = inst.toMachineCode().length / emulator.addressSize;
+    let binVal = inst.toMachineCode();
+    let decVal = progMemory[address].toString();
+    let hexVal = progMemory[address].toHexValue()
+    instructions.push({address: address, inst: inst, binVal: binVal, decVal: decVal, hexVal: hexVal});
 
-    instructions.push({address: address, isInstruction: true, inst: inst});
-
-    for (let offset = 1; offset < size; offset++) {
-      let binaryValue = progMemory[address + offset].toBitString()
-      instructions.push({address: address + offset, isInstruction: false, binaryValue: binaryValue});
-    }
-
-    address += size;
+    address += 1;
   }
 
   return instructions;
@@ -41,9 +37,11 @@ const instructions = computed(() => {
         <thead>
         <tr>
           <th scope="col" style="width: 10%">PC</th>
-          <th scope="col" style="width: 15%">Address</th>
-          <th scope="col" style="width: 30%">Machine Code</th>
-          <th scope="col" style="width: 45%">Source</th>
+          <th scope="col" style="width: 10%">Address</th>
+          <th scope="col" style="width: 20%">Binary</th>
+          <th scope="col" style="width: 15%">Decimal</th>
+          <th scope="col" style="width: 15%">Hex</th>
+          <th scope="col" style="width: 20%">Assembly</th>
         </tr>
         </thead>
         <tbody>
@@ -67,15 +65,22 @@ const instructions = computed(() => {
               />
             </svg>
           </td>
-          <td>0x{{ paddString(instruction.address.toString(16), 4) }}</td>
           <td>
-            <pre v-if="instruction.isInstruction">{{ instruction.inst.toMachineCode().slice(0, 16) }}</pre>
-            <pre v-else>{{ instruction.binaryValue }}</pre>
+            <pre>0x{{ paddString(instruction.address.toString(16), 4) }}</pre>
           </td>
           <td>
-            <a v-if="instruction.isInstruction">
-              {{ instruction.inst.toString() }}
+            <pre>{{ instruction.binVal.slice(0, 16) }}</pre>
+          </td>
+          <td>
+            <a>
+              <pre>{{ instruction.decVal }}</pre>
             </a>
+          </td>
+          <td>
+            <pre>{{ instruction.hexVal }}</pre>
+          </td>
+          <td>
+            <pre>{{ instruction.inst.toString() }}</pre>
           </td>
         </tr>
         </tbody>
