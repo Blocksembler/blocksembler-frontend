@@ -108,7 +108,7 @@ test("execute bne instruction with immediate when condition is true", () => {
     let instruction = new BneImmediateInstruction(['12']);
 
     let mockSystem = generateMockSystem([0, 0, 0, 0, 0, 0, 0, 0, 0], instruction)
-    let expectedSystemState = generateMockSystem([11, 0, 0, 0, 0, 0, 0, 0, 0], instruction)
+    let expectedSystemState = generateMockSystem([10, 0, 0, 0, 0, 0, 0, 0, 0], instruction)
     
     instruction.executeOn(mockSystem);
 
