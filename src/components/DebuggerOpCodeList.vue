@@ -1,7 +1,6 @@
 <script setup>
 import {computed} from "vue";
 import {codeParser, emulator} from "../state";
-import {paddString} from "../util/string.js";
 
 const memoryToInstructionObjects = (progMemory) => {
   let instructions = [];
@@ -66,7 +65,7 @@ const instructions = computed(() => {
             </svg>
           </td>
           <td>
-            <pre>0x{{ paddString(instruction.address.toString(16), 4) }}</pre>
+            <pre>0x{{ instruction.address.toString(16).padStart(4, "0") }}</pre>
           </td>
           <td>
             <pre>{{ instruction.binVal.slice(0, 16) }}</pre>
