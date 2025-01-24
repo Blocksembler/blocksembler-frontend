@@ -224,6 +224,12 @@ export class Word {
         );
     }
 
+    toHexValue() {
+        let hexStr = String(parseInt(this.toBitString(),2).toString(16));
+        let len = Number(this.bits.length / 4);
+        return `0x${hexStr.padStart(len, '0')}`;
+    }
+
     toUnsignedIntValue() {
         let bitString = [...this.bits].reverse().join("");
         return parseInt(bitString, 2);
