@@ -109,3 +109,17 @@ test("test if immutable word is not changed after set operation", () => {
     word.set(Word.fromString("1111", 4));
     expect(word.toSignedIntValue()).toBe(0);
 });
+
+
+test("test converting word to hex", () => {
+    let word = Word.fromString("11111010", 8);
+    let hexValue = word.toHexValue()
+    expect(hexValue).toEqual("0xfa");
+})
+
+test("test converting 6-bit word to hex", () => {
+    let word = Word.fromString("111010", 6);
+    let hexValue = word.toHexValue()
+    expect(hexValue).toEqual("0x3a");
+})
+
