@@ -112,7 +112,7 @@ test("execute bab instruction with immediate when condition is true", () => {
     let mockSystem = generateMockSystem([0, 0, 0, 10, 0, 0, 0, 0, 0], instruction)
     mockSystem.registers.status.set(Word.fromString('0000000000000100'))
 
-    let expectedSystemState = generateMockSystem([11, 0, 0, 10, 0, 0, 0, 0, 0], instruction)
+    let expectedSystemState = generateMockSystem([10, 0, 0, 10, 0, 0, 0, 0, 0], instruction)
     expectedSystemState.registers.status.set(Word.fromString('000000000000100'))
 
     instruction.executeOn(mockSystem);

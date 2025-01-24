@@ -98,8 +98,9 @@ export class BaseEmulator {
         }
 
         let nextInstruction = this.loadNextInstruction();
+        let instructionLength = Math.floor(nextInstruction.toMachineCode().length / this.addressSize);
         nextInstruction.executeOn(this);
-        this.registers.pc.set(this.registers.pc.addImmedate(1));
+        this.registers.pc.set(this.registers.pc.addImmedate(instructionLength));
     }
 
     loadNextInstruction() {

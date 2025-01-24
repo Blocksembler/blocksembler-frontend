@@ -93,9 +93,7 @@ test("test execute jmp instruction", () => {
 test("execute jmp instruction with immediate", () => {
     let instruction = new JmpImmediateInstruction(['12']);
     let mockSystem = generateMockSystem([0, 0, 0, 0, 0, 0, 0, 0, 0], instruction)
-    let expectedSystemState = generateMockSystem([0, 0, 0, 0, 0, 0, 0, 0, 0], instruction)
-
-    expectedSystemState.registers.pc.set(Word.fromSignedIntValue(11));
+    let expectedSystemState = generateMockSystem([10, 0, 0, 0, 0, 0, 0, 0, 0], instruction)
 
     instruction.executeOn(mockSystem);
 
