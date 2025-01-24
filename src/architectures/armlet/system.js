@@ -50,15 +50,4 @@ export class ArmletEmulator extends BaseEmulator {
     get isAbFlagSet() {
         return this.registers.status.bits[2] === 1
     }
-
-    executeSingleInstruction() {
-        super.executeSingleInstruction();
-
-        if (this.registers.pc.toUnsignedIntValue() !== 0) {
-            let prevInstruction = this.loadPreviousInstruction()
-            if (prevInstruction instanceof AbstractImmediateArmletInstruction) {
-                this.registers.pc.set(this.registers.pc.addImmedate(1))
-            }
-        }
-    }
 }

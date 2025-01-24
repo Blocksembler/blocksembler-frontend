@@ -227,7 +227,7 @@ export class AbstractArmletImmediateControlInstruction extends AbstractImmediate
     getJmpTarget(system) {
         let immediateAddress = system.registers.pc.toUnsignedIntValue() + 1
         let immediate = system.memory[immediateAddress]
-        return immediate.addImmedate(-1)
+        return immediate.addImmedate(-2)
     }
 }
 
