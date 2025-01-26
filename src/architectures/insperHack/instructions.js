@@ -32,7 +32,38 @@ export class AddwInstruction extends BaseInstruction {
     }
 
     toMachineCode() {
-        // TO-DO
+        let code = '111';
+        if (this.args[0].startsWith('(') || this.args[1].startsWith('(')) {
+            code += '1';
+        } else {
+            code += '0';
+        }
+        //get opCode and append
+        let prototype = Object.getPrototypeOf(this);
+        code += prototype.constructor.opCode;
+
+        // destinations
+        // %A %D (%A) 
+        if (this.args.slice(2).includes('%A')) { // %A
+            code += '1';
+        } else {
+            code += '0';
+        }
+        if (this.args.slice(2).includes('%D')) { // %D
+            code += '1';
+        } else {
+            code += '0';
+        }
+        if (this.args.slice(2).includes('(%A)')) { // (%A)
+            code += '1';
+        } else {
+            code += '0';
+        }
+
+        // no jump
+        code += '000';
+
+        return code;
     }
 }
 
