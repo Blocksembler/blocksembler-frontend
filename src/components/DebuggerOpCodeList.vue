@@ -1,20 +1,29 @@
 <script setup>
 import {computed} from "vue";
-import {annaCodeParser, emulator} from "../state";
-import {paddString} from "../util/string";
+import {codeParser, emulator} from "../state";
+
+const memoryToInstructionObjects = (progMemory) => {
+  let instructions = [];
+
+  let address = 0;
+  while (address < progMemory.length) {
+    let inst = codeParser.instructionFactory.createFromOpCode(progMemory, address);
+
+    let binVal = inst.toMachineCode();
+    let decVal = progMemory[address].toString();
+    let hexVal = progMemory[address].toHexValue()
+    instructions.push({address: address, inst: inst, binVal: binVal, decVal: decVal, hexVal: hexVal});
+
+    address += 1;
+  }
+
+  return instructions;
+}
 
 const instructions = computed(() => {
-  let programMemorySegment = emulator.memory.slice(
-      0,
-      emulator.loadedProgramSize
-  );
+  let programMemorySegment = emulator.memory.slice(0, emulator.loadedProgramSize);
 
-  return programMemorySegment.map((code, idx) => {
-    let inst = annaCodeParser.instructionFactory.createFromOpCode(
-        code.toBitString()
-    );
-    return {address: idx, inst: inst};
-  });
+  return memoryToInstructionObjects(programMemorySegment);
 });
 </script>
 <template>
@@ -27,9 +36,11 @@ const instructions = computed(() => {
         <thead>
         <tr>
           <th scope="col" style="width: 10%">PC</th>
-          <th scope="col" style="width: 15%">Address</th>
-          <th scope="col" style="width: 30%">Machine Code</th>
-          <th scope="col" style="width: 45%">Source</th>
+          <th scope="col" style="width: 10%">Address</th>
+          <th scope="col" style="width: 20%">Binary</th>
+          <th scope="col" style="width: 15%">Decimal</th>
+          <th scope="col" style="width: 15%">Hex</th>
+          <th scope="col" style="width: 20%">Assembly</th>
         </tr>
         </thead>
         <tbody>
@@ -53,11 +64,23 @@ const instructions = computed(() => {
               />
             </svg>
           </td>
-          <td>0x{{ paddString(instruction.address.toString(16), 4) }}</td>
           <td>
-            <pre>{{ instruction.inst.toMachineCode() }}</pre>
+            <pre>0x{{ instruction.address.toString(16).padStart(4, "0") }}</pre>
           </td>
-          <td>{{ instruction.inst.toString() }}</td>
+          <td>
+            <pre>{{ instruction.binVal.slice(0, 16) }}</pre>
+          </td>
+          <td>
+            <a>
+              <pre>{{ instruction.decVal }}</pre>
+            </a>
+          </td>
+          <td>
+            <pre>{{ instruction.hexVal }}</pre>
+          </td>
+          <td>
+            <pre>{{ instruction.inst.toString() }}</pre>
+          </td>
         </tr>
         </tbody>
       </table>

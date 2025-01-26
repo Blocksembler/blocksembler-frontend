@@ -1,6 +1,6 @@
 <script setup>
 import {ref} from "vue";
-import {toolbox} from "../architectures/anna/toolbox";
+import {toolbox} from "../architectures/armlet/toolbox";
 
 import BaseBlocklyEditor from "./BaseBlocklyEditor.vue";
 import BaseCodeMirrorEditor from "./BaseCodeMirrorEditor.vue";

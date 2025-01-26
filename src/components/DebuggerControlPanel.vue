@@ -1,7 +1,7 @@
 <script setup>
 import {reactive} from "vue";
 import BaseButton from "./BaseButton.vue";
-import {annaCodeParser, emulator, generatedCode, settings} from "../state";
+import {codeParser, emulator, generatedCode, settings} from "../state";
 import BaseModal from "./BaseModal.vue";
 import PlayCircleIcon from "@/components/icons/PlayCircleIcon.vue";
 import PlayIcon from "@/components/icons/PlayIcon.vue";
@@ -14,7 +14,7 @@ const output = reactive(emulator.output);
 
 const assembleHandler = () => {
   console.log("start parsing...");
-  let parsedProgram = annaCodeParser.parseCode(generatedCode.value);
+  let parsedProgram = codeParser.parseCode(generatedCode.value);
   console.log("load program to memory...");
   emulator.loadProgram(parsedProgram);
   console.log("assemble & load finished");

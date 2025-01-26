@@ -1,7 +1,6 @@
 <script setup>
 import {computed, ref} from "vue";
 import {emulator} from "../state";
-import {paddString} from "../util/string";
 
 const startAddress = ref(0);
 const size = ref(9);
@@ -31,15 +30,23 @@ const memory = computed(() => {
       <table class="table">
         <thead>
         <tr>
-          <th scope="col" style="width: 50%">Address</th>
-          <th scope="col" style="width: 50%">Value</th>
+          <th scope="col" style="width: 20%">Address</th>
+          <th scope="col" style="width: 40%">Binary</th>
+          <th scope="col" style="width: 20%">Decimal</th>
+          <th scope="col" style="width: 20%">Hex</th>
         </tr>
         </thead>
         <tbody>
         <tr v-for="mem in memory" :key="mem.address">
-          <td>0x{{ paddString(mem.address.toString(16), 4) }}</td>
+          <td>0x{{ mem.address.toString(16).padStart(4, "0") }}</td>
           <td>
-            <pre>{{ mem.word.toBitString() }} ({{ mem.word }})</pre>
+            <pre>{{ mem.word.toBitString() }}</pre>
+          </td>
+          <td>
+            <pre>{{ mem.word }}</pre>
+          </td>
+          <td>
+            <pre>{{ mem.word.toHexValue() }}</pre>
           </td>
         </tr>
         </tbody>

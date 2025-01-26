@@ -1,40 +1,53 @@
 import {expect, test, vi} from "vitest";
-import {BaseAssemblerParser} from "../../src/architectures/parser";
-import {BranchEqualZeroInstruction} from "../../src/architectures/anna/instructions";
+import {AnnaAssemblyParser} from "@/architectures/anna/parser.js";
+import {BranchEqualZeroInstruction} from "@/architectures/anna/instructions.js";
 
 test("parse empty file", () => {
     let emptyFile = "";
 
-    let mockFactory = {
-        create: function (type, meta) {
-            return {type: type, meta: meta};
-        },
-    };
-
-    let parser = new BaseAssemblerParser(mockFactory);
+    let parser = new AnnaAssemblyParser({});
     let result = parser.parseCode(emptyFile);
 
     expect(result).toMatchObject([]);
 });
 
 test("parse single-line assembler code", () => {
-    let emptyFile = "add r1 r2 r3";
+    let sourceCode = "add r1 r2 r3";
 
     let mockFactory = {
-        createFromMnemonic: function (type, meta) {
-            return {type: type, meta: meta};
+        createFromMnemonic: function (type, args) {
+            return {type: type, args: args};
         },
     };
 
-    let parser = new BaseAssemblerParser(mockFactory);
-    let result = parser.parseCode(emptyFile);
+    let parser = new AnnaAssemblyParser(mockFactory);
+    let result = parser.parseCode(sourceCode);
 
     expect(result).toMatchObject(
         new Array({
             type: "add",
-            meta: {
-                args: ["r1", "r2", "r3"],
-            },
+            args: ["r1", "r2", "r3"],
+        })
+    );
+});
+
+test("parse addi instruction", () => {
+   let sourceCode = "addi r1 r2 -1";
+
+    let mockFactory = {
+        createFromMnemonic: function (type, args) {
+            return {type: type, args: args};
+        },
+    };
+
+    let parser = new AnnaAssemblyParser(mockFactory);
+    let result = parser.parseCode(sourceCode);
+
+    expect(result).toMatchObject(
+        new Array({
+            type: "addi",
+            label: null,
+            args: ["r1", "r2", "-1"],
         })
     );
 });
@@ -43,26 +56,23 @@ test("parse multi-line assembler code", () => {
     let emptyFile = "add r1 r2 r3\nor r4 r5 r6";
 
     let mockFactory = {
-        createFromMnemonic: function (type, meta) {
-            return {type: type, meta: meta};
+        createFromMnemonic: function (type, args) {
+            return {type: type, args: args};
         },
     };
 
-    let parser = new BaseAssemblerParser(mockFactory);
+    let parser = new AnnaAssemblyParser(mockFactory);
     let result = parser.parseCode(emptyFile);
 
     expect(result).toMatchObject([
         {
             type: "add",
-            meta: {
-                args: ["r1", "r2", "r3"],
-            },
+            args: ["r1", "r2", "r3"],
+
         },
         {
             type: "or",
-            meta: {
-                args: ["r4", "r5", "r6"],
-            },
+            args: ["r4", "r5", "r6"],
         },
     ]);
 });
@@ -72,26 +82,22 @@ test("parse multi-line assembler code with comments", () => {
         "# this is a comment\nadd r1 r2 r3 # this is a line comment\nor r4 r5 r6\n# add r1 r2 r3 <- this command should be ignored";
 
     let mockFactory = {
-        createFromMnemonic: function (type, meta) {
-            return {type: type, meta: meta};
+        createFromMnemonic: function (type, args) {
+            return {type: type, args: args};
         },
     };
 
-    let parser = new BaseAssemblerParser(mockFactory);
+    let parser = new AnnaAssemblyParser(mockFactory);
     let result = parser.parseCode(emptyFile);
 
     expect(result).toMatchObject([
         {
             type: "add",
-            meta: {
-                args: ["r1", "r2", "r3"],
-            },
+            args: ["r1", "r2", "r3"],
         },
         {
             type: "or",
-            meta: {
-                args: ["r4", "r5", "r6"],
-            },
+            args: ["r4", "r5", "r6"],
         },
     ]);
 });
@@ -104,14 +110,12 @@ test("parse assembler code with labels", () => {
         }),
     };
 
-    let parser = new BaseAssemblerParser(mockFactory);
+    let parser = new AnnaAssemblyParser(mockFactory);
     let result = parser.parseCode(assemblerCode);
     expect(result).toMatchObject([
         {
-            meta: {
-                label: "loop",
-                args: ["r0", -1],
-            },
+            label: "loop",
+            args: ["r0", -1],
         },
     ]);
 });
