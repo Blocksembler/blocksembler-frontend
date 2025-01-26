@@ -1,7 +1,6 @@
 <script setup>
 import {computed, ref} from "vue";
 import {emulator} from "../state";
-import {paddString} from "../util/string";
 
 const startAddress = ref(0);
 const size = ref(9);
@@ -39,7 +38,7 @@ const memory = computed(() => {
         </thead>
         <tbody>
         <tr v-for="mem in memory" :key="mem.address">
-          <td>0x{{ paddString(mem.address.toString(16), 4) }}</td>
+          <td>0x{{ mem.address.toString(16).padStart(4, "0") }}</td>
           <td>
             <pre>{{ mem.word.toBitString() }}</pre>
           </td>
