@@ -32,7 +32,7 @@ test("parse single-line assembler code", () => {
 });
 
 test("parse addi instruction", () => {
-   let sourceCode = "addi r1 r2 -1";
+    let sourceCode = "addi r1 r2 -1";
 
     let mockFactory = {
         createFromMnemonic: function (type, args) {

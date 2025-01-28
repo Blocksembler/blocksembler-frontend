@@ -1,7 +1,7 @@
 <script setup>
 import {reactive} from "vue";
 import BaseButton from "./BaseButton.vue";
-import {codeParser, emulator, generatedCode, settings} from "../state";
+import {codeParser, codingWorkspaceState, emulator, settings} from "../state";
 import BaseModal from "./BaseModal.vue";
 import PlayCircleIcon from "@/components/icons/PlayCircleIcon.vue";
 import PlayIcon from "@/components/icons/PlayIcon.vue";
@@ -12,9 +12,11 @@ import TerminalIcon from "@/components/icons/TerminalIcon.vue";
 
 const output = reactive(emulator.output);
 
+defineProps(['sourceCode'])
+
 const assembleHandler = () => {
   console.log("start parsing...");
-  let parsedProgram = codeParser.parseCode(generatedCode.value);
+  let parsedProgram = codeParser.parseCode(codingWorkspaceState.sourceCode);
   console.log("load program to memory...");
   emulator.loadProgram(parsedProgram);
   console.log("assemble & load finished");
@@ -60,14 +62,14 @@ const reset = () => {
     >{{ output.join("\n") }}</textarea>
   </BaseModal>
 
-  <BaseModal id="settingsModal" title="Settings" savable>
-    <label for="customRange1" class="form-label">Milliseconds per Instruction</label>
-    <input type="range"
+  <BaseModal id="settingsModal" savable title="Settings">
+    <label class="form-label" for="customRange1">Milliseconds per Instruction</label>
+    <input id="customRange1"
+           v-model.number="settings.executionSpeed"
            class="form-range"
-           id="customRange1"
-           min="1"
            max="2000"
-           v-model.number="settings.executionSpeed">
+           min="1"
+           type="range">
     <a>{{ settings.executionSpeed }}ms per instruction</a>
   </BaseModal>
 
