@@ -35,7 +35,7 @@ export const toolbox = {
                 },
                 {
                     kind: "block",
-                    type: "labelVal",
+                    type: "label",
                 },
                 {
                     kind: "block",
@@ -49,7 +49,7 @@ export const toolbox = {
             contents: [
                 {
                     kind: "block",
-                    type: "label",
+                    type: "labelDef",
                 },
                 {
                     kind: "block",

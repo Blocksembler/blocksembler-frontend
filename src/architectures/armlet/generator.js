@@ -27,25 +27,25 @@ generator.forBlock["start"] = function (_block, _generator) {
     return "";
 };
 
-generator.forBlock["label"] = function (block, _generator) {
+generator.forBlock["labelDef"] = function (block, _generator) {
     const label = block.getFieldValue("label");
     return `@${label}:`;
 };
 
 generator.forBlock["register"] = function (block, _generator) {
-    const registerNr = block.getFieldValue("register");
+    const registerNr = block.getFieldValue("value");
 
     return [`$${registerNr}`, Order.ATOMIC];
 };
 
-generator.forBlock["labelVal"] = function (block, _generator) {
-    const label = block.getFieldValue("label");
+generator.forBlock["label"] = function (block, _generator) {
+    const label = block.getFieldValue("value");
 
     return [`>${label}`, Order.ATOMIC];
 };
 
 generator.forBlock["immediate"] = function (block, _generator) {
-    const immediate = block.getFieldValue("immediate");
+    const immediate = block.getFieldValue("value");
 
     return [`${immediate}`, Order.ATOMIC];
 };

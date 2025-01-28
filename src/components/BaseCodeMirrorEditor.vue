@@ -4,20 +4,17 @@ import {onMounted, ref, watch} from "vue";
 import {EditorState} from "@codemirror/state";
 import {EditorView, lineNumbers} from "@codemirror/view";
 
-import { oneDark } from "@codemirror/theme-one-dark";
+import {oneDark} from "@codemirror/theme-one-dark";
 
-import {generatedCode} from "../state";
+const props = defineProps(['codingWorkspaceState'])
 
 let codemirrorTextarea = ref();
 let view = ref();
 
-let props = defineProps({
-  highlightedLine: Number,
-});
 
 onMounted(() => {
   let state = EditorState.create({
-    doc: generatedCode.value,
+    doc: props.codingWorkspaceState.sourceCode,
     extensions: [
       oneDark,
       lineNumbers(),
@@ -40,17 +37,20 @@ onMounted(() => {
 
 });
 
-const updateDocument = () => {
-  view.value.dispatch({
-    changes: {
-      from: 0,
-      to: view.value.state.doc.length,
-      insert: generatedCode.value,
-    },
-  });
-};
+const loadCode = (code) => {
+  if (view.value) {
+    view.value.dispatch({
+      changes: {
+        from: 0,
+        to: view.value.state.doc.length,
+        insert: code,
+      },
+    });
+  }
+}
 
-watch(generatedCode, updateDocument);
+watch(() => props.codingWorkspaceState.sourceCode, (code) => loadCode(code));
+
 </script>
 
 <template>

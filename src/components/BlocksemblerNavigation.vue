@@ -1,24 +1,23 @@
 <script setup>
-import {saveAs} from "file-saver";
-import {load, save} from "../util/serialization.js";
-import {jsonWorkspace} from "../state.js";
-
 import PencilIcon from "@/components/icons/PencilIcon.vue";
 import BugIcon from "@/components/icons/BugIcon.vue";
 import CloudDownloadIcon from "@/components/icons/CloudDownloadIcon.vue";
 import GearIcon from "@/components/icons/GearIcon.vue";
 import CloudUploadIcon from "@/components/icons/CloudUploadIcon.vue";
 
+let emit = defineEmits(['importProject', 'exportProject']);
+
 let export_project = () => {
-  saveAs(new Blob([JSON.stringify(load())]), `blocksembler-project-${Date.now()}.json`)
+  emit('exportProject');
 }
 
 let import_project = () => {
   let fileReader = new FileReader();
 
   fileReader.onload = (e) => {
-    jsonWorkspace.value = JSON.parse(e.target.result)
-    save(jsonWorkspace.value)
+    const sourceCode = e.target.result;
+    emit('importProject', sourceCode);
+    console.log('emit importProject Event');
   }
 
   fileReader.readAsText(document.getElementById("file-input").files[0]);

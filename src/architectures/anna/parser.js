@@ -23,7 +23,7 @@ export class AnnaAssemblyParser {
     }
 
     parseInstructionLine(line) {
-        let tokens = line.split(" ").filter((token) => token.length > 0);
+        let tokens = line.split(" ").map(token => token.trim()).filter((token) => token.length > 0);
 
         let label = this.extractLabel(tokens);
         let type = this.extractType(tokens);
