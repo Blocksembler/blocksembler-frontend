@@ -1,23 +1,21 @@
 <script setup>
-import {onMounted, ref, shallowRef, watch} from "vue";
+import {onMounted, ref, shallowRef} from "vue";
 import * as Blockly from "blockly";
 
 import "../architectures/armlet/blocks";
 import {generator} from "../architectures/armlet/generator";
 import {formatAssemblyCode} from "../architectures/formatter.js";
 import {load, save} from "../util/serialization";
-import {generatedCode, jsonWorkspace} from "../state";
+import {jsonWorkspace} from "../state";
+import {loadWorkspaceFromAssemblyCode} from "@/architectures/import.js";
 
-const props = defineProps(["options", "assemblerCode"]);
+const props = defineProps(["options", "codingWorkspaceState"]);
+
 const blocklyToolbox = ref();
 const blocklyDiv = ref();
 const workspace = shallowRef();
 
-defineExpose({workspace});
-
 onMounted(() => {
-  //Blockly.common.defineBlocks(blocks);
-
   const options = props.options || {};
   if (!options.toolbox) {
     options.toolbox = blocklyToolbox.value;
@@ -25,10 +23,11 @@ onMounted(() => {
   workspace.value = Blockly.inject(blocklyDiv.value, options);
 
   const runCode = () => {
-    generatedCode.value = formatAssemblyCode(
-        generator.workspaceToCode(workspace.value),
-        10
+    let code = formatAssemblyCode(
+        generator.workspaceToCode(workspace.value)
     );
+
+    props.codingWorkspaceState.updateSourceCode(code)
   };
 
   jsonWorkspace.value = load();
@@ -60,15 +59,16 @@ onMounted(() => {
     runCode();
   });
 
-  watch(jsonWorkspace, (newValue) => {
-    if (newValue) {
-      Blockly.Events.disable();
-      Blockly.serialization.workspaces.load(newValue, workspace.value, false);
-      Blockly.Events.enable();
-    }
-  })
-
 });
+
+const refresh = (code) => {
+  Blockly.Events.disable();
+  loadWorkspaceFromAssemblyCode(workspace.value, code);
+  Blockly.Events.enable();
+}
+
+props.codingWorkspaceState.addBlockEditorRefreshCallback(refresh)
+
 </script>
 
 <template>
