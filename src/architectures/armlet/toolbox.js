@@ -24,6 +24,10 @@ export const toolbox = {
                 {
                     kind: "block",
                     type: "data",
+                },
+                {
+                    kind: "block",
+                    type: "comment",
                 }
             ]
         },

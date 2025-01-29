@@ -1,9 +1,3 @@
-const DEFAULT_HEADER = `
-############################
-# Generated Assembler Code #
-############################
-`;
-
 export const formatAssemblyCode = (code, indent = 5) => {
     const lines = code.split("\n");
 
@@ -13,7 +7,7 @@ export const formatAssemblyCode = (code, indent = 5) => {
         formattedCode += formatLine(line, indent);
     }
 
-    return `${DEFAULT_HEADER}\n${formattedCode}`.trim();
+    return `${formattedCode}`;
 };
 
 const formatLine = (line, indent) => {
@@ -29,5 +23,5 @@ const formatLine = (line, indent) => {
 };
 
 const isLabeledLine = (line) => {
-    return line.indexOf(":") !== -1;
+    return line.trim().startsWith("@");
 };

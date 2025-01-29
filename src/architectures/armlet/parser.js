@@ -1,3 +1,5 @@
+import {MultilineComment} from "@/architectures/armlet/instructions.js";
+
 export class ArmletAssemblyParser {
     constructor(factory) {
         this.instructionFactory = factory;
@@ -8,23 +10,37 @@ export class ArmletAssemblyParser {
         let parsedProgram = [];
 
         let idx = 0;
+
+        let multilineComment = "";
+
         while (idx < lines.length) {
             let separatedLine = this.separateInstructionAndComment(lines[idx]);
             let instruction = separatedLine.instruction;
             let comment = separatedLine.comment;
 
-            if (instruction.endsWith(':')) {
-                let nextCommand = this.separateInstructionAndComment(lines[idx + 1])
-                idx += 1;
-                instruction += " " + nextCommand.instruction;
-                if (comment.length > 0) {
-                    comment += "\n";
-                }
-                comment += nextCommand.comment;
-            }
-
             if (instruction) {
+                if (instruction.endsWith(':')) {
+                    let nextCommand = this.separateInstructionAndComment(lines[idx + 1])
+                    idx += 1;
+                    instruction += " " + nextCommand.instruction;
+                    if (comment.length > 0) {
+                        comment += "\n";
+                    }
+                    comment += nextCommand.comment;
+                }
+
                 parsedProgram.push(this.parseInstructionLine(instruction, comment));
+
+                if (multilineComment.length > 0) {
+                    parsedProgram.push(new MultilineComment(multilineComment));
+                    multilineComment = "";
+                }
+
+            } else if (comment) {
+                multilineComment += `${comment}\n`;
+            } else if (multilineComment.length > 0) {
+                parsedProgram.push(new MultilineComment(multilineComment));
+                multilineComment = "";
             }
 
             idx += 1;

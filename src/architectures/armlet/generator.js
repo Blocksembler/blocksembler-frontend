@@ -42,6 +42,16 @@ generator.forBlock["start"] = function (block, _generator) {
     return handleComments(block);
 };
 
+generator.forBlock["comment"] = function (block, _generator) {
+    const commentText = block.getFieldValue('text');
+    let source = "\n"
+
+    for (let line of commentText.split("\n")) {
+        source += ` # ${line} \n`;
+    }
+    return source
+}
+
 generator.forBlock["labelDef"] = function (block, _generator) {
     const label = block.getFieldValue("label");
     return `@${label}:` + handleComments(block);
