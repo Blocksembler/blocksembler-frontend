@@ -1,4 +1,5 @@
 import * as Blockly from "blockly";
+import {FieldMultilineInput} from "@blockly/field-multilineinput";
 
 const atomicValueColor = 350;
 const operationColor = 200;
@@ -15,6 +16,19 @@ Blockly.Blocks['start'] = {
         this.setTooltip('nop instruction');
         this.setHelpUrl('');
         this.setColour(0);
+    }
+};
+
+Blockly.Blocks['comment'] = {
+    init: function () {
+        this.appendDummyInput('label text')
+            .appendField(new FieldMultilineInput('This is a multi-\nline comment!'), 'text');
+        this.setInputsInline(true)
+        this.setPreviousStatement(true, null);
+        this.setNextStatement(true, null);
+        this.setTooltip('mov instruction');
+        this.setHelpUrl('');
+        this.setColour(60);
     }
 };
 

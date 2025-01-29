@@ -2,13 +2,14 @@
 import PencilIcon from "@/components/icons/PencilIcon.vue";
 import BugIcon from "@/components/icons/BugIcon.vue";
 import CloudDownloadIcon from "@/components/icons/CloudDownloadIcon.vue";
-import GearIcon from "@/components/icons/GearIcon.vue";
 import CloudUploadIcon from "@/components/icons/CloudUploadIcon.vue";
+import {codingWorkspaceState} from "@/state.js";
+import {saveAs} from "file-saver";
 
 let emit = defineEmits(['importProject', 'exportProject']);
 
 let export_project = () => {
-  emit('exportProject');
+  saveAs(new Blob([codingWorkspaceState.sourceCode]), `project-${Date.now()}.s`);
 }
 
 let import_project = () => {
@@ -61,12 +62,6 @@ let import_project = () => {
                 <CloudUploadIcon class="d-block mx-auto mb-1"/>
                 Import Project
                 <input id="file-input" type="file" name="name" style="display: none;" @change="import_project"/>
-              </a>
-            </li>
-            <li>
-              <a href="#" class="nav-link text-white" data-bs-target="#settingsModal" data-bs-toggle="modal">
-                <GearIcon class="d-block mx-auto mb-1"/>
-                Settings
               </a>
             </li>
           </ul>
