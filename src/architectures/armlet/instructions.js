@@ -97,6 +97,38 @@ export class DataDirective extends PseudoInstruction {
         let immediate = Number(this.args[0]);
         return Word.fromSignedIntValue(immediate, addressSize).toBitString()
     }
+
+    toBlock(ws) {
+        let dataBlock = ws.newBlock('data')
+        dataBlock.initSvg()
+
+        let wordData = Number(this.args[0]);
+        dataBlock.getField('wordData').setValue(wordData);
+
+        return dataBlock
+    }
+}
+
+export class MultilineComment {
+    constructor(text) {
+        this.text = text;
+    }
+
+    toString() {
+        return this.text;
+    }
+
+    toMachineCode() {
+        return "";
+    }
+
+    toBlock(ws) {
+        let multilineCommentBlock = ws.newBlock('comment')
+        multilineCommentBlock.initSvg()
+        multilineCommentBlock.getField('text').setValue(this.text);
+
+        return multilineCommentBlock
+    }
 }
 
 export class AbstractArmletInstruction extends BaseInstruction {

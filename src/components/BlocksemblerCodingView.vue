@@ -6,6 +6,7 @@ import BaseBlocklyEditor from "./BaseBlocklyEditor.vue";
 import BaseCodeMirrorEditor from "./BaseCodeMirrorEditor.vue";
 import {codingWorkspaceState} from "@/state.js";
 
+
 let options = ref({
   toolbox: toolbox,
   collapse: true,
@@ -20,6 +21,22 @@ let options = ref({
   scrollbars: true,
   sounds: true,
   oneBasedIndex: true,
+
+  multiselectIcon: {
+    hideIcon: false,
+    weight: 3,
+    enabledIcon: 'https://github.com/mit-cml/workspace-multiselect/raw/main/test/media/select.svg',
+    disabledIcon: 'https://github.com/mit-cml/workspace-multiselect/raw/main/test/media/unselect.svg',
+  },
+  multiSelectKeys: ['Shift'],
+
+  multiselectCopyPaste: {
+    // Enable the copy/paste accross tabs feature (true by default).
+    crossTab: true,
+    // Show the copy/paste menu entries (true by default).
+    menu: true,
+  },
+
 });
 
 </script>
