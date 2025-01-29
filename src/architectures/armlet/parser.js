@@ -9,16 +9,22 @@ export class ArmletAssemblyParser {
 
         let idx = 0;
         while (idx < lines.length) {
-            let trimmedLine = this.trimComments(lines[idx]);
+            let separatedLine = this.separateInstructionAndComment(lines[idx]);
+            let instruction = separatedLine.instruction;
+            let comment = separatedLine.comment;
 
-            if (trimmedLine.endsWith(':')) {
-                let nextCommand = this.trimComments(lines[idx + 1])
+            if (instruction.endsWith(':')) {
+                let nextCommand = this.separateInstructionAndComment(lines[idx + 1])
                 idx += 1;
-                trimmedLine += " " + nextCommand;
+                instruction += " " + nextCommand.instruction;
+                if (comment.length > 0) {
+                    comment += "\n";
+                }
+                comment += nextCommand.comment;
             }
 
-            if (trimmedLine) {
-                parsedProgram.push(this.parseInstructionLine(trimmedLine));
+            if (instruction) {
+                parsedProgram.push(this.parseInstructionLine(instruction, comment));
             }
 
             idx += 1;
@@ -27,13 +33,17 @@ export class ArmletAssemblyParser {
         return this.resolveLabels(parsedProgram);
     }
 
-    trimComments(line) {
-        let tokens = line.split("#");
-        return tokens[0];
+    separateInstructionAndComment(line) {
+        let commentStart = line.indexOf('#')
+
+        if (commentStart < 0) {
+            return {'instruction': line.trim(), 'comment': ''};
+        }
+        return {'instruction': line.slice(0, commentStart).trim(), 'comment': line.slice(commentStart + 1).trim()}
     }
 
-    parseInstructionLine(line) {
-        let tokens = line.split(" ").map(token => token.trim()).filter((token) => token.length > 0);
+    parseInstructionLine(instruction, comment) {
+        let tokens = instruction.split(" ").map(token => token.trim()).filter((token) => token.length > 0);
 
         let label = this.extractLabel(tokens);
         let type = this.extractType(tokens);
@@ -45,6 +55,7 @@ export class ArmletAssemblyParser {
         }
 
         let inst = this.instructionFactory.createFromMnemonic(type, tokens);
+        inst.comment = comment;
         inst.label = label;
         return inst;
     }
