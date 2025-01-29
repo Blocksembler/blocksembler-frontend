@@ -903,7 +903,7 @@ export class CmpInstruction extends AbstractArmletInstruction {
         let firstOp = system.registers[this.aArgument]
         let secondOp = system.registers[this.bArgument]
 
-        let result = Word.fromSignedIntValue(0)
+        let result = Word.fromSignedIntValue(0, 3)
 
         if (firstOp.toBitString() === secondOp.toBitString()) {
             result.bits[0] = 1;
@@ -954,7 +954,7 @@ export class CmpImmediateInstruction extends AbstractImmediateArmletInstruction 
         let firstOp = system.registers[this.aArgument]
         let immediate = system.memory[system.registers['pc'].toUnsignedIntValue() + 1]
 
-        let result = Word.fromSignedIntValue(0)
+        let result = Word.fromSignedIntValue(0, 3)
 
         if (firstOp.toBitString() === immediate.toBitString()) {
             result.bits[0] = 1;
