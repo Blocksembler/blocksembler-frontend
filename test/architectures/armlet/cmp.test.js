@@ -66,7 +66,7 @@ test("compare two numbers where a == b", () => {
     let instruction = new CmpInstruction(['$0', '$1']);
     let mockSystem = generateMockSystem([0, 2, 2, 0, 0, 0, 0, 0, 0], instruction)
     let expectedSystemState = generateMockSystem([0, 2, 2, 0, 0, 0, 0, 0, 0], instruction)
-    expectedSystemState.registers.status.set(Word.fromString('0000000000000001'))
+    expectedSystemState.registers.status.set(Word.fromString('001', 3))
 
     instruction.executeOn(mockSystem);
 
@@ -77,7 +77,7 @@ test("compare two numbers where a > b (a and b are sigend values)", () => {
     let instruction = new CmpInstruction(['$0', '$1']);
     let mockSystem = generateMockSystem([0, 2, -1, 0, 0, 0, 0, 0, 0], instruction)
     let expectedSystemState = generateMockSystem([0, 2, -1, 0, 0, 0, 0, 0, 0], instruction)
-    expectedSystemState.registers.status.set(Word.fromString('0000000000000010'))
+    expectedSystemState.registers.status.set(Word.fromString('010', 3))
 
     instruction.executeOn(mockSystem);
 
@@ -88,7 +88,7 @@ test("compare two numbers where a > b (a and b are unsigend values)", () => {
     let instruction = new CmpInstruction(['$0', '$1']);
     let mockSystem = generateMockSystem([0, 2, 1, 0, 0, 0, 0, 0, 0], instruction)
     let expectedSystemState = generateMockSystem([0, 2, 1, 0, 0, 0, 0, 0, 0], instruction)
-    expectedSystemState.registers.status.set(Word.fromString('0000000000000110'))
+    expectedSystemState.registers.status.set(Word.fromString('110', 3))
 
     instruction.executeOn(mockSystem);
 
@@ -99,7 +99,7 @@ test("compare two numbers where a == 2", () => {
     let instruction = new CmpImmediateInstruction(['$0', '2']);
     let mockSystem = generateMockSystem([0, 2, 0, 0, 0, 0, 0, 0, 0], instruction)
     let expectedSystemState = generateMockSystem([0, 2, 0, 0, 0, 0, 0, 0, 0], instruction)
-    expectedSystemState.registers.status.set(Word.fromString('0000000000000001'))
+    expectedSystemState.registers.status.set(Word.fromString('001', 3))
 
     instruction.executeOn(mockSystem);
 
@@ -110,7 +110,7 @@ test("compare two numbers where a > 2 (both signed values)", () => {
     let instruction = new CmpImmediateInstruction(['$0', parseInt('1111111111111111', 2).toString()]);
     let mockSystem = generateMockSystem([0, 4, 0, 0, 0, 0, 0, 0, 0], instruction)
     let expectedSystemState = generateMockSystem([0, 4, 0, 0, 0, 0, 0, 0, 0], instruction)
-    expectedSystemState.registers.status.set(Word.fromString('0000000000000010'))
+    expectedSystemState.registers.status.set(Word.fromString('010', 3))
 
     instruction.executeOn(mockSystem);
 
@@ -121,7 +121,7 @@ test("compare two numbers where a > 2 (both unsigned values)", () => {
     let instruction = new CmpImmediateInstruction(['$0', '1']);
     let mockSystem = generateMockSystem([0, 3, 0, 0, 0, 0, 0, 0, 0], instruction)
     let expectedSystemState = generateMockSystem([0, 3, 0, 0, 0, 0, 0, 0, 0], instruction)
-    expectedSystemState.registers.status.set(Word.fromString('0000000000000110'))
+    expectedSystemState.registers.status.set(Word.fromString('110', 3))
 
     instruction.executeOn(mockSystem);
 
