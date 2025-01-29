@@ -5,7 +5,12 @@ const intToOpCode = (number) => {
     return Number(number).toString(2).padStart(6, '0')
 }
 
-const regToBinary = (reg) => Number(reg[1]).toString(2).padStart(3, '0');
+const regToBinary = (reg) => {
+    if (!reg) {
+        return "000";
+    }
+    return Number(reg[1]).toString(2).padStart(3, '0');
+}
 
 const containsImmediate = (args) => {
     if (args.length === 0) {
@@ -64,40 +69,6 @@ export class ArmletInstructionFactory {
 
 export class AbstractArmletInstruction extends BaseInstruction {
 
-    get destination() {
-        if (!this.args || this.args.length < 1 || !this.args[0].startsWith('$')) {
-            return "$0"
-        }
-
-        return this.args[0];
-    }
-
-    get firstOperand() {
-        if (!this.args || this.args.length < 2 || !this.args[1].startsWith('$')) {
-            return "$0"
-        }
-
-        return this.args[1];
-    }
-
-    get secondOperand() {
-        if (!this.args || this.args.length < 3 || !this.args[2].startsWith('$')) {
-            return "$0"
-        }
-
-        return this.args[2];
-    }
-
-    get immediate() {
-        let lastArg = this.args.at(-1)
-
-        if (lastArg && !lastArg.startsWith('$')) {
-            return lastArg
-        }
-
-        return ""
-    }
-
     static extractL(code) {
         return `$${parseInt(code.slice(7, 10), 2)}`;
     }
@@ -118,14 +89,53 @@ export class AbstractArmletInstruction extends BaseInstruction {
         return new this([l, a, b])
     }
 
+    get lArgument() {
+        const lPos = this.constructor.argumentLayout.indexOf('L')
+
+        if (lPos < 0) {
+            return null;
+        }
+
+        return this.args[lPos]
+    }
+
+    get aArgument() {
+        const aPos = this.constructor.argumentLayout.indexOf('A')
+
+        if (aPos < 0) {
+            return null;
+        }
+
+        return this.args[aPos]
+    }
+
+    get bArgument() {
+        const bPos = this.constructor.argumentLayout.indexOf('B')
+
+        if (bPos < 0) {
+            return null;
+        }
+
+        return this.args[bPos]
+    }
+
+    get immediate() {
+        const iPos = this.constructor.argumentLayout.indexOf('I')
+
+        if (iPos < 0) {
+            return null;
+        }
+
+        return this.args[iPos]
+    }
+
     toMachineCode() {
-        let l = regToBinary(this.destination)
-        let a = regToBinary(this.firstOperand)
-        let b = regToBinary(this.secondOperand)
+        let l = regToBinary(this.lArgument)
+        let a = regToBinary(this.aArgument)
+        let b = regToBinary(this.bArgument)
 
         return "0" + b + a + l + this.constructor.opCode
     }
-
 
     toString() {
         let cmd = this.constructor.mnemonic
@@ -134,6 +144,54 @@ export class AbstractArmletInstruction extends BaseInstruction {
         }
 
         return cmd
+    }
+
+    toBlock(ws) {
+        let block = ws.newBlock(this.constructor.mnemonic);
+        block.initSvg();
+
+        if (this.lArgument) {
+            let destinationBlock = ws.newBlock('register');
+            destinationBlock.initSvg();
+            destinationBlock.getField('value').setValue(Number(this.lArgument[1]))
+
+            let movDestConnection = block.getInput('L').connection;
+            movDestConnection.connect(destinationBlock.outputConnection);
+        }
+
+        if (this.aArgument) {
+            let aBlock = ws.newBlock('register');
+            aBlock.initSvg();
+            aBlock.getField('value').setValue(Number(this.aArgument[1]));
+
+            let aConnection = block.getInput('A').connection;
+            aConnection.connect(aBlock.outputConnection);
+        }
+
+        if (this.bArgument) {
+            let bBlock = ws.newBlock('register');
+            bBlock.initSvg();
+            bBlock.getField('value').setValue(Number(this.bArgument[1]));
+
+            let bConnection = block.getInput('B').connection;
+            bConnection.connect(bBlock.outputConnection);
+        }
+
+        if (this.immediate) {
+            let iBlock = ws.newBlock('immediate');
+            iBlock.initSvg();
+            iBlock.getField('value').setValue(Number(this.immediate));
+
+            if (!this.constructor.argumentLayout.includes('A')) {
+                let iConnection = block.getInput('A').connection;
+                iConnection.connect(iBlock.outputConnection);
+            } else {
+                let iConnection = block.getInput('B').connection;
+                iConnection.connect(iBlock.outputConnection);
+            }
+        }
+
+        return block;
     }
 
 }
@@ -148,8 +206,8 @@ export class AbstractImmediateArmletInstruction extends AbstractArmletInstructio
     }
 
     toMachineCode() {
-        let l = regToBinary(this.destination)
-        let a = regToBinary(this.firstOperand)
+        let l = regToBinary(this.lArgument)
+        let a = regToBinary(this.aArgument)
         let b = "000"
         let binaryImmediate = Number(this.immediate).toString(2).padStart(16, '0')
 
@@ -162,20 +220,9 @@ export class AbstractImmediateArmletInstruction extends AbstractArmletInstructio
 }
 
 export class AbstractArmletControlInstruction extends AbstractArmletInstruction {
-    get destination() {
-        return '$0';
-    }
 
-    get firstOperand() {
-        if (!this.args || this.args.length < 1 || !this.args[0].startsWith('$')) {
-            return "$0"
-        }
-
-        return this.args[0];
-    }
-
-    get secondOperand() {
-        return '$0';
+    static get argumentLayout() {
+        return "A";
     }
 
     static fromMachineCode(code) {
@@ -186,33 +233,25 @@ export class AbstractArmletControlInstruction extends AbstractArmletInstruction 
 
     toMachineCode() {
         let l = "000"
-        let a = regToBinary(this.firstOperand)
+        let a = regToBinary(this.aArgument)
         let b = "000"
 
         return "0" + b + a + l + this.constructor.opCode
     }
 
     getJmpTarget(system) {
-        return system.registers[this.firstOperand].addImmedate(-1)
+        return system.registers[this.aArgument].addImmedate(-1)
     }
 }
 
 export class AbstractArmletImmediateControlInstruction extends AbstractImmediateArmletInstruction {
-    get destination() {
-        return '$0';
-    }
-
-    get firstOperand() {
-        return '$0'
-    }
-
-    get secondOperand() {
-        return '$0';
-    }
-
     static fromMachineCode(instWord, immediateWord) {
         let immediate = `${parseInt(immediateWord, 2)}`
         return new this([immediate])
+    }
+
+    static get argumentLayout() {
+        return "I";
     }
 
     toMachineCode() {
@@ -245,6 +284,10 @@ export class NopInstruction extends AbstractArmletInstruction {
         return intToOpCode(0)
     }
 
+    static get argumentLayout() {
+        return "N";
+    }
+
     static fromMachineCode(instWord, immediateWord) {
         return new NopInstruction();
     }
@@ -255,6 +298,12 @@ export class NopInstruction extends AbstractArmletInstruction {
 
     toString() {
         return NopInstruction.mnemonic;
+    }
+
+    toBlock(ws) {
+        let block = ws.newBlock(NopInstruction.mnemonic);
+        block.initSvg();
+        return block;
     }
 }
 
@@ -267,13 +316,17 @@ export class MovInstruction extends AbstractArmletInstruction {
         return intToOpCode(1)
     }
 
+    static get argumentLayout() {
+        return "LA";
+    }
+
     static fromMachineCode(instWord, immediateWord) {
         return new MovInstruction([this.extractL(instWord), this.extractA(instWord)]);
     }
 
     executeOn(system) {
-        let targetReg = system.registers[this.destination];
-        let sourceReg = system.registers[this.firstOperand];
+        let targetReg = system.registers[this.lArgument];
+        let sourceReg = system.registers[this.aArgument];
         targetReg.set(sourceReg);
     }
 }
@@ -287,6 +340,10 @@ export class MovImmediateInstruction extends AbstractImmediateArmletInstruction 
         return intToOpCode(26)
     }
 
+    static get argumentLayout() {
+        return "LI";
+    }
+
     static fromMachineCode(instWord, immediateWord) {
         let l = this.extractL(instWord)
         let immediate = `${parseInt(immediateWord, 2)}`
@@ -295,7 +352,7 @@ export class MovImmediateInstruction extends AbstractImmediateArmletInstruction 
     }
 
     executeOn(system) {
-        let targetReg = system.registers[this.destination];
+        let targetReg = system.registers[this.lArgument];
         let immediate = system.memory[system.registers['pc'].toUnsignedIntValue() + 1]
         system.registers['pc'].addImmedate(1)
 
@@ -313,14 +370,18 @@ export class AndInstruction extends AbstractArmletInstruction {
         return intToOpCode(2)
     }
 
+    static get argumentLayout() {
+        return "LAB";
+    }
+
     static fromMachineCode(code) {
         return new AndInstruction([this.extractL(code), this.extractA(code), this.extractB(code)]);
     }
 
     executeOn(system) {
-        let dest = system.registers[this.destination]
-        let firstOp = system.registers[this.firstOperand]
-        let secondOp = system.registers[this.secondOperand]
+        let dest = system.registers[this.lArgument]
+        let firstOp = system.registers[this.aArgument]
+        let secondOp = system.registers[this.bArgument]
 
         let result = firstOp.and(secondOp)
         dest.set(result)
@@ -336,9 +397,13 @@ export class AndImmediateInstruction extends AbstractImmediateArmletInstruction 
         return intToOpCode(27)
     }
 
+    static get argumentLayout() {
+        return "LAI";
+    }
+
     executeOn(system) {
-        let dest = system.registers[this.destination]
-        let firstOp = system.registers[this.firstOperand]
+        let dest = system.registers[this.lArgument]
+        let firstOp = system.registers[this.aArgument]
         let secondOp = system.memory[system.registers['pc'].toUnsignedIntValue() + 1]
 
         let result = firstOp.and(secondOp)
@@ -355,10 +420,14 @@ export class IorInstruction extends AbstractArmletInstruction {
         return intToOpCode(3)
     }
 
+    static get argumentLayout() {
+        return "LAB";
+    }
+
     executeOn(system) {
-        let dest = system.registers[this.destination]
-        let firstOp = system.registers[this.firstOperand]
-        let secondOp = system.registers[this.secondOperand]
+        let dest = system.registers[this.lArgument]
+        let firstOp = system.registers[this.aArgument]
+        let secondOp = system.registers[this.bArgument]
 
         let result = firstOp.or(secondOp)
         dest.set(result)
@@ -374,9 +443,13 @@ export class IorImmediateInstruction extends AbstractImmediateArmletInstruction 
         return intToOpCode(28)
     }
 
+    static get argumentLayout() {
+        return "LAI";
+    }
+
     executeOn(system) {
-        let dest = system.registers[this.destination]
-        let firstOp = system.registers[this.firstOperand]
+        let dest = system.registers[this.lArgument]
+        let firstOp = system.registers[this.aArgument]
         let secondOp = system.memory[system.registers['pc'].toUnsignedIntValue() + 1]
 
         let result = firstOp.or(secondOp)
@@ -394,10 +467,14 @@ export class EorInstruction extends AbstractArmletInstruction {
         return intToOpCode(4)
     }
 
+    static get argumentLayout() {
+        return "LAB";
+    }
+
     executeOn(system) {
-        let dest = system.registers[this.destination]
-        let firstOp = system.registers[this.firstOperand]
-        let secondOp = system.registers[this.secondOperand]
+        let dest = system.registers[this.lArgument]
+        let firstOp = system.registers[this.aArgument]
+        let secondOp = system.registers[this.bArgument]
 
         let result = firstOp.xor(secondOp)
         dest.set(result)
@@ -413,9 +490,13 @@ export class EorImmediateInstruction extends AbstractImmediateArmletInstruction 
         return intToOpCode(29)
     }
 
+    static get argumentLayout() {
+        return "LAI";
+    }
+
     executeOn(system) {
-        let dest = system.registers[this.destination]
-        let firstOp = system.registers[this.firstOperand]
+        let dest = system.registers[this.lArgument]
+        let firstOp = system.registers[this.aArgument]
         let secondOp = system.memory[system.registers['pc'].toUnsignedIntValue() + 1]
         let result = firstOp.xor(secondOp)
         dest.set(result)
@@ -431,6 +512,10 @@ export class NotInstruction extends AbstractArmletInstruction {
         return intToOpCode(5)
     }
 
+    static get argumentLayout() {
+        return "LA";
+    }
+
     static fromMachineCode(code) {
         let l = this.extractL(code)
         let a = this.extractA(code)
@@ -439,8 +524,8 @@ export class NotInstruction extends AbstractArmletInstruction {
     }
 
     executeOn(system) {
-        let destReg = system.registers[this.destination]
-        let firstOpReg = system.registers[this.firstOperand]
+        let destReg = system.registers[this.lArgument]
+        let firstOpReg = system.registers[this.aArgument]
 
         destReg.set(firstOpReg.invert())
     }
@@ -455,10 +540,14 @@ export class AddInstruction extends AbstractArmletInstruction {
         return intToOpCode(6)
     }
 
+    static get argumentLayout() {
+        return "LAB";
+    }
+
     executeOn(system) {
-        let destReg = system.registers[this.destination];
-        let firstOpReg = system.registers[this.firstOperand];
-        let secondOpReg = system.registers[this.secondOperand];
+        let destReg = system.registers[this.lArgument];
+        let firstOpReg = system.registers[this.aArgument];
+        let secondOpReg = system.registers[this.bArgument];
 
         let result = firstOpReg.add(secondOpReg);
         destReg.set(result);
@@ -474,9 +563,13 @@ export class AddImmediateInstruction extends AbstractImmediateArmletInstruction 
         return intToOpCode(30)
     }
 
+    static get argumentLayout() {
+        return "LAI";
+    }
+
     executeOn(system) {
-        let destReg = system.registers[this.destination];
-        let firstOpReg = system.registers[this.firstOperand];
+        let destReg = system.registers[this.lArgument];
+        let firstOpReg = system.registers[this.aArgument];
         let secondOpReg = system.memory[system.registers['pc'].toUnsignedIntValue() + 1];
 
         let result = firstOpReg.add(secondOpReg);
@@ -493,11 +586,14 @@ export class SubInstruction extends AbstractArmletInstruction {
         return intToOpCode(7)
     }
 
+    static get argumentLayout() {
+        return "LAB";
+    }
 
     executeOn(system) {
-        let destReg = system.registers[this.destination];
-        let firstOpReg = system.registers[this.firstOperand];
-        let secondOpReg = system.registers[this.secondOperand];
+        let destReg = system.registers[this.lArgument];
+        let firstOpReg = system.registers[this.aArgument];
+        let secondOpReg = system.registers[this.bArgument];
 
         let twoCompliment = secondOpReg.invert().addImmedate(1)
 
@@ -515,9 +611,13 @@ export class SubImmediateInstruction extends AbstractImmediateArmletInstruction 
         return intToOpCode(31)
     }
 
+    static get argumentLayout() {
+        return "LAI";
+    }
+
     executeOn(system) {
-        let destReg = system.registers[this.destination];
-        let firstOpReg = system.registers[this.firstOperand];
+        let destReg = system.registers[this.lArgument];
+        let firstOpReg = system.registers[this.aArgument];
         let secondOpReg = system.memory[system.registers['pc'].toUnsignedIntValue() + 1];
 
         let twoCompliment = secondOpReg.invert().addImmedate(1)
@@ -536,6 +636,10 @@ export class NegInstruction extends AbstractArmletInstruction {
         return intToOpCode(8)
     }
 
+    static get argumentLayout() {
+        return "LA";
+    }
+
     static fromMachineCode(code) {
         let l = this.extractL(code)
         let a = this.extractA(code)
@@ -545,8 +649,8 @@ export class NegInstruction extends AbstractArmletInstruction {
 
 
     executeOn(system) {
-        let destReg = system.registers[this.destination];
-        let firstOpReg = system.registers[this.firstOperand];
+        let destReg = system.registers[this.lArgument];
+        let firstOpReg = system.registers[this.aArgument];
 
         let negVal = firstOpReg.invert().addImmedate(1);
         destReg.set(negVal);
@@ -562,10 +666,14 @@ export class LslInstruction extends AbstractArmletInstruction {
         return intToOpCode(9)
     }
 
+    static get argumentLayout() {
+        return "LAB";
+    }
+
     executeOn(system) {
-        let destReg = system.registers[this.destination]
-        let firstOpReg = system.registers[this.firstOperand]
-        let secondOpVal = system.registers[this.secondOperand].toUnsignedIntValue()
+        let destReg = system.registers[this.lArgument]
+        let firstOpReg = system.registers[this.aArgument]
+        let secondOpVal = system.registers[this.bArgument].toUnsignedIntValue()
 
         let result = firstOpReg.shift(secondOpVal)
         destReg.set(result)
@@ -581,9 +689,13 @@ export class LslImmediateInstruction extends AbstractImmediateArmletInstruction 
         return intToOpCode(32)
     }
 
+    static get argumentLayout() {
+        return "LAI";
+    }
+
     executeOn(system) {
-        let destReg = system.registers[this.destination]
-        let firstOpReg = system.registers[this.firstOperand]
+        let destReg = system.registers[this.lArgument]
+        let firstOpReg = system.registers[this.aArgument]
         let secondOpVal = system.memory[system.registers['pc'].toUnsignedIntValue() + 1].toUnsignedIntValue()
 
         let result = firstOpReg.shift(secondOpVal)
@@ -600,10 +712,14 @@ export class LsrInstruction extends AbstractArmletInstruction {
         return intToOpCode(10)
     }
 
+    static get argumentLayout() {
+        return "LAB";
+    }
+
     executeOn(system) {
-        let destReg = system.registers[this.destination];
-        let firstOpReg = system.registers[this.firstOperand];
-        let secondOpVal = system.registers[this.secondOperand].toUnsignedIntValue();
+        let destReg = system.registers[this.lArgument];
+        let firstOpReg = system.registers[this.aArgument];
+        let secondOpVal = system.registers[this.bArgument].toUnsignedIntValue();
 
         let result = firstOpReg.shift(-secondOpVal);
         destReg.set(result);
@@ -619,9 +735,13 @@ export class LsrImmediateInstruction extends AbstractImmediateArmletInstruction 
         return intToOpCode(33)
     }
 
+    static get argumentLayout() {
+        return "LAI";
+    }
+
     executeOn(system) {
-        let destReg = system.registers[this.destination];
-        let firstOpReg = system.registers[this.firstOperand];
+        let destReg = system.registers[this.lArgument];
+        let firstOpReg = system.registers[this.aArgument];
         let secondOpVal = system.memory[system.registers['pc'].toUnsignedIntValue() + 1].toUnsignedIntValue();
 
         let result = firstOpReg.shift(-secondOpVal);
@@ -638,10 +758,14 @@ export class AsrInstruction extends AbstractArmletInstruction {
         return intToOpCode(11)
     }
 
+    static get argumentLayout() {
+        return "LAB";
+    }
+
     executeOn(system) {
-        let destReg = system.registers[this.destination];
-        let firstOpReg = system.registers[this.firstOperand];
-        let secondOpVal = system.registers[this.secondOperand].toSignedIntValue();
+        let destReg = system.registers[this.lArgument];
+        let firstOpReg = system.registers[this.aArgument];
+        let secondOpVal = system.registers[this.bArgument].toSignedIntValue();
 
         let result = firstOpReg.arithmeticShift(-secondOpVal);
 
@@ -658,9 +782,13 @@ export class AsrImmediateInstruction extends AbstractImmediateArmletInstruction 
         return intToOpCode(34)
     }
 
+    static get argumentLayout() {
+        return "LAI";
+    }
+
     executeOn(system) {
-        let destReg = system.registers[this.destination];
-        let firstOpReg = system.registers[this.firstOperand];
+        let destReg = system.registers[this.lArgument];
+        let firstOpReg = system.registers[this.aArgument];
         let secondOpVal = system.memory[system.registers['pc'].toUnsignedIntValue() + 1].toUnsignedIntValue();
 
         let result = firstOpReg.arithmeticShift(-secondOpVal);
@@ -678,6 +806,10 @@ export class LoaInstruction extends AbstractArmletInstruction {
         return intToOpCode(12)
     }
 
+    static get argumentLayout() {
+        return "LA";
+    }
+
     static fromMachineCode(code) {
         let l = this.extractL(code)
         let a = this.extractA(code)
@@ -686,15 +818,15 @@ export class LoaInstruction extends AbstractArmletInstruction {
     }
 
     toMachineCode() {
-        let l = regToBinary(this.destination)
-        let a = regToBinary(this.firstOperand)
+        let l = regToBinary(this.lArgument)
+        let a = regToBinary(this.aArgument)
 
         return "0" + "000" + a + l + this.constructor.opCode
     }
 
     executeOn(system) {
-        let idx = system.registers[this.firstOperand].toUnsignedIntValue()
-        system.registers[this.destination].set(system.memory[idx])
+        let idx = system.registers[this.aArgument].toUnsignedIntValue()
+        system.registers[this.lArgument].set(system.memory[idx])
     }
 }
 
@@ -707,6 +839,10 @@ export class StoInstruction extends AbstractArmletInstruction {
         return intToOpCode(13)
     }
 
+    static get argumentLayout() {
+        return "LA";
+    }
+
     static fromMachineCode(code) {
         let l = this.extractL(code)
         let a = this.extractA(code)
@@ -715,15 +851,15 @@ export class StoInstruction extends AbstractArmletInstruction {
     }
 
     toMachineCode() {
-        let l = regToBinary(this.destination)
-        let a = regToBinary(this.firstOperand)
+        let l = regToBinary(this.lArgument)
+        let a = regToBinary(this.aArgument)
 
         return "0" + "000" + a + l + this.constructor.opCode
     }
 
     executeOn(system) {
-        let idx = system.registers[this.destination].toUnsignedIntValue()
-        system.memory[idx].set(system.registers[this.firstOperand])
+        let idx = system.registers[this.lArgument].toUnsignedIntValue()
+        system.memory[idx].set(system.registers[this.aArgument])
     }
 }
 
@@ -736,24 +872,8 @@ export class CmpInstruction extends AbstractArmletInstruction {
         return intToOpCode(14)
     }
 
-    get destination() {
-        return '$0';
-    }
-
-    get firstOperand() {
-        if (!this.args || this.args.length < 1 || !this.args[0].startsWith('$')) {
-            return "$0"
-        }
-
-        return this.args[0];
-    }
-
-    get secondOperand() {
-        if (!this.args || this.args.length < 2 || !this.args[1].startsWith('$')) {
-            return "$0"
-        }
-
-        return this.args[1];
+    static get argumentLayout() {
+        return "AB";
     }
 
     static fromMachineCode(code) {
@@ -765,15 +885,15 @@ export class CmpInstruction extends AbstractArmletInstruction {
 
     toMachineCode() {
         let l = "000"
-        let a = regToBinary(this.firstOperand)
-        let b = regToBinary(this.secondOperand)
+        let a = regToBinary(this.aArgument)
+        let b = regToBinary(this.bArgument)
 
         return "0" + b + a + l + this.constructor.opCode
     }
 
     executeOn(system) {
-        let firstOp = system.registers[this.firstOperand]
-        let secondOp = system.registers[this.secondOperand]
+        let firstOp = system.registers[this.aArgument]
+        let secondOp = system.registers[this.bArgument]
 
         let result = Word.fromSignedIntValue(0)
 
@@ -802,20 +922,8 @@ export class CmpImmediateInstruction extends AbstractImmediateArmletInstruction 
         return intToOpCode(35)
     }
 
-    get destination() {
-        return '$0';
-    }
-
-    get firstOperand() {
-        if (!this.args || this.args.length < 1 || !this.args[0].startsWith('$')) {
-            return "$0"
-        }
-
-        return this.args[0];
-    }
-
-    get secondOperand() {
-        return '$0';
+    static get argumentLayout() {
+        return "AI";
     }
 
     static fromMachineCode(instWord, immediateWord) {
@@ -827,7 +935,7 @@ export class CmpImmediateInstruction extends AbstractImmediateArmletInstruction 
 
     toMachineCode() {
         let l = "000"
-        let a = regToBinary(this.firstOperand)
+        let a = regToBinary(this.aArgument)
         let b = "000"
         let binaryImmediate = Number(this.immediate).toString(2).padStart(16, '0')
 
@@ -835,7 +943,7 @@ export class CmpImmediateInstruction extends AbstractImmediateArmletInstruction 
     }
 
     executeOn(system) {
-        let firstOp = system.registers[this.firstOperand]
+        let firstOp = system.registers[this.aArgument]
         let immediate = system.memory[system.registers['pc'].toUnsignedIntValue() + 1]
 
         let result = Word.fromSignedIntValue(0)
@@ -925,6 +1033,7 @@ export class BneInstruction extends AbstractArmletControlInstruction {
     static get opCode() {
         return intToOpCode(17);
     }
+
 
     executeOn(system) {
         if (!system.isEqFlagSet) {
@@ -1219,6 +1328,10 @@ export class TrpInstruction extends AbstractArmletInstruction {
         return intToOpCode(62)
     }
 
+    static get argumentLayout() {
+        return 'N';
+    }
+
     static fromMachineCode(instWord, immediateWord) {
         return new TrpInstruction();
     }
@@ -1240,6 +1353,10 @@ export class HltInstruction extends AbstractArmletInstruction {
 
     static get opCode() {
         return intToOpCode(63);
+    }
+
+    static get argumentLayout() {
+        return 'N';
     }
 
     executeOn(system) {

@@ -18,7 +18,7 @@ Blockly.Blocks['start'] = {
     }
 };
 
-Blockly.Blocks['label'] = {
+Blockly.Blocks['labelDef'] = {
     init: function () {
         this.appendDummyInput('label text')
             .appendField('label: @')
@@ -36,7 +36,7 @@ Blockly.Blocks['immediate'] = {
     init: function () {
         this.appendDummyInput()
             .appendField("Immediate: ")
-            .appendField(new Blockly.FieldNumber(0), "immediate");
+            .appendField(new Blockly.FieldNumber(0), "value");
         this.setInputsInline(true);
         this.setOutput(true, "immediate");
         this.setColour(atomicValueColor);
@@ -49,7 +49,7 @@ Blockly.Blocks['register'] = {
     init: function () {
         this.appendDummyInput()
             .appendField("Register: $")
-            .appendField(new Blockly.FieldNumber(0, 0, 7), "register");
+            .appendField(new Blockly.FieldNumber(0, 0, 7), "value");
         this.setInputsInline(true);
         this.setOutput(true, "register");
         this.setColour(atomicValueColor);
@@ -58,11 +58,11 @@ Blockly.Blocks['register'] = {
     }
 };
 
-Blockly.Blocks['labelVal'] = {
+Blockly.Blocks['label'] = {
     init: function () {
         this.appendDummyInput()
             .appendField("Label: >")
-            .appendField(new Blockly.FieldTextInput("default"), "label");
+            .appendField(new Blockly.FieldTextInput("default"), "value");
         this.setInputsInline(true);
         this.setOutput(true, "label");
         this.setColour(atomicValueColor);
