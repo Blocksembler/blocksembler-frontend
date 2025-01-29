@@ -21,6 +21,10 @@ export const toolbox = {
                     kind: "block",
                     type: "trp",
                 },
+                {
+                    kind: "block",
+                    type: "data",
+                }
             ]
         },
         {

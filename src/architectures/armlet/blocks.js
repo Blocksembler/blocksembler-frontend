@@ -549,3 +549,17 @@ Blockly.Blocks['bbe'] = {
         this.setColour(jmpColor);
     }
 };
+
+Blockly.Blocks['data'] = {
+    init: function () {
+        this.appendDummyInput()
+            .appendField("Declare one word of data containing the value ")
+            .appendField(new Blockly.FieldNumber(0), "wordData");
+        this.setInputsInline(true);
+        this.setPreviousStatement(true, null);
+        this.setNextStatement(true, null);
+        this.setTooltip('bbe instruction');
+        this.setHelpUrl('');
+        this.setColour(123);
+    }
+};

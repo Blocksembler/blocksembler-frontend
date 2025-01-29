@@ -1,13 +1,25 @@
 import {BaseEmulator, Word} from "../system";
-import {AbstractImmediateArmletInstruction, ArmletInstructionFactory} from "@/architectures/armlet/instructions.js";
+import {ArmletInstructionFactory} from "@/architectures/armlet/instructions.js";
 
-const addressSize = 16;
+export const addressSize = 16;
 
 export class ArmletEmulator extends BaseEmulator {
     constructor() {
         const registers = ArmletEmulator.setUpRegistersStatic();
         const interrupts = ArmletEmulator.setUpInterruptsStatic();
         super(registers, addressSize, new ArmletInstructionFactory(), interrupts);
+    }
+
+    get isEqFlagSet() {
+        return this.registers.status.bits[0] === 1
+    }
+
+    get isGtFlagSet() {
+        return this.registers.status.bits[1] === 1
+    }
+
+    get isAbFlagSet() {
+        return this.registers.status.bits[2] === 1
     }
 
     static setUpRegistersStatic() {
@@ -37,17 +49,5 @@ export class ArmletEmulator extends BaseEmulator {
                 alert(msg);
             }
         }
-    }
-
-    get isEqFlagSet() {
-        return this.registers.status.bits[0] === 1
-    }
-
-    get isGtFlagSet() {
-        return this.registers.status.bits[1] === 1
-    }
-
-    get isAbFlagSet() {
-        return this.registers.status.bits[2] === 1
     }
 }
