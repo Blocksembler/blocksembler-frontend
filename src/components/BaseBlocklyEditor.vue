@@ -8,6 +8,7 @@ import {formatAssemblyCode} from "../architectures/formatter.js";
 import {load, save} from "../util/serialization";
 import {jsonWorkspace} from "../state";
 import {loadWorkspaceFromAssemblyCode} from "@/architectures/import.js";
+import {Multiselect} from "@mit-app-inventor/blockly-plugin-workspace-multiselect";
 
 const props = defineProps(["options", "codingWorkspaceState"]);
 
@@ -21,6 +22,9 @@ onMounted(() => {
     options.toolbox = blocklyToolbox.value;
   }
   workspace.value = Blockly.inject(blocklyDiv.value, options);
+
+  const multiselectPlugin = new Multiselect(workspace.value);
+  multiselectPlugin.init(options);
 
   const runCode = () => {
     let code = formatAssemblyCode(

@@ -10,9 +10,11 @@
     "test": "vitest"
   },
   "dependencies": {
+    "@blockly/field-multilineinput": "^5.0.13",
     "@codemirror/state": "^6.5.1",
     "@codemirror/theme-one-dark": "^6.1.2",
     "@codemirror/view": "^6.36.2",
+    "@mit-app-inventor/blockly-plugin-workspace-multiselect": "^1.0.1",
     "@popperjs/core": "^2.11.8",
     "blockly": "11.2.0",
     "bootstrap": "^5.3.2",
