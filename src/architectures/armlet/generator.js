@@ -249,3 +249,9 @@ generator.forBlock["sto"] = function (block, _generator) {
 
     return `sto ${l}, ${a} ` + handleComments(block);
 }
+
+generator.forBlock['data'] = function (block, _generator) {
+    const dataVal = block.getFieldValue("wordData");
+
+    return `%data ${dataVal}`;
+}
