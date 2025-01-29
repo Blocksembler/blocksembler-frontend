@@ -16,10 +16,17 @@ defineProps(['sourceCode'])
 
 const assembleHandler = () => {
   console.log("start parsing...");
-  let parsedProgram = codeParser.parseCode(codingWorkspaceState.sourceCode);
-  console.log("load program to memory...");
-  emulator.loadProgram(parsedProgram);
-  console.log("assemble & load finished");
+
+  try {
+    let parsedProgram = codeParser.parseCode(codingWorkspaceState.sourceCode);
+    console.log("load program to memory...");
+    emulator.loadProgram(parsedProgram);
+    console.log("assemble & load finished");
+  } catch (e) {
+    alert('Failed to parse the assembly program! \n\n Reason: Not every label-primitive defined in code!');
+  }
+
+
 };
 
 const runProgram = () => {
