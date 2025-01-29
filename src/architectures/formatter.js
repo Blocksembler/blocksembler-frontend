@@ -4,7 +4,7 @@ const DEFAULT_HEADER = `
 ############################
 `;
 
-export const formatAssemblyCode = (code, indent = 10) => {
+export const formatAssemblyCode = (code, indent = 5) => {
     const lines = code.split("\n");
 
     let formattedCode = "";
