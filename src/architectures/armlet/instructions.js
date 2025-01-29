@@ -69,26 +69,6 @@ export class ArmletInstructionFactory {
 
 export class AbstractArmletInstruction extends BaseInstruction {
 
-    static extractL(code) {
-        return `$${parseInt(code.slice(7, 10), 2)}`;
-    }
-
-    static extractA(code) {
-        return `$${parseInt(code.slice(4, 7), 2)}`;
-    }
-
-    static extractB(code) {
-        return `$${parseInt(code.slice(1, 4), 2)}`;
-    }
-
-    static fromMachineCode(code) {
-        let l = this.extractL(code)
-        let a = this.extractA(code)
-        let b = this.extractB(code)
-
-        return new this([l, a, b])
-    }
-
     get lArgument() {
         const lPos = this.constructor.argumentLayout.indexOf('L')
 
@@ -129,6 +109,26 @@ export class AbstractArmletInstruction extends BaseInstruction {
         return this.args[iPos]
     }
 
+    static extractL(code) {
+        return `$${parseInt(code.slice(7, 10), 2)}`;
+    }
+
+    static extractA(code) {
+        return `$${parseInt(code.slice(4, 7), 2)}`;
+    }
+
+    static extractB(code) {
+        return `$${parseInt(code.slice(1, 4), 2)}`;
+    }
+
+    static fromMachineCode(code) {
+        let l = this.extractL(code)
+        let a = this.extractA(code)
+        let b = this.extractB(code)
+
+        return new this([l, a, b])
+    }
+
     toMachineCode() {
         let l = regToBinary(this.lArgument)
         let a = regToBinary(this.aArgument)
@@ -141,6 +141,10 @@ export class AbstractArmletInstruction extends BaseInstruction {
         let cmd = this.constructor.mnemonic
         if (this.args.length > 0) {
             cmd = cmd + " " + this.args.join(", ")
+        }
+
+        if (this.comment) {
+            cmd += " # " + this.comment
         }
 
         return cmd
@@ -189,6 +193,10 @@ export class AbstractArmletInstruction extends BaseInstruction {
                 let iConnection = block.getInput('B').connection;
                 iConnection.connect(iBlock.outputConnection);
             }
+        }
+
+        if (this.comment) {
+            block.setCommentText(this.comment);
         }
 
         return block;
@@ -245,13 +253,13 @@ export class AbstractArmletControlInstruction extends AbstractArmletInstruction 
 }
 
 export class AbstractArmletImmediateControlInstruction extends AbstractImmediateArmletInstruction {
+    static get argumentLayout() {
+        return "I";
+    }
+
     static fromMachineCode(instWord, immediateWord) {
         let immediate = `${parseInt(immediateWord, 2)}`
         return new this([immediate])
-    }
-
-    static get argumentLayout() {
-        return "I";
     }
 
     toMachineCode() {
