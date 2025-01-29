@@ -144,7 +144,7 @@ export class BaseEmulator {
 
     resetRegisters() {
         for (let regName in this.registers) {
-            this.registers[regName].set(Word.fromSignedIntValue(0, this.addressSize));
+            this.registers[regName].set(Word.fromSignedIntValue(0, this.registers[regName].len));
         }
     }
 
@@ -155,6 +155,10 @@ export class BaseEmulator {
 
 export class Word {
     bits = [];
+
+    get len() {
+        return this.bits.length;
+    }
 
     static fromString(bitString, size = 16) {
         if (size) {
@@ -226,7 +230,7 @@ export class Word {
     }
 
     toHexValue() {
-        let hexStr = String(parseInt(this.toBitString(),2).toString(16));
+        let hexStr = String(parseInt(this.toBitString(), 2).toString(16));
         let len = Number(this.bits.length / 4);
         return `0x${hexStr.padStart(len, '0')}`;
     }
