@@ -19,8 +19,9 @@ const assembleHandler = () => {
 
   try {
     let parsedProgram = codeParser.parseCode(codingWorkspaceState.sourceCode);
+    let resolvedProgram = codeParser.resolveLabels(parsedProgram);
     console.log("load program to memory...");
-    emulator.loadProgram(parsedProgram);
+    emulator.loadProgram(resolvedProgram);
     console.log("assemble & load finished");
   } catch (e) {
     alert('Failed to parse the assembly program! \n\n Reason: Not every label-primitive defined in code!');

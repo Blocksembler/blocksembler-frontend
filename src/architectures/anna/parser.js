@@ -14,7 +14,7 @@ export class AnnaAssemblyParser {
             }
         });
 
-        return this.resolveLabels(parsedProgram);
+        return parsedProgram;
     }
 
     trimComments(line) {
