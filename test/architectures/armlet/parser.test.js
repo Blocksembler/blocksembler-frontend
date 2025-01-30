@@ -151,7 +151,7 @@ test('test parsing programm with all instructions', () => {
     ]
 
     let parser = new ArmletAssemblyParser(new ArmletInstructionFactory());
-    let parsedProgram = parser.parseCode(program.join('\n'))
+    let parsedProgram = parser.resolveLabels(parser.parseCode(program.join('\n')))
 
     expect(parsedProgram).toEqual(expectedProgram);
 });
