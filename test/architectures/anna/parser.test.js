@@ -6,13 +6,13 @@ test("parse empty file", () => {
     let emptyFile = "";
 
     let parser = new AnnaAssemblyParser({});
-    let result = parser.parseCode(emptyFile);
+    let result = parser.resolveLabels(parser.parseCode(emptyFile));
 
     expect(result).toMatchObject([]);
 });
 
 test("parse single-line assembler code", () => {
-    let sourceCode = "add r1 r2 r3";
+    let assemblerCode = "add r1 r2 r3";
 
     let mockFactory = {
         createFromMnemonic: function (type, args) {
@@ -21,7 +21,7 @@ test("parse single-line assembler code", () => {
     };
 
     let parser = new AnnaAssemblyParser(mockFactory);
-    let result = parser.parseCode(sourceCode);
+    let result = parser.resolveLabels(parser.parseCode(assemblerCode));
 
     expect(result).toMatchObject(
         new Array({
@@ -32,7 +32,7 @@ test("parse single-line assembler code", () => {
 });
 
 test("parse addi instruction", () => {
-    let sourceCode = "addi r1 r2 -1";
+    let assemblerCode = "addi r1 r2 -1";
 
     let mockFactory = {
         createFromMnemonic: function (type, args) {
@@ -41,7 +41,7 @@ test("parse addi instruction", () => {
     };
 
     let parser = new AnnaAssemblyParser(mockFactory);
-    let result = parser.parseCode(sourceCode);
+    let result = parser.resolveLabels(parser.parseCode(assemblerCode));
 
     expect(result).toMatchObject(
         new Array({
@@ -53,7 +53,7 @@ test("parse addi instruction", () => {
 });
 
 test("parse multi-line assembler code", () => {
-    let emptyFile = "add r1 r2 r3\nor r4 r5 r6";
+    let assemblerCode = "add r1 r2 r3\nor r4 r5 r6";
 
     let mockFactory = {
         createFromMnemonic: function (type, args) {
@@ -62,7 +62,7 @@ test("parse multi-line assembler code", () => {
     };
 
     let parser = new AnnaAssemblyParser(mockFactory);
-    let result = parser.parseCode(emptyFile);
+    let result = parser.resolveLabels(parser.parseCode(assemblerCode));
 
     expect(result).toMatchObject([
         {
@@ -78,7 +78,7 @@ test("parse multi-line assembler code", () => {
 });
 
 test("parse multi-line assembler code with comments", () => {
-    let emptyFile =
+    let assemblerCode =
         "# this is a comment\nadd r1 r2 r3 # this is a line comment\nor r4 r5 r6\n# add r1 r2 r3 <- this command should be ignored";
 
     let mockFactory = {
@@ -88,7 +88,7 @@ test("parse multi-line assembler code with comments", () => {
     };
 
     let parser = new AnnaAssemblyParser(mockFactory);
-    let result = parser.parseCode(emptyFile);
+    let result = parser.resolveLabels(parser.parseCode(assemblerCode));
 
     expect(result).toMatchObject([
         {
@@ -111,7 +111,7 @@ test("parse assembler code with labels", () => {
     };
 
     let parser = new AnnaAssemblyParser(mockFactory);
-    let result = parser.parseCode(assemblerCode);
+    let result = parser.resolveLabels(parser.parseCode(assemblerCode));
     expect(result).toMatchObject([
         {
             label: "loop",

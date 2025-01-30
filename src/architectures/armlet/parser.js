@@ -46,7 +46,7 @@ export class ArmletAssemblyParser {
             idx += 1;
         }
 
-        return this.resolveLabels(parsedProgram);
+        return parsedProgram;
     }
 
     separateInstructionAndComment(line) {

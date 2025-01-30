@@ -246,9 +246,17 @@ export class AbstractArmletInstruction extends BaseInstruction {
         }
 
         if (this.immediate) {
-            let iBlock = ws.newBlock('immediate');
-            iBlock.initSvg();
-            iBlock.getField('value').setValue(Number(this.immediate));
+            let block;
+
+            if (this.immediate.startsWith('>')) {
+                block = ws.newBlock('label');
+                block.initSvg();
+                block.getField('value').setValue(this.immediate);
+            } else {
+                block = ws.newBlock('immediate');
+                block.initSvg();
+                block.getField('value').setValue(Number(this.immediate));
+            }
 
             if (!this.constructor.argumentLayout.includes('A')) {
                 let iConnection = block.getInput('A').connection;
