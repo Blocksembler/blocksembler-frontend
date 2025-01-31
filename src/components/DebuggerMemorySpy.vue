@@ -19,12 +19,12 @@ const memory = computed(() => {
     <div class="card-body overflow-auto">
       <form>
         <div class="mb-3">
-          <label for="startAddress" class="form-label">Start Address</label>
-          <input v-model="startAddress" type="number" class="form-control" id="startAddress">
+          <label class="form-label" for="startAddress">Start Address</label>
+          <input id="startAddress" v-model="startAddress" class="form-control" type="number">
         </div>
         <div class="mb-3">
-          <label for="size" class="form-label">Size (in Bytes)</label>
-          <input v-model="size" type="number" class="form-control" id="size">
+          <label class="form-label" for="size">Size (in Bytes)</label>
+          <input id="size" v-model="size" class="form-control" type="number">
         </div>
       </form>
       <table class="table">
@@ -43,7 +43,7 @@ const memory = computed(() => {
             <pre>{{ mem.word.toBitString() }}</pre>
           </td>
           <td>
-            <pre>{{ mem.word }}</pre>
+            <pre>{{ mem.word.toUnsignedIntValue() }}</pre>
           </td>
           <td>
             <pre>{{ mem.word.toHexValue() }}</pre>

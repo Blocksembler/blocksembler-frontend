@@ -27,8 +27,25 @@ export const toolbox = {
                 },
                 {
                     kind: "block",
+                    type: "decimalWord",
+                },
+                {
+                    kind: "block",
                     type: "comment",
                 }
+            ]
+        }, {
+            kind: "category",
+            name: "Data Declaration",
+            contents: [
+                {
+                    kind: "block",
+                    type: "data",
+                },
+                {
+                    kind: "block",
+                    type: "decimalWord",
+                },
             ]
         },
         {
