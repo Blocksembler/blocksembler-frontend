@@ -1,3 +1,5 @@
+import '@blockly/toolbox-search';
+
 export const toolbox = {
     kind: "categoryToolbox",
     contents: [
@@ -192,6 +194,10 @@ export const toolbox = {
                     type: "sto",
                 },
             ]
+        }, {
+            'kind': 'search',
+            'name': 'Search',
+            'contents': [],
         }
     ],
 };
