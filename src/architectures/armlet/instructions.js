@@ -94,18 +94,44 @@ export class DataDirective extends PseudoInstruction {
     }
 
     toMachineCode() {
-        let immediate = Number(this.args[0]);
-        return Word.fromSignedIntValue(immediate, addressSize).toBitString()
+        return this.args.map(arg => Number(arg))
+            .map(arg => Word.fromSignedIntValue(arg, addressSize).toBitString())
+            .join('')
     }
 
     toBlock(ws) {
-        let dataBlock = ws.newBlock('data')
-        dataBlock.initSvg()
 
-        let wordData = Number(this.args[0]);
-        dataBlock.getField('wordData').setValue(wordData);
 
-        return dataBlock
+        if (this.args.length === 0) {
+            return null;
+        }
+
+        if (this.args.length === 1) {
+            let dataWord = ws.newBlock('decimalWord')
+            dataWord.initSvg()
+            dataWord.setFieldValue(this.args[0], 'data')
+            return dataWord
+        }
+
+        let dataWordsBlock = ws.newBlock('data')
+        dataWordsBlock.initSvg()
+
+        let wordData = ws.newBlock('decimalWord')
+        wordData.initSvg();
+        wordData.getField('data').setValue(this.args[0]);
+        dataWordsBlock.getInput('dataWords').connection.connect(wordData.previousConnection);
+
+        for (let arg of this.args.slice(1)) {
+            let nextWord = ws.newBlock('decimalWord');
+            nextWord.initSvg()
+            nextWord.getField('data').setValue(arg);
+            nextWord.previousConnection.connect(wordData.nextConnection);
+
+            wordData = nextWord;
+        }
+
+        dataWordsBlock.setCollapsed(true);
+        return dataWordsBlock;
     }
 }
 
@@ -127,6 +153,7 @@ export class MultilineComment {
         multilineCommentBlock.initSvg()
         multilineCommentBlock.getField('text').setValue(this.text);
 
+        multilineCommentBlock.setCollapsed(true);
         return multilineCommentBlock
     }
 }
@@ -246,16 +273,16 @@ export class AbstractArmletInstruction extends BaseInstruction {
         }
 
         if (this.immediate) {
-            let block;
+            let iBlock;
 
             if (this.immediate.startsWith('>')) {
-                block = ws.newBlock('label');
-                block.initSvg();
-                block.getField('value').setValue(this.immediate);
+                iBlock = ws.newBlock('label');
+                iBlock.initSvg();
+                iBlock.getField('value').setValue(this.immediate.slice(1));
             } else {
-                block = ws.newBlock('immediate');
-                block.initSvg();
-                block.getField('value').setValue(Number(this.immediate));
+                iBlock = ws.newBlock('immediate');
+                iBlock.initSvg();
+                iBlock.getField('value').setValue(Number(this.immediate));
             }
 
             if (!this.constructor.argumentLayout.includes('A')) {

@@ -19,7 +19,7 @@ const registers = reactive(emulator.registers);
         <tr v-for="(value, name) in registers">
           <td>{{ name }}</td>
           <td>
-            <pre>{{ value.toBitString() }} ({{ value }})</pre>
+            <pre>{{ value.toBitString() }} ({{ value.toUnsignedIntValue() }})</pre>
           </td>
         </tr>
         </tbody>

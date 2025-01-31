@@ -5,6 +5,7 @@ const atomicValueColor = 350;
 const operationColor = 200;
 const jmpColor = 50;
 const cmpColor = 150;
+const dataWordColor = 0;
 
 Blockly.Blocks['start'] = {
     init: function () {
@@ -566,14 +567,31 @@ Blockly.Blocks['bbe'] = {
 
 Blockly.Blocks['data'] = {
     init: function () {
+        this.appendDummyInput('test')
+            .setAlign(Blockly.inputs.Align.CENTRE)
+            .appendField('Declare multiple words of data:');
+        this.appendStatementInput('dataWords')
+            .setCheck('dataWord');
+        this.setInputsInline(true)
+        this.setPreviousStatement(true, null);
+        this.setNextStatement(true, null);
+        this.setTooltip('mov instruction');
+        this.setHelpUrl('');
+        this.setColour(dataWordColor);
+    }
+};
+
+Blockly.Blocks['decimalWord'] = {
+    init: function () {
         this.appendDummyInput()
-            .appendField("Declare one word of data containing the value ")
-            .appendField(new Blockly.FieldNumber(0), "wordData");
+            .appendField("Decimal Word")
+            .appendField(new Blockly.FieldNumber(0), "data");
         this.setInputsInline(true);
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
         this.setTooltip('bbe instruction');
         this.setHelpUrl('');
-        this.setColour(123);
+        this.setColour(dataWordColor);
+        this.setOutput(false, "dataWord");
     }
 };
