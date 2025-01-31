@@ -261,7 +261,27 @@ generator.forBlock["sto"] = function (block, _generator) {
 }
 
 generator.forBlock['data'] = function (block, _generator) {
-    const dataVal = block.getFieldValue("wordData");
+    let code = "%data ";
+
+    let child = block.getChildren(true);
+
+    if (child) {
+        child = child[0];
+    } else {
+        child = null;
+    }
+
+    while (child) {
+        let val = child.getFieldValue('data')
+        code += `${val}, `;
+        child = child.getNextBlock();
+    }
+
+    return code.slice(0, code.length - 2);
+}
+
+generator.forBlock['decimalWord'] = function (block, _generator) {
+    const dataVal = block.getFieldValue("data");
 
     return `%data ${dataVal}`;
 }

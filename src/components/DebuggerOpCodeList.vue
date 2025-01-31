@@ -9,8 +9,8 @@ const memoryToInstructionObjects = (progMemory) => {
   while (address < progMemory.length) {
     let inst = codeParser.instructionFactory.createFromOpCode(progMemory, address);
 
-    let binVal = inst.toMachineCode();
-    let decVal = progMemory[address].toString();
+    let binVal = progMemory[address].toBitString();
+    let decVal = progMemory[address].toUnsignedIntValue();
     let hexVal = progMemory[address].toHexValue()
     instructions.push({address: address, inst: inst, binVal: binVal, decVal: decVal, hexVal: hexVal});
 
