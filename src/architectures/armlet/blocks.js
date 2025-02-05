@@ -14,8 +14,7 @@ Blockly.Blocks['start'] = {
         this.setInputsInline(true)
         this.setPreviousStatement(false);
         this.setNextStatement(true, null);
-        this.setTooltip('nop instruction');
-        this.setHelpUrl('');
+        this.setTooltip('Entry point of the program');
         this.setColour(0);
     }
 };
@@ -27,8 +26,7 @@ Blockly.Blocks['comment'] = {
         this.setInputsInline(true)
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
-        this.setTooltip('mov instruction');
-        this.setHelpUrl('');
+        this.setTooltip('This block can be used to add multi-line comments to the source code.');
         this.setColour(60);
     }
 };
@@ -41,8 +39,7 @@ Blockly.Blocks['labelDef'] = {
         this.setInputsInline(true)
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
-        this.setTooltip('mov instruction');
-        this.setHelpUrl('');
+        this.setTooltip('This block defines a label that is attached to the subsequent instruction block.');
         this.setColour(225);
     }
 };
@@ -55,7 +52,7 @@ Blockly.Blocks['immediate'] = {
         this.setInputsInline(true);
         this.setOutput(true, "immediate");
         this.setColour(atomicValueColor);
-        this.setTooltip("");
+        this.setTooltip("This block represents an immediate integer value.");
         this.setHelpUrl("");
     }
 };
@@ -68,7 +65,7 @@ Blockly.Blocks['register'] = {
         this.setInputsInline(true);
         this.setOutput(true, "register");
         this.setColour(atomicValueColor);
-        this.setTooltip("register");
+        this.setTooltip("This block refers to one of the 8 registers ($0 - $7).");
         this.setHelpUrl("");
     }
 };
@@ -81,7 +78,7 @@ Blockly.Blocks['label'] = {
         this.setInputsInline(true);
         this.setOutput(true, "label");
         this.setColour(atomicValueColor);
-        this.setTooltip("register");
+        this.setTooltip("This block refers to an address defined by a label. Ensure the label is defined elsewhere!");
         this.setHelpUrl("");
     }
 };
@@ -93,8 +90,7 @@ Blockly.Blocks['nop'] = {
         this.setInputsInline(true)
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
-        this.setTooltip('nop instruction');
-        this.setHelpUrl('');
+        this.setTooltip('This instruction does nothing.');
         this.setColour(operationColor);
     }
 };
@@ -106,8 +102,7 @@ Blockly.Blocks['hlt'] = {
         this.setInputsInline(true)
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
-        this.setTooltip('hlt instruction');
-        this.setHelpUrl('');
+        this.setTooltip('Halts the program execution.');
         this.setColour(operationColor);
     }
 };
@@ -119,12 +114,10 @@ Blockly.Blocks['trp'] = {
         this.setInputsInline(true)
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
-        this.setTooltip('trp instruction');
-        this.setHelpUrl('');
+        this.setTooltip('Triggers a trap (interrupt) in the program.');
         this.setColour(operationColor);
     }
 };
-
 
 Blockly.Blocks['mov'] = {
     init: function () {
@@ -137,8 +130,7 @@ Blockly.Blocks['mov'] = {
         this.setInputsInline(true)
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
-        this.setTooltip('mov instruction');
-        this.setHelpUrl('');
+        this.setTooltip('Copies a value (register/immediate/label) into a register.');
         this.setColour(operationColor);
     }
 };
@@ -154,8 +146,7 @@ Blockly.Blocks['not'] = {
         this.setInputsInline(true)
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
-        this.setTooltip('not instruction');
-        this.setHelpUrl('');
+        this.setTooltip('Performs a bitwise NOT on a value and stores the result in a register.');
         this.setColour(operationColor);
     }
 };
@@ -171,8 +162,7 @@ Blockly.Blocks['neg'] = {
         this.setInputsInline(true)
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
-        this.setTooltip('neg instruction');
-        this.setHelpUrl('');
+        this.setTooltip('Takes the two’s complement (negation) of a value and stores it in a register.');
         this.setColour(operationColor);
     }
 };
@@ -181,15 +171,15 @@ Blockly.Blocks['loa'] = {
     init: function () {
         this.appendValueInput('A')
             .setCheck('register')
-            .appendField('load the value that is stored in memory at address ');
+            .appendField('load the value stored in memory at address ');
         this.appendValueInput('L')
             .setCheck('register')
-            .appendField('to register ');
+            .appendField('into register ');
         this.setInputsInline(true)
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
-        this.setTooltip('neg instruction');
-        this.setHelpUrl('');
+
+        this.setTooltip('Loads a value from the memory address (stored in a register) into a target register.');
         this.setColour(operationColor);
     }
 };
@@ -201,16 +191,15 @@ Blockly.Blocks['sto'] = {
             .appendField('store the value of register ');
         this.appendValueInput('L')
             .setCheck('register')
-            .appendField('to memory at address ');
+            .appendField('into memory at address ');
         this.setInputsInline(true)
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
-        this.setTooltip('neg instruction');
-        this.setHelpUrl('');
+
+        this.setTooltip('Stores the value from one register into the memory address specified by another register.');
         this.setColour(operationColor);
     }
 };
-
 
 Blockly.Blocks['and'] = {
     init: function () {
@@ -226,8 +215,7 @@ Blockly.Blocks['and'] = {
         this.setInputsInline(true)
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
-        this.setTooltip('and instruction');
-        this.setHelpUrl('');
+        this.setTooltip('Performs a bitwise AND between two values and stores the result in a register.');
         this.setColour(operationColor);
     }
 };
@@ -246,8 +234,7 @@ Blockly.Blocks['ior'] = {
         this.setInputsInline(true)
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
-        this.setTooltip('ior instruction');
-        this.setHelpUrl('');
+        this.setTooltip('Performs a bitwise inclusive OR between two values and stores the result in a register.');
         this.setColour(operationColor);
     }
 };
@@ -266,8 +253,7 @@ Blockly.Blocks['eor'] = {
         this.setInputsInline(true)
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
-        this.setTooltip('eor instruction');
-        this.setHelpUrl('');
+        this.setTooltip('Performs a bitwise exclusive OR (XOR) between two values and stores the result in a register.');
         this.setColour(operationColor);
     }
 };
@@ -286,8 +272,7 @@ Blockly.Blocks['add'] = {
         this.setInputsInline(true)
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
-        this.setTooltip('add instruction');
-        this.setHelpUrl('');
+        this.setTooltip('Adds two values and stores the result in a register.');
         this.setColour(operationColor);
     }
 };
@@ -306,8 +291,7 @@ Blockly.Blocks['sub'] = {
         this.setInputsInline(true)
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
-        this.setTooltip('sub instruction');
-        this.setHelpUrl('');
+        this.setTooltip('Subtracts the second value from the first and stores the result in a register.');
         this.setColour(operationColor);
     }
 };
@@ -316,7 +300,7 @@ Blockly.Blocks['lsl'] = {
     init: function () {
         this.appendValueInput('A')
             .setCheck('register')
-            .appendField('do a logic shift to the left (<<) of');
+            .appendField('do a logical shift left (<<) of');
         this.appendValueInput('B')
             .setCheck(['register', 'immediate'])
             .appendField(' by ');
@@ -326,8 +310,7 @@ Blockly.Blocks['lsl'] = {
         this.setInputsInline(true)
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
-        this.setTooltip('lsl instruction');
-        this.setHelpUrl('');
+        this.setTooltip('Performs a logical shift to the left by the specified amount and stores the result in a register.');
         this.setColour(operationColor);
     }
 };
@@ -336,7 +319,7 @@ Blockly.Blocks['lsr'] = {
     init: function () {
         this.appendValueInput('A')
             .setCheck('register')
-            .appendField('do a logic shift to the right (>>) of');
+            .appendField('do a logical shift right (>>) of');
         this.appendValueInput('B')
             .setCheck(['register', 'immediate'])
             .appendField(' by ');
@@ -346,8 +329,7 @@ Blockly.Blocks['lsr'] = {
         this.setInputsInline(true)
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
-        this.setTooltip('lsr instruction');
-        this.setHelpUrl('');
+        this.setTooltip('Performs a logical shift to the right by the specified amount and stores the result in a register.');
         this.setColour(operationColor);
     }
 };
@@ -356,7 +338,7 @@ Blockly.Blocks['asr'] = {
     init: function () {
         this.appendValueInput('A')
             .setCheck('register')
-            .appendField('do a arithmetic shift to the right (>>) of');
+            .appendField('do an arithmetic shift right (>>) of');
         this.appendValueInput('B')
             .setCheck(['register', 'immediate'])
             .appendField(' by ');
@@ -366,8 +348,7 @@ Blockly.Blocks['asr'] = {
         this.setInputsInline(true)
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
-        this.setTooltip('asr instruction');
-        this.setHelpUrl('');
+        this.setTooltip('Performs an arithmetic (sign-extended) shift to the right and stores the result in a register.');
         this.setColour(operationColor);
     }
 };
@@ -381,12 +362,11 @@ Blockly.Blocks['cmp'] = {
             .setCheck(['register', 'immediate'])
             .appendField(' and ');
         this.appendDummyInput()
-            .appendField(' and update status register');
+            .appendField('and update status register');
         this.setInputsInline(true)
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
-        this.setTooltip('cmp instruction');
-        this.setHelpUrl('');
+        this.setTooltip('Compares two values (register/immediate) and updates the status register (flags).');
         this.setColour(cmpColor);
     }
 };
@@ -399,8 +379,7 @@ Blockly.Blocks['jmp'] = {
         this.setInputsInline(true)
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
-        this.setTooltip('jmp instruction');
-        this.setHelpUrl('');
+        this.setTooltip('Unconditional jump to a specified address (register/immediate/label).');
         this.setColour(jmpColor);
     }
 };
@@ -415,8 +394,7 @@ Blockly.Blocks['beq'] = {
         this.setInputsInline(true)
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
-        this.setTooltip('beq instruction');
-        this.setHelpUrl('');
+        this.setTooltip('Branches to the specified address if the last comparison indicated equality.');
         this.setColour(jmpColor);
     }
 };
@@ -431,8 +409,7 @@ Blockly.Blocks['bne'] = {
         this.setInputsInline(true);
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
-        this.setTooltip('bne instruction');
-        this.setHelpUrl('');
+        this.setTooltip('Branches to the specified address if the last comparison indicated inequality.');
         this.setColour(jmpColor);
     }
 };
@@ -443,12 +420,11 @@ Blockly.Blocks['bgt'] = {
             .setCheck(['register', 'immediate', 'label'])
             .appendField('jump to address ');
         this.appendDummyInput()
-            .appendField('if last comparison greater than');
+            .appendField('if last comparison was greater than');
         this.setInputsInline(true);
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
-        this.setTooltip('bgt instruction');
-        this.setHelpUrl('');
+        this.setTooltip('Branches if the first value was greater than the second in the last comparison.');
         this.setColour(jmpColor);
     }
 };
@@ -459,12 +435,11 @@ Blockly.Blocks['blt'] = {
             .setCheck(['register', 'immediate', 'label'])
             .appendField('jump to address ');
         this.appendDummyInput()
-            .appendField('if last comparison less than');
+            .appendField('if last comparison was less than');
         this.setInputsInline(true);
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
-        this.setTooltip('blt instruction');
-        this.setHelpUrl('');
+        this.setTooltip('Branches if the first value was less than the second in the last comparison.');
         this.setColour(jmpColor);
     }
 };
@@ -475,12 +450,11 @@ Blockly.Blocks['bge'] = {
             .setCheck(['register', 'immediate', 'label'])
             .appendField('jump to address ');
         this.appendDummyInput()
-            .appendField('if last comparison greater or equal');
+            .appendField('if last comparison was greater or equal');
         this.setInputsInline(true);
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
-        this.setTooltip('bge instruction');
-        this.setHelpUrl('');
+        this.setTooltip('Branches if the first value was greater than or equal to the second in the last comparison.');
         this.setColour(jmpColor);
     }
 };
@@ -491,12 +465,11 @@ Blockly.Blocks['ble'] = {
             .setCheck(['register', 'immediate', 'label'])
             .appendField('jump to address ');
         this.appendDummyInput()
-            .appendField('if last comparison less or equal');
+            .appendField('if last comparison was less or equal');
         this.setInputsInline(true);
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
-        this.setTooltip('ble instruction');
-        this.setHelpUrl('');
+        this.setTooltip('Branches if the first value was less than or equal to the second in the last comparison.');
         this.setColour(jmpColor);
     }
 };
@@ -511,8 +484,7 @@ Blockly.Blocks['bab'] = {
         this.setInputsInline(true);
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
-        this.setTooltip('bab instruction');
-        this.setHelpUrl('');
+        this.setTooltip('Branches if the unsigned first value was above the second in the last comparison.');
         this.setColour(jmpColor);
     }
 };
@@ -527,8 +499,7 @@ Blockly.Blocks['bbw'] = {
         this.setInputsInline(true);
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
-        this.setTooltip('bbw instruction');
-        this.setHelpUrl('');
+        this.setTooltip('Branches if the unsigned first value was below the second in the last comparison.');
         this.setColour(jmpColor);
     }
 };
@@ -543,8 +514,7 @@ Blockly.Blocks['bae'] = {
         this.setInputsInline(true);
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
-        this.setTooltip('bae instruction');
-        this.setHelpUrl('');
+        this.setTooltip('Branches if the unsigned first value was above or equal to the second in the last comparison.');
         this.setColour(jmpColor);
     }
 };
@@ -559,8 +529,7 @@ Blockly.Blocks['bbe'] = {
         this.setInputsInline(true);
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
-        this.setTooltip('bbe instruction');
-        this.setHelpUrl('');
+        this.setTooltip('Branches if the unsigned first value was below or equal to the second in the last comparison.');
         this.setColour(jmpColor);
     }
 };
@@ -575,8 +544,7 @@ Blockly.Blocks['data'] = {
         this.setInputsInline(true)
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
-        this.setTooltip('mov instruction');
-        this.setHelpUrl('');
+        this.setTooltip('This block can contain multiple data-word definitions to be placed in memory.');
         this.setColour(dataWordColor);
     }
 };
@@ -589,8 +557,7 @@ Blockly.Blocks['decimalWord'] = {
         this.setInputsInline(true);
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
-        this.setTooltip('bbe instruction');
-        this.setHelpUrl('');
+        this.setTooltip('Declares a single decimal word to be stored in memory.');
         this.setColour(dataWordColor);
         this.setOutput(false, "dataWord");
     }
