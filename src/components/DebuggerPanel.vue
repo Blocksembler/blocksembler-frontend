@@ -8,7 +8,7 @@ import DebuggerMemorySpy from "./DebuggerMemorySpy.vue";
   <DebuggerControlPanel/>
   <DebuggerOpCodeList/>
 
-  <div class="row my-3">
+  <div class="row my-3 container">
     <div class="col-5">
       <DebuggerRegisterSpy/>
     </div>
@@ -17,3 +17,4 @@ import DebuggerMemorySpy from "./DebuggerMemorySpy.vue";
     </div>
   </div>
 </template>
+
