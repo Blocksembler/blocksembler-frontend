@@ -1,5 +1,3 @@
-import '@blockly/toolbox-search';
-
 export const toolbox = {
     kind: "categoryToolbox",
     contents: [

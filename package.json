@@ -13,7 +13,6 @@
     "@blockly/block-plus-minus": "^8.0.12",
     "@blockly/field-multilineinput": "^5.0.13",
     "@blockly/shadow-block-converter": "^6.0.13",
-    "@blockly/toolbox-search": "^2.0.12",
     "@codemirror/state": "^6.5.1",
     "@codemirror/theme-one-dark": "^6.1.2",
     "@codemirror/view": "^6.36.2",
