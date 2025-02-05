@@ -46,8 +46,7 @@ export const toolbox = {
             name: "Arithmetic Instructions",
             contents: [
                 {kind: "block", type: "neg"},
-                {kind: "block", type: "add"},
-                {kind: "block", type: "sub"},
+                {kind: "block", type: "ainst"},
             ]
         },
         {
@@ -55,9 +54,7 @@ export const toolbox = {
             name: "Logic Instructions",
             contents: [
                 {kind: "block", type: "not"},
-                {kind: "block", type: "and"},
-                {kind: "block", type: "ior"},
-                {kind: "block", type: "eor"},
+                {kind: "block", type: "linst"},
                 {kind: "block", type: "lsl"},
                 {kind: "block", type: "lsr"},
                 {kind: "block", type: "asr"},
@@ -69,16 +66,7 @@ export const toolbox = {
             contents: [
                 {kind: "block", type: "cmp"},
                 {kind: "block", type: "jmp"},
-                {kind: "block", type: "beq"},
-                {kind: "block", type: "bne"},
-                {kind: "block", type: "bgt"},
-                {kind: "block", type: "blt"},
-                {kind: "block", type: "bge"},
-                {kind: "block", type: "ble"},
-                {kind: "block", type: "bab"},
-                {kind: "block", type: "bbw"},
-                {kind: "block", type: "bae"},
-                {kind: "block", type: "bbe"},
+                {kind: "block", type: "cjmp"},
             ]
         }
     ]

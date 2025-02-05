@@ -200,6 +200,10 @@ export class AbstractArmletInstruction extends BaseInstruction {
         return this.args[iPos]
     }
 
+    get blockType() {
+        return this.constructor.mnemonic
+    }
+
     static extractL(code) {
         return `$${parseInt(code.slice(7, 10), 2)}`;
     }
@@ -242,7 +246,7 @@ export class AbstractArmletInstruction extends BaseInstruction {
     }
 
     toBlock(ws) {
-        let block = ws.newBlock(this.constructor.mnemonic);
+        let block = ws.newBlock(this.blockType);
         block.initSvg();
 
         if (this.lArgument) {
@@ -481,6 +485,10 @@ export class AndInstruction extends AbstractArmletInstruction {
         return "LAB";
     }
 
+    get blockType() {
+        return "linst"
+    }
+
     static fromMachineCode(code) {
         return new AndInstruction([this.extractL(code), this.extractA(code), this.extractB(code)]);
     }
@@ -508,6 +516,10 @@ export class AndImmediateInstruction extends AbstractImmediateArmletInstruction 
         return "LAI";
     }
 
+    get blockType() {
+        return "linst"
+    }
+
     executeOn(system) {
         let dest = system.registers[this.lArgument]
         let firstOp = system.registers[this.aArgument]
@@ -531,6 +543,10 @@ export class IorInstruction extends AbstractArmletInstruction {
         return "LAB";
     }
 
+    get blockType() {
+        return "linst"
+    }
+
     executeOn(system) {
         let dest = system.registers[this.lArgument]
         let firstOp = system.registers[this.aArgument]
@@ -552,6 +568,10 @@ export class IorImmediateInstruction extends AbstractImmediateArmletInstruction 
 
     static get argumentLayout() {
         return "LAI";
+    }
+
+    get blockType() {
+        return "linst"
     }
 
     executeOn(system) {
@@ -578,6 +598,10 @@ export class EorInstruction extends AbstractArmletInstruction {
         return "LAB";
     }
 
+    get blockType() {
+        return "linst"
+    }
+
     executeOn(system) {
         let dest = system.registers[this.lArgument]
         let firstOp = system.registers[this.aArgument]
@@ -599,6 +623,10 @@ export class EorImmediateInstruction extends AbstractImmediateArmletInstruction 
 
     static get argumentLayout() {
         return "LAI";
+    }
+
+    get blockType() {
+        return "linst"
     }
 
     executeOn(system) {
@@ -651,6 +679,10 @@ export class AddInstruction extends AbstractArmletInstruction {
         return "LAB";
     }
 
+    get blockType() {
+        return "ainst"
+    }
+
     executeOn(system) {
         let destReg = system.registers[this.lArgument];
         let firstOpReg = system.registers[this.aArgument];
@@ -672,6 +704,10 @@ export class AddImmediateInstruction extends AbstractImmediateArmletInstruction 
 
     static get argumentLayout() {
         return "LAI";
+    }
+
+    get blockType() {
+        return "ainst"
     }
 
     executeOn(system) {
@@ -697,6 +733,10 @@ export class SubInstruction extends AbstractArmletInstruction {
         return "LAB";
     }
 
+    get blockType() {
+        return "ainst"
+    }
+
     executeOn(system) {
         let destReg = system.registers[this.lArgument];
         let firstOpReg = system.registers[this.aArgument];
@@ -720,6 +760,10 @@ export class SubImmediateInstruction extends AbstractImmediateArmletInstruction 
 
     static get argumentLayout() {
         return "LAI";
+    }
+
+    get blockType() {
+        return "ainst"
     }
 
     executeOn(system) {
@@ -1094,6 +1138,10 @@ export class JmpImmediateInstruction extends AbstractArmletImmediateControlInstr
         return intToOpCode(36)
     }
 
+    get blockType() {
+        return "cjmp"
+    }
+
     executeOn(system) {
         system.registers['pc'].set(this.getJmpTarget(system))
     }
@@ -1106,6 +1154,10 @@ export class BeqInstruction extends AbstractArmletControlInstruction {
 
     static get opCode() {
         return intToOpCode(16);
+    }
+
+    get blockType() {
+        return "cjmp"
     }
 
     executeOn(system) {
@@ -1125,6 +1177,10 @@ export class BeqImmediateInstruction extends AbstractArmletImmediateControlInstr
         return intToOpCode(37);
     }
 
+    get blockType() {
+        return "cjmp"
+    }
+
     executeOn(system) {
         if (system.isEqFlagSet) {
             system.registers['pc'].set(this.getJmpTarget(system))
@@ -1141,6 +1197,9 @@ export class BneInstruction extends AbstractArmletControlInstruction {
         return intToOpCode(17);
     }
 
+    get blockType() {
+        return "cjmp"
+    }
 
     executeOn(system) {
         if (!system.isEqFlagSet) {
@@ -1156,6 +1215,10 @@ export class BneImmediateInstruction extends AbstractArmletImmediateControlInstr
 
     static get opCode() {
         return intToOpCode(38);
+    }
+
+    get blockType() {
+        return "cjmp"
     }
 
     executeOn(system) {
@@ -1174,6 +1237,10 @@ export class BgtInstruction extends AbstractArmletControlInstruction {
         return intToOpCode(18);
     }
 
+    get blockType() {
+        return "cjmp"
+    }
+
     executeOn(system) {
         if (system.isGtFlagSet) {
             system.registers['pc'].set(this.getJmpTarget(system))
@@ -1188,6 +1255,10 @@ export class BgtImmediateInstruction extends AbstractArmletImmediateControlInstr
 
     static get opCode() {
         return intToOpCode(39);
+    }
+
+    get blockType() {
+        return "cjmp"
     }
 
     executeOn(system) {
@@ -1206,6 +1277,10 @@ export class BltInstruction extends AbstractArmletControlInstruction {
         return intToOpCode(19);
     }
 
+    get blockType() {
+        return "cjmp"
+    }
+
     executeOn(system) {
         if (!(system.isGtFlagSet || system.isEqFlagSet)) {
             system.registers['pc'].set(this.getJmpTarget(system))
@@ -1220,6 +1295,10 @@ export class BltImmediateInstruction extends AbstractArmletImmediateControlInstr
 
     static get opCode() {
         return intToOpCode(40);
+    }
+
+    get blockType() {
+        return "cjmp"
     }
 
     executeOn(system) {
@@ -1239,6 +1318,10 @@ export class BgeInstruction extends AbstractArmletControlInstruction {
         return intToOpCode(20);
     }
 
+    get blockType() {
+        return "cjmp"
+    }
+
     executeOn(system) {
         if (system.isGtFlagSet || system.isEqFlagSet) {
             system.registers['pc'].set(this.getJmpTarget(system))
@@ -1253,6 +1336,10 @@ export class BgeImmediateInstruction extends AbstractArmletImmediateControlInstr
 
     static get opCode() {
         return intToOpCode(41);
+    }
+
+    get blockType() {
+        return "cjmp"
     }
 
     executeOn(system) {
@@ -1271,6 +1358,10 @@ export class BleInstruction extends AbstractArmletControlInstruction {
         return intToOpCode(21);
     }
 
+    get blockType() {
+        return "cjmp"
+    }
+
     executeOn(system) {
         if (!system.isGtFlagSet) {
             system.registers['pc'].set(this.getJmpTarget(system))
@@ -1285,6 +1376,10 @@ export class BleImmediateInstruction extends AbstractArmletImmediateControlInstr
 
     static get opCode() {
         return intToOpCode(42);
+    }
+
+    get blockType() {
+        return "cjmp"
     }
 
     executeOn(system) {
@@ -1303,6 +1398,10 @@ export class BabInstruction extends AbstractArmletControlInstruction {
         return intToOpCode(22);
     }
 
+    get blockType() {
+        return "cjmp"
+    }
+
     executeOn(system) {
         if (system.isAbFlagSet) {
             system.registers['pc'].set(this.getJmpTarget(system))
@@ -1317,6 +1416,10 @@ export class BabImmediateInstruction extends AbstractArmletImmediateControlInstr
 
     static get opCode() {
         return intToOpCode(43);
+    }
+
+    get blockType() {
+        return "cjmp"
     }
 
     executeOn(system) {
@@ -1335,6 +1438,10 @@ export class BbwInstruction extends AbstractArmletControlInstruction {
         return intToOpCode(23);
     }
 
+    get blockType() {
+        return "cjmp"
+    }
+
     executeOn(system) {
         if (!(system.isAbFlagSet || system.isEqFlagSet)) {
             system.registers['pc'].set(this.getJmpTarget(system))
@@ -1349,6 +1456,10 @@ export class BbwImmediateInstruction extends AbstractArmletImmediateControlInstr
 
     static get opCode() {
         return intToOpCode(44);
+    }
+
+    get blockType() {
+        return "cjmp"
     }
 
     executeOn(system) {
@@ -1367,6 +1478,10 @@ export class BaeInstruction extends AbstractArmletControlInstruction {
         return intToOpCode(24);
     }
 
+    get blockType() {
+        return "cjmp"
+    }
+
     executeOn(system) {
         if (system.isAbFlagSet || system.isEqFlagSet) {
             system.registers['pc'].set(this.getJmpTarget(system))
@@ -1381,6 +1496,10 @@ export class BaeImmediateInstruction extends AbstractArmletImmediateControlInstr
 
     static get opCode() {
         return intToOpCode(45);
+    }
+
+    get blockType() {
+        return "cjmp"
     }
 
     executeOn(system) {
@@ -1399,6 +1518,10 @@ export class BbeInstruction extends AbstractArmletControlInstruction {
         return intToOpCode(25);
     }
 
+    get blockType() {
+        return "cjmp"
+    }
+
     executeOn(system) {
         if (!system.isAbFlagSet) {
             system.registers['pc'].set(this.getJmpTarget(system))
@@ -1413,6 +1536,10 @@ export class BbeImmediateInstruction extends AbstractArmletImmediateControlInstr
 
     static get opCode() {
         return intToOpCode(46);
+    }
+
+    get blockType() {
+        return "cjmp"
     }
 
     executeOn(system) {
