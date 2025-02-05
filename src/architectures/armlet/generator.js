@@ -94,28 +94,14 @@ generator.forBlock["mov"] = function (block, _generator) {
     return `mov ${l}, ${a}` + handleComments(block);
 }
 
-generator.forBlock["and"] = function (block, _generator) {
+generator.forBlock["linst"] = function (block, _generator) {
     const l = generator.valueToCode(block, "L", Order.ATOMIC);
     const a = generator.valueToCode(block, "A", Order.ATOMIC);
     const b = generator.valueToCode(block, "B", Order.ATOMIC);
 
-    return `and ${l}, ${a}, ${b}` + handleComments(block);
-}
+    const op = block.getFieldValue('operation')
 
-generator.forBlock["ior"] = function (block, _generator) {
-    const l = generator.valueToCode(block, "L", Order.ATOMIC);
-    const a = generator.valueToCode(block, "A", Order.ATOMIC);
-    const b = generator.valueToCode(block, "B", Order.ATOMIC);
-
-    return `ior ${l}, ${a}, ${b}` + handleComments(block);
-}
-
-generator.forBlock["eor"] = function (block, _generator) {
-    const l = generator.valueToCode(block, "L", Order.ATOMIC);
-    const a = generator.valueToCode(block, "A", Order.ATOMIC);
-    const b = generator.valueToCode(block, "B", Order.ATOMIC);
-
-    return `eor ${l}, ${a}, ${b}` + handleComments(block);
+    return `${op} ${l}, ${a}, ${b}` + handleComments(block);
 }
 
 generator.forBlock["not"] = function (block, _generator) {
@@ -126,20 +112,14 @@ generator.forBlock["not"] = function (block, _generator) {
     return `not ${l}, ${a}` + handleComments(block);
 }
 
-generator.forBlock["add"] = function (block, _generator) {
+generator.forBlock["ainst"] = function (block, _generator) {
     const l = generator.valueToCode(block, "L", Order.ATOMIC);
     const a = generator.valueToCode(block, "A", Order.ATOMIC);
     const b = generator.valueToCode(block, "B", Order.ATOMIC);
 
-    return `add ${l}, ${a}, ${b}` + handleComments(block);
-}
+    const op = block.getFieldValue('operation')
 
-generator.forBlock["sub"] = function (block, _generator) {
-    const l = generator.valueToCode(block, "L", Order.ATOMIC);
-    const a = generator.valueToCode(block, "A", Order.ATOMIC);
-    const b = generator.valueToCode(block, "B", Order.ATOMIC);
-
-    return `sub ${l}, ${a}, ${b}` + handleComments(block);
+    return `${op} ${l}, ${a}, ${b}` + handleComments(block);
 }
 
 generator.forBlock["neg"] = function (block, _generator) {
@@ -186,65 +166,13 @@ generator.forBlock["jmp"] = function (block, _generator) {
     return `jmp ${a} ` + handleComments(block);
 }
 
-generator.forBlock["beq"] = function (block, _generator) {
+generator.forBlock["cjmp"] = function (block, _generator) {
     const a = generator.valueToCode(block, "A", Order.ATOMIC);
+    const op = block.getField("condition").getValue();
 
-    return `beq ${a} ` + handleComments(block);
+    return `${op} ${a} ` + handleComments(block);
 }
 
-generator.forBlock["bne"] = function (block, _generator) {
-    const a = generator.valueToCode(block, "A", Order.ATOMIC);
-
-    return `bne ${a} ` + handleComments(block);
-}
-
-generator.forBlock["bgt"] = function (block, _generator) {
-    const a = generator.valueToCode(block, "A", Order.ATOMIC);
-
-    return `bgt ${a} ` + handleComments(block);
-}
-
-generator.forBlock["bge"] = function (block, _generator) {
-    const a = generator.valueToCode(block, "A", Order.ATOMIC);
-
-    return `bge ${a} ` + handleComments(block);
-}
-
-generator.forBlock["blt"] = function (block, _generator) {
-    const a = generator.valueToCode(block, "A", Order.ATOMIC);
-
-    return `blt ${a} ` + handleComments(block);
-}
-
-generator.forBlock["ble"] = function (block, _generator) {
-    const a = generator.valueToCode(block, "A", Order.ATOMIC);
-
-    return `ble ${a} ` + handleComments(block);
-}
-
-generator.forBlock["bab"] = function (block, _generator) {
-    const a = generator.valueToCode(block, "A", Order.ATOMIC);
-
-    return `bab ${a} ` + handleComments(block);
-}
-
-generator.forBlock["bbw"] = function (block, _generator) {
-    const a = generator.valueToCode(block, "A", Order.ATOMIC);
-
-    return `bbw ${a} ` + handleComments(block);
-}
-
-generator.forBlock["bae"] = function (block, _generator) {
-    const a = generator.valueToCode(block, "A", Order.ATOMIC);
-
-    return `bbw ${a} ` + handleComments(block);
-}
-
-generator.forBlock["bbe"] = function (block, _generator) {
-    const a = generator.valueToCode(block, "A", Order.ATOMIC);
-
-    return `bbw ${a} ` + handleComments(block);
-}
 
 generator.forBlock["loa"] = function (block, _generator) {
     const l = generator.valueToCode(block, "L", Order.ATOMIC);
