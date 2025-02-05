@@ -7,7 +7,7 @@ import {codingWorkspaceState} from "@/state.js";
 <template>
   <div class="container-fluid">
     <div class="row">
-      <div class="col-8 px-3">
+      <div class="col-8 px-3 container">
         <DebuggerPanel/>
       </div>
       <div class="col-4 p-0">
@@ -17,4 +17,9 @@ import {codingWorkspaceState} from "@/state.js";
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.container {
+  height: calc(100vh - 100px);
+  overflow: scroll;
+}
+</style>
