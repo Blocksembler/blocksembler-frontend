@@ -19,7 +19,12 @@ export class ArmletAssemblyParser {
             let comment = separatedLine.comment;
 
             if (instruction) {
-                if (instruction.endsWith(':')) {
+                if (multilineComment.length > 0) {
+                    parsedProgram.push(new MultilineComment(multilineComment));
+                    multilineComment = "";
+                }
+
+                if (instruction.startsWith('@')) {
                     let nextCommand = this.separateInstructionAndComment(lines[idx + 1])
                     idx += 1;
                     instruction += " " + nextCommand.instruction;
@@ -30,11 +35,6 @@ export class ArmletAssemblyParser {
                 }
 
                 parsedProgram.push(this.parseInstructionLine(instruction, comment));
-
-                if (multilineComment.length > 0) {
-                    parsedProgram.push(new MultilineComment(multilineComment));
-                    multilineComment = "";
-                }
 
             } else if (comment) {
                 multilineComment += `${comment}\n`;
