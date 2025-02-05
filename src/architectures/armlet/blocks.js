@@ -137,12 +137,11 @@ Blockly.Blocks['mov'] = {
 
 Blockly.Blocks['not'] = {
     init: function () {
-        this.appendValueInput('A')
-            .setCheck(['register', 'immediate'])
-            .appendField('invert bits of ');
         this.appendValueInput('L')
             .setCheck('register')
-            .appendField('and store result to ');
+        this.appendValueInput('A')
+            .setCheck('register')
+            .appendField('= bit-wise not');
         this.setInputsInline(true)
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
@@ -153,12 +152,11 @@ Blockly.Blocks['not'] = {
 
 Blockly.Blocks['neg'] = {
     init: function () {
-        this.appendValueInput('A')
-            .setCheck(['register', 'immediate'])
-            .appendField('negate the value of ');
         this.appendValueInput('L')
             .setCheck('register')
-            .appendField('and store result to ');
+        this.appendValueInput('A')
+            .setCheck('register')
+            .appendField(':= negative value of');
         this.setInputsInline(true)
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
@@ -203,15 +201,14 @@ Blockly.Blocks['sto'] = {
 
 Blockly.Blocks['and'] = {
     init: function () {
-        this.appendValueInput('A')
-            .setCheck('register')
-            .appendField('do bitwise AND of');
-        this.appendValueInput('B')
-            .setCheck(['register', 'immediate'])
-            .appendField('and');
         this.appendValueInput('L')
             .setCheck('register')
-            .appendField('then store result to');
+        this.appendValueInput('A')
+            .setCheck('register')
+            .appendField('=');
+        this.appendValueInput('B')
+            .setCheck(['register', 'immediate'])
+            .appendField(' AND ');
         this.setInputsInline(true)
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
@@ -222,15 +219,14 @@ Blockly.Blocks['and'] = {
 
 Blockly.Blocks['ior'] = {
     init: function () {
-        this.appendValueInput('A')
-            .setCheck('register')
-            .appendField('do bitwise (inclusive) OR of');
-        this.appendValueInput('B')
-            .setCheck(['register', 'immediate'])
-            .appendField('and');
         this.appendValueInput('L')
             .setCheck('register')
-            .appendField('then store result to');
+        this.appendValueInput('A')
+            .setCheck('register')
+            .appendField('=');
+        this.appendValueInput('B')
+            .setCheck(['register', 'immediate'])
+            .appendField(' OR ');
         this.setInputsInline(true)
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
@@ -241,15 +237,14 @@ Blockly.Blocks['ior'] = {
 
 Blockly.Blocks['eor'] = {
     init: function () {
-        this.appendValueInput('A')
-            .setCheck('register')
-            .appendField('do bitwise exclusive OR of');
-        this.appendValueInput('B')
-            .setCheck(['register', 'immediate'])
-            .appendField('and');
         this.appendValueInput('L')
             .setCheck('register')
-            .appendField('then store result to');
+        this.appendValueInput('A')
+            .setCheck('register')
+            .appendField('=');
+        this.appendValueInput('B')
+            .setCheck(['register', 'immediate'])
+            .appendField(' XOR ');
         this.setInputsInline(true)
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
@@ -258,17 +253,24 @@ Blockly.Blocks['eor'] = {
     }
 };
 
-Blockly.Blocks['add'] = {
+const arithmeticOps = [
+    ['+', 'add'],
+    ['-', 'sub'],
+];
+
+Blockly.Blocks['ainst'] = {
     init: function () {
-        this.appendValueInput('A')
-            .setCheck('register')
-            .appendField('calculate ');
-        this.appendValueInput('B')
-            .setCheck(['register', 'immediate'])
-            .appendField(' + ');
         this.appendValueInput('L')
             .setCheck('register')
-            .appendField('and store result to');
+        this.appendValueInput('A')
+            .setCheck('register')
+            .appendField(':=');
+        this.appendDummyInput()
+            .appendField(" ")
+            .appendField(new Blockly.FieldDropdown(() => arithmeticOps), 'operation')
+            .appendField(" ")
+        this.appendValueInput('B')
+            .setCheck(['register', 'immediate'])
         this.setInputsInline(true)
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
@@ -277,21 +279,29 @@ Blockly.Blocks['add'] = {
     }
 };
 
-Blockly.Blocks['sub'] = {
+const logicOps = [
+    ['OR', 'ior'],
+    ['XOR', 'eor'],
+    ['AND', 'and'],
+];
+
+Blockly.Blocks['linst'] = {
     init: function () {
-        this.appendValueInput('A')
-            .setCheck('register')
-            .appendField('calculate ');
-        this.appendValueInput('B')
-            .setCheck(['register', 'immediate'])
-            .appendField(' - ');
         this.appendValueInput('L')
             .setCheck('register')
-            .appendField('and store result to');
+        this.appendValueInput('A')
+            .setCheck('register')
+            .appendField(':=');
+        this.appendDummyInput()
+            .appendField(" ")
+            .appendField(new Blockly.FieldDropdown(() => logicOps), 'operation')
+            .appendField(" ")
+        this.appendValueInput('B')
+            .setCheck(['register', 'immediate'])
         this.setInputsInline(true)
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
-        this.setTooltip('Subtracts the second value from the first and stores the result in a register.');
+        this.setTooltip('Adds two values and stores the result in a register.');
         this.setColour(operationColor);
     }
 };
@@ -384,152 +394,32 @@ Blockly.Blocks['jmp'] = {
     }
 };
 
-Blockly.Blocks['beq'] = {
+const branchingConditions = [
+    ['equal', 'beq'],
+    ['not equal', 'bne'],
+    ['greater than', 'bgt'],
+    ['greater or equal', 'bge'],
+    ['less than', 'blt'],
+    ['less or equal', 'ble'],
+    ['above', 'bab'],
+    ['below', 'bbl'],
+    ['above or equal', 'bae'],
+    ['below or equal', 'bbe'],
+];
+
+Blockly.Blocks['cjmp'] = {
     init: function () {
         this.appendValueInput('A')
             .setCheck(['register', 'immediate', 'label'])
             .appendField('jump to address ');
-        this.appendDummyInput()
-            .appendField('if last comparison was equal');
+        this.appendDummyInput('CON')
+            .appendField('if last comparison was')
+            .appendField(new Blockly.FieldDropdown(() => branchingConditions), 'condition');
+
         this.setInputsInline(true)
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
-        this.setTooltip('Branches to the specified address if the last comparison indicated equality.');
-        this.setColour(jmpColor);
-    }
-};
-
-Blockly.Blocks['bne'] = {
-    init: function () {
-        this.appendValueInput('A')
-            .setCheck(['register', 'immediate', 'label'])
-            .appendField('jump to address ');
-        this.appendDummyInput()
-            .appendField('if last comparison was not equal');
-        this.setInputsInline(true);
-        this.setPreviousStatement(true, null);
-        this.setNextStatement(true, null);
-        this.setTooltip('Branches to the specified address if the last comparison indicated inequality.');
-        this.setColour(jmpColor);
-    }
-};
-
-Blockly.Blocks['bgt'] = {
-    init: function () {
-        this.appendValueInput('A')
-            .setCheck(['register', 'immediate', 'label'])
-            .appendField('jump to address ');
-        this.appendDummyInput()
-            .appendField('if last comparison was greater than');
-        this.setInputsInline(true);
-        this.setPreviousStatement(true, null);
-        this.setNextStatement(true, null);
-        this.setTooltip('Branches if the first value was greater than the second in the last comparison.');
-        this.setColour(jmpColor);
-    }
-};
-
-Blockly.Blocks['blt'] = {
-    init: function () {
-        this.appendValueInput('A')
-            .setCheck(['register', 'immediate', 'label'])
-            .appendField('jump to address ');
-        this.appendDummyInput()
-            .appendField('if last comparison was less than');
-        this.setInputsInline(true);
-        this.setPreviousStatement(true, null);
-        this.setNextStatement(true, null);
-        this.setTooltip('Branches if the first value was less than the second in the last comparison.');
-        this.setColour(jmpColor);
-    }
-};
-
-Blockly.Blocks['bge'] = {
-    init: function () {
-        this.appendValueInput('A')
-            .setCheck(['register', 'immediate', 'label'])
-            .appendField('jump to address ');
-        this.appendDummyInput()
-            .appendField('if last comparison was greater or equal');
-        this.setInputsInline(true);
-        this.setPreviousStatement(true, null);
-        this.setNextStatement(true, null);
-        this.setTooltip('Branches if the first value was greater than or equal to the second in the last comparison.');
-        this.setColour(jmpColor);
-    }
-};
-
-Blockly.Blocks['ble'] = {
-    init: function () {
-        this.appendValueInput('A')
-            .setCheck(['register', 'immediate', 'label'])
-            .appendField('jump to address ');
-        this.appendDummyInput()
-            .appendField('if last comparison was less or equal');
-        this.setInputsInline(true);
-        this.setPreviousStatement(true, null);
-        this.setNextStatement(true, null);
-        this.setTooltip('Branches if the first value was less than or equal to the second in the last comparison.');
-        this.setColour(jmpColor);
-    }
-};
-
-Blockly.Blocks['bab'] = {
-    init: function () {
-        this.appendValueInput('A')
-            .setCheck(['register', 'immediate', 'label'])
-            .appendField('jump to address ');
-        this.appendDummyInput()
-            .appendField('if last comparison was above');
-        this.setInputsInline(true);
-        this.setPreviousStatement(true, null);
-        this.setNextStatement(true, null);
-        this.setTooltip('Branches if the unsigned first value was above the second in the last comparison.');
-        this.setColour(jmpColor);
-    }
-};
-
-Blockly.Blocks['bbw'] = {
-    init: function () {
-        this.appendValueInput('A')
-            .setCheck(['register', 'immediate', 'label'])
-            .appendField('jump to address ');
-        this.appendDummyInput()
-            .appendField('if last comparison was below');
-        this.setInputsInline(true);
-        this.setPreviousStatement(true, null);
-        this.setNextStatement(true, null);
-        this.setTooltip('Branches if the unsigned first value was below the second in the last comparison.');
-        this.setColour(jmpColor);
-    }
-};
-
-Blockly.Blocks['bae'] = {
-    init: function () {
-        this.appendValueInput('A')
-            .setCheck(['register', 'immediate', 'label'])
-            .appendField('jump to address ');
-        this.appendDummyInput()
-            .appendField('if last comparison was above or equal');
-        this.setInputsInline(true);
-        this.setPreviousStatement(true, null);
-        this.setNextStatement(true, null);
-        this.setTooltip('Branches if the unsigned first value was above or equal to the second in the last comparison.');
-        this.setColour(jmpColor);
-    }
-};
-
-Blockly.Blocks['bbe'] = {
-    init: function () {
-        this.appendValueInput('A')
-            .setCheck(['register', 'immediate', 'label'])
-            .appendField('jump to address ');
-        this.appendDummyInput()
-            .appendField('if last comparison was below or equal');
-        this.setInputsInline(true);
-        this.setPreviousStatement(true, null);
-        this.setNextStatement(true, null);
-        this.setTooltip('Branches if the unsigned first value was below or equal to the second in the last comparison.');
+        this.setTooltip('Branches to the specified address if the last comparison indicated the according result.');
         this.setColour(jmpColor);
     }
 };
