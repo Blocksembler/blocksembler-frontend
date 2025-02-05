@@ -5,495 +5,81 @@ export const toolbox = {
     contents: [
         {
             kind: "category",
-            name: "Basic",
+            name: "Program Structure",
             contents: [
-                {
-                    kind: "block",
-                    type: "start",
-                },
-                {
-                    kind: "block",
-                    type: "nop",
-                },
-                {
-                    kind: "block",
-                    type: "hlt",
-                },
-                {
-                    kind: "block",
-                    type: "trp",
-                },
-                {
-                    kind: "block",
-                    type: "data",
-                },
-                {
-                    kind: "block",
-                    type: "decimalWord",
-                },
-                {
-                    kind: "block",
-                    type: "comment",
-                }
-            ]
-        }, {
-            kind: "category",
-            name: "Data Declaration",
-            contents: [
-                {
-                    kind: "block",
-                    type: "data",
-                },
-                {
-                    kind: "block",
-                    type: "decimalWord",
-                },
+                {kind: "block", type: "start"},
+                {kind: "block", type: "comment"},
+                {kind: "block", type: "labelDef"},
+                {kind: "block", type: "data"},
+                {kind: "block", type: "decimalWord"},
             ]
         },
         {
             kind: "category",
             name: "Primitives",
-            color: "50",
             contents: [
-
-                {
-                    kind: "block",
-                    type: "immediate",
-                },
-                {
-                    kind: "block",
-                    type: "label",
-                },
-                {
-                    kind: "block",
-                    type: "register",
-                },
-            ],
+                {kind: "block", type: "immediate"},
+                {kind: "block", type: "register"},
+                {kind: "block", type: "label"},
+            ]
         },
         {
             kind: "category",
-            name: "Jump Instructions",
+            name: "System Instructions",
             contents: [
-                {
-                    kind: "block",
-                    type: "labelDef",
-                },
-                {
-                    kind: "block",
-                    type: "jmp",
-                    inputs : {
-                        "A": {
-                            shadow: {
-                                type: "label",
-                            },
-
-                        }
-                    }
-                },
-                {
-                    kind: "block",
-                    type: "beq",
-                    inputs : {
-                        "A": {
-                            shadow: {
-                                type: "label",
-                            },
-
-                        }
-                    }
-                },
-                {
-                    kind: "block",
-                    type: "bne",
-                    inputs : {
-                        "A": {
-                            shadow: {
-                                type: "label",
-                            },
-
-                        }
-                    }
-                },
-                {
-                    kind: "block",
-                    type: "bgt",
-                    inputs : {
-                        "A": {
-                            shadow: {
-                                type: "label",
-                            },
-
-                        }
-                    }
-                },
-                {
-                    kind: "block",
-                    type: "bge",
-                    inputs : {
-                        "A": {
-                            shadow: {
-                                type: "label",
-                            },
-
-                        }
-                    }
-                },
-                {
-                    kind: "block",
-                    type: "blt",
-                    inputs : {
-                        "A": {
-                            shadow: {
-                                type: "label",
-                            },
-
-                        }
-                    }
-                },
-                {
-                    kind: "block",
-                    type: "ble",
-                    inputs : {
-                        "A": {
-                            shadow: {
-                                type: "label",
-                            },
-
-                        }
-                    }
-                },
-                {
-                    kind: "block",
-                    type: "bab",
-                    inputs : {
-                        "A": {
-                            shadow: {
-                                type: "label",
-                            },
-
-                        }
-                    }
-                },
-                {
-                    kind: "block",
-                    type: "bbw",
-                    inputs : {
-                        "A": {
-                            shadow: {
-                                type: "label",
-                            },
-
-                        }
-                    }
-                },
-                {
-                    kind: "block",
-                    type: "bae",
-                    inputs : {
-                        "A": {
-                            shadow: {
-                                type: "label",
-                            },
-
-                        }
-                    }
-                },
-                {
-                    kind: "block",
-                    type: "bbe",
-                    inputs : {
-                        "A": {
-                            shadow: {
-                                type: "label",
-                            },
-
-                        }
-                    }
-                },
+                {kind: "block", type: "nop"},
+                {kind: "block", type: "hlt"},
+                {kind: "block", type: "trp"},
+            ]
+        },
+        {
+            kind: "category",
+            name: "Memory Instructions",
+            contents: [
+                {kind: "block", type: "mov"},
+                {kind: "block", type: "loa"},
+                {kind: "block", type: "sto"},
             ]
         },
         {
             kind: "category",
             name: "Arithmetic Instructions",
-            color: "50",
             contents: [
-
-                {
-                    kind: "block",
-                    type: "cmp",
-                    inputs : {
-                        "A": {
-                            shadow: {
-                                type: "register",
-                            },
-                        },
-                        "B": {
-                            shadow: {
-                                type: "register",
-                            },
-                        }
-                    }
-                },
-                {
-                    kind: "block",
-                    type: "mov",
-                    inputs : {
-                        "L": {
-                            shadow: {
-                                type: "register",
-                            },
-                        },
-                        "A": {
-                            shadow: {
-                                type: "register",
-                            },
-                        }
-                    }
-                },
-                {
-                    kind: "block",
-                    type: "and",
-                    inputs : {
-                        "L": {
-                            shadow: {
-                                type: "register",
-                            },
-                        },
-                        "A": {
-                            shadow: {
-                                type: "register",
-                            },
-                        },
-                        "B": {
-                            shadow: {
-                                type: "register",
-                            },
-                        }
-                    }
-                },
-                {
-                    kind: "block",
-                    type: "ior",
-                    inputs : {
-                        "L": {
-                            shadow: {
-                                type: "register",
-                            },
-                        },
-                        "A": {
-                            shadow: {
-                                type: "register",
-                            },
-                        },
-                        "B": {
-                            shadow: {
-                                type: "register",
-                            },
-                        }
-                    }
-                },
-                {
-                    kind: "block",
-                    type: "eor",
-                    inputs : {
-                        "L": {
-                            shadow: {
-                                type: "register",
-                            },
-                        },
-                        "A": {
-                            shadow: {
-                                type: "register",
-                            },
-                        },
-                        "B": {
-                            shadow: {
-                                type: "register",
-                            },
-                        }
-                    }
-                },
-                {
-                    kind: "block",
-                    type: "not",
-                    inputs : {
-                        "L": {
-                            shadow: {
-                                type: "register",
-                            },
-                        },
-                        "A": {
-                            shadow: {
-                                type: "register",
-                            },
-                        }
-                    }
-                },
-                {
-                    kind: "block",
-                    type: "add",
-                    inputs : {
-                        "L": {
-                            shadow: {
-                                type: "register",
-                            },
-                        },
-                        "A": {
-                            shadow: {
-                                type: "register",
-                            },
-                        },
-                        "B": {
-                            shadow: {
-                                type: "register",
-                            },
-                        }
-                    }
-                },
-                {
-                    kind: "block",
-                    type: "sub",
-                    inputs : {
-                        "L": {
-                            shadow: {
-                                type: "register",
-                            },
-                        },
-                        "A": {
-                            shadow: {
-                                type: "register",
-                            },
-                        },
-                        "B": {
-                            shadow: {
-                                type: "register",
-                            },
-                        }
-                    }
-                },
-                {
-                    kind: "block",
-                    type: "neg",
-                    inputs : {
-                        "L": {
-                            shadow: {
-                                type: "register",
-                            },
-                        },
-                        "A": {
-                            shadow: {
-                                type: "register",
-                            },
-                        }
-                    }
-                },
-                {
-                    kind: "block",
-                    type: "lsl",
-                    inputs : {
-                        "L": {
-                            shadow: {
-                                type: "register",
-                            },
-                        },
-                        "A": {
-                            shadow: {
-                                type: "register",
-                            },
-                        },
-                        "B": {
-                            shadow: {
-                                type: "register",
-                            },
-                        }
-                    }
-                },
-                {
-                    kind: "block",
-                    type: "lsr",
-                    inputs : {
-                        "L": {
-                            shadow: {
-                                type: "register",
-                            },
-                        },
-                        "A": {
-                            shadow: {
-                                type: "register",
-                            },
-                        },
-                        "B": {
-                            shadow: {
-                                type: "register",
-                            },
-                        }
-                    }
-                },
-                {
-                    kind: "block",
-                    type: "asr",
-                    inputs : {
-                        "L": {
-                            shadow: {
-                                type: "register",
-                            },
-                        },
-                        "A": {
-                            shadow: {
-                                type: "register",
-                            },
-                        },
-                        "B": {
-                            shadow: {
-                                type: "register",
-                            },
-                        }
-                    }
-                },
+                {kind: "block", type: "neg"},
+                {kind: "block", type: "add"},
+                {kind: "block", type: "sub"},
             ]
         },
         {
             kind: "category",
-            name: "Memory Access",
-            color: "200",
+            name: "Logic Instructions",
             contents: [
-                {
-                    kind: "block",
-                    type: "loa",
-                    inputs : {
-                        "L": {
-                            shadow: {
-                                type: "register",
-                            },
-                        },
-                        "A": {
-                            shadow: {
-                                type: "register",
-                            },
-                        }
-                    }
-                },
-                {
-                    kind: "block",
-                    type: "sto",
-                    inputs : {
-                        "L": {
-                            shadow: {
-                                type: "register",
-                            },
-                        },
-                        "A": {
-                            shadow: {
-                                type: "register",
-                            },
-                        }
-                    }
-                },
+                {kind: "block", type: "not"},
+                {kind: "block", type: "and"},
+                {kind: "block", type: "ior"},
+                {kind: "block", type: "eor"},
+                {kind: "block", type: "lsl"},
+                {kind: "block", type: "lsr"},
+                {kind: "block", type: "asr"},
             ]
-        }, {
-            'kind': 'search',
-            'name': 'Search',
-            'contents': [],
+        },
+        {
+            kind: "category",
+            name: "Compare and Branching",
+            contents: [
+                {kind: "block", type: "cmp"},
+                {kind: "block", type: "jmp"},
+                {kind: "block", type: "beq"},
+                {kind: "block", type: "bne"},
+                {kind: "block", type: "bgt"},
+                {kind: "block", type: "blt"},
+                {kind: "block", type: "bge"},
+                {kind: "block", type: "ble"},
+                {kind: "block", type: "bab"},
+                {kind: "block", type: "bbw"},
+                {kind: "block", type: "bae"},
+                {kind: "block", type: "bbe"},
+            ]
         }
-    ],
+    ]
 };
