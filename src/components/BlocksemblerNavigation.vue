@@ -13,11 +13,14 @@ let importProject = () => {
 
   fileReader.onload = (e) => {
     const sourceCode = e.target.result;
-    emit('importProject', sourceCode);
-    console.log('emit importProject Event');
+    codingWorkspaceState.initWorkspace(sourceCode);
   }
 
   fileReader.readAsText(document.getElementById("file-input").files[0]);
+}
+
+let createNewProject = () => {
+  codingWorkspaceState.initWorkspace("");
 }
 
 </script>
@@ -46,12 +49,21 @@ let importProject = () => {
               </a>
               <ul class="dropdown-menu">
                 <li>
+                  <a class="dropdown-item" href="#" @click=createNewProject>
+                    New Project
+                  </a>
+                </li>
+                <li>
                   <a class="dropdown-item" href="#" onclick="document.getElementById('file-input').click();">
-                    Import Project
+                    Import Assembly Code
                     <input id="file-input" name="name" style="display: none;" type="file" @change="importProject"/>
                   </a>
                 </li>
-                <li><a class="dropdown-item" href="#" @click=exportProject>Export</a></li>
+                <li>
+                  <a class="dropdown-item" href="#" @click=exportProject>
+                    Export Assembly Code
+                  </a>
+                </li>
               </ul>
             </li>
             <li class="nav-item">
