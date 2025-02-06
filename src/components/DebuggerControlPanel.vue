@@ -81,10 +81,7 @@ const reset = () => {
     <a>{{ settings.executionSpeed }}ms per instruction</a>
   </BaseModal>
 
-  <div
-      class="py-3 m-0 navbar sticky-top background-white"
-      style="background-color: white"
-  >
+  <div class="py-3 m-0 navbar sticky-top background-white">
     <div>
       <BaseButton @click="assembleHandler">
         <PlayCircleIcon/>
@@ -125,4 +122,9 @@ const reset = () => {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.navbar {
+  background-color: white;
+  z-index: 0;
+}
+</style>
