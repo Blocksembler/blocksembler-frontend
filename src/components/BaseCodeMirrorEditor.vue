@@ -22,7 +22,7 @@ onMounted(() => {
       EditorState.readOnly.of(true),
       EditorView.theme({
         "&": {
-          height: "calc(100vh - 100px)",
+          height: "calc(100vh - 66px)",
           width: "100%",
         },
       }),
@@ -57,7 +57,5 @@ watch(() => props.codingWorkspaceState.sourceCode, (code) => loadCode(code));
 </template>
 
 <style scoped>
-#assemblerEditor {
-  height: 100%;
-}
+
 </style>
