@@ -86,7 +86,7 @@ props.codingWorkspaceState.addBlockEditorRefreshCallback(refresh)
 
 <style scoped>
 .blocklyDiv {
-  height: calc(100vh - 100px);
+  height: calc(100vh - 66px);
   width: 100%;
 }
 </style>
