@@ -1,18 +1,14 @@
 <script setup>
-import PencilIcon from "@/components/icons/PencilIcon.vue";
-import BugIcon from "@/components/icons/BugIcon.vue";
-import CloudDownloadIcon from "@/components/icons/CloudDownloadIcon.vue";
-import CloudUploadIcon from "@/components/icons/CloudUploadIcon.vue";
 import {codingWorkspaceState} from "@/state.js";
 import {saveAs} from "file-saver";
 
 let emit = defineEmits(['importProject', 'exportProject']);
 
-let export_project = () => {
+let exportProject = () => {
   saveAs(new Blob([codingWorkspaceState.sourceCode]), `project-${Date.now()}.s`);
 }
 
-let import_project = () => {
+let importProject = () => {
   let fileReader = new FileReader();
 
   fileReader.onload = (e) => {
@@ -26,53 +22,56 @@ let import_project = () => {
 
 </script>
 <template>
+
   <header>
-    <div class="px-3 text-bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <div class="container-fluid">
-        <div class="d-flex flex-wrap align-items-center justify-content-center">
-          <img
-              class="d-flex align-items-center my-lg-0 me-lg-auto"
-              href="/#"
-              src="https://github.com/Blocksembler/blocksembler-frontend/raw/main/img/logo.png"
-              width="150px"
-              alt="Blocksembler Logo"/>
-
-
-          <ul class="nav col-12 col-lg-auto my-2 my-md-0">
-            <li>
-              <a href="/#/editor" class="nav-link text-white">
-                <PencilIcon class="d-block mx-auto mb-1"/>
-                Editor
+        <img
+            alt="Blocksembler Logo"
+            class="navbar-brand"
+            height="50px"
+            href="/#"
+            src="https://github.com/Blocksembler/blocksembler-frontend/raw/main/img/logo.png"/>
+        <button aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"
+                class="navbar-toggler"
+                data-bs-target="#navbarSupportedContent" data-bs-toggle="collapse" type="button">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div id="navbarSupportedContent" class="collapse navbar-collapse">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item dropdown">
+              <a aria-expanded="false" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#"
+                 role="button">
+                File
+              </a>
+              <ul class="dropdown-menu">
+                <li>
+                  <a class="dropdown-item" href="#" onclick="document.getElementById('file-input').click();">
+                    Import Project
+                    <input id="file-input" name="name" style="display: none;" type="file" @change="importProject"/>
+                  </a>
+                </li>
+                <li><a class="dropdown-item" href="#" @click=exportProject>Export</a></li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/#/editor">
+                Edit Code
               </a>
             </li>
-            <li>
-              <a href="/#/debugger" class="nav-link text-white">
-                <BugIcon class="d-block mx-auto mb-1"/>
-                Debugger
+            <li class="nav-item">
+              <a class="nav-link" href="/#/debugger">
+                Run Code
               </a>
             </li>
-            <li>
-              <a href="#" class="nav-link text-white" @click="export_project">
-                <CloudDownloadIcon class="d-block mx-auto mb-1"/>
-                Export Project
-              </a>
-            </li>
-            <li>
-              <a href="#" class="nav-link text-white" onclick="document.getElementById('file-input').click();">
-                <CloudUploadIcon class="d-block mx-auto mb-1"/>
-                Import Project
-                <input id="file-input" type="file" name="name" style="display: none;" @change="import_project"/>
-              </a>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                Settings</a>
             </li>
           </ul>
         </div>
       </div>
-    </div>
+    </nav>
   </header>
-</template>
 
-<style scoped>
-header div {
-  height: 100px;
-}
-</style>
+</template>
