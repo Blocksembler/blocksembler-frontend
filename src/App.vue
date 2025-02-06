@@ -5,7 +5,6 @@ import BlocksemblerDebugView from "./components/BlocksemblerDebugView.vue";
 import Blocksembler404 from "./components/Blocksembler404.vue";
 
 import {computed, ref} from "vue";
-import {codingWorkspaceState} from "@/state.js";
 
 const routes = {
   "/": BlocksemblerCodingView,
@@ -23,18 +22,11 @@ const currentView = computed(() => {
   return routes[currentPath.value.slice(1) || "/"] || Blocksembler404;
 });
 
-const exportProject = () => {
-  console.log('Export project!');
-}
-
-const importProject = (source) => {
-  codingWorkspaceState.initWorkspace(source);
-}
 
 </script>
 
 <template>
-  <BlocksemblerNavigation @exportProject="exportProject" @importProject="importProject"/>
+  <BlocksemblerNavigation/>
   <component :is="currentView"/>
 </template>
 
