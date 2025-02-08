@@ -1,6 +1,7 @@
 <script setup>
-import {codingWorkspaceState} from "@/state.js";
+import {codingWorkspaceState, settings} from "@/state.js";
 import {saveAs} from "file-saver";
+import BaseModal from "@/components/BaseModal.vue";
 
 let emit = defineEmits(['importProject', 'exportProject']);
 
@@ -77,13 +78,24 @@ let createNewProject = () => {
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">
-                Settings</a>
+              <a class="nav-link" data-bs-target="#settingsModal" data-bs-toggle="modal" href="#">
+                Settings
+              </a>
             </li>
           </ul>
         </div>
       </div>
     </nav>
+    <BaseModal id="settingsModal" savable title="Settings">
+      <label class="form-label" for="customRange1">Milliseconds per Instruction</label>
+      <input id="customRange1"
+             v-model.number="settings.executionSpeed"
+             class="form-range"
+             max="2000"
+             min="1"
+             type="range">
+      <a>{{ settings.executionSpeed }}ms per instruction</a>
+    </BaseModal>
   </header>
 
 </template>
