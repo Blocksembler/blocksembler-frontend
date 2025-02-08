@@ -483,14 +483,14 @@ Blockly.Blocks['decimalWord'] = {
 Blockly.Blocks['randPerm'] = {
     init: function () {
         this.appendDummyInput()
-            .appendField("Generate a random permutation of datawords from 0 to")
+            .appendField("Generate a random permutation of datawords from 1 to")
             .appendField(new Blockly.FieldNumber(0), "n")
             .appendField("using seed")
             .appendField(new Blockly.FieldNumber(0), "seed");
         this.setInputsInline(true);
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
-        this.setTooltip('Declares a shuffled list of values from 0 to n');
+        this.setTooltip('Declares a shuffled list of datawords from 1 to n');
         this.setColour(dataWordColor);
         this.setOutput(false, "dataWord");
     }
