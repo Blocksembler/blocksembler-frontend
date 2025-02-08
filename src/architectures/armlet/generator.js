@@ -69,7 +69,13 @@ generator.forBlock["label"] = function (block, _generator) {
     return [`>${label}`, Order.ATOMIC];
 };
 
-generator.forBlock["immediate"] = function (block, _generator) {
+generator.forBlock["decImmediate"] = function (block, _generator) {
+    const immediate = block.getFieldValue("value");
+
+    return [`${immediate}`, Order.ATOMIC];
+};
+
+generator.forBlock["hexImmediate"] = function (block, _generator) {
     const immediate = block.getFieldValue("value");
 
     return [`${immediate}`, Order.ATOMIC];
