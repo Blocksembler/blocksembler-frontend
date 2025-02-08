@@ -58,6 +58,7 @@ const reset = () => {
     emulator.output.pop();
   }
 };
+
 </script>
 
 <template>
@@ -126,6 +127,6 @@ const reset = () => {
 <style scoped>
 .navbar {
   background-color: white;
-  z-index: 2  ;
+  z-index: 2;
 }
 </style>
