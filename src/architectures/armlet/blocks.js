@@ -10,7 +10,7 @@ const dataWordColor = 0;
 Blockly.Blocks['start'] = {
     init: function () {
         this.appendDummyInput('start')
-            .appendField('START');
+            .appendField('ENTRYPOINT');
         this.setInputsInline(true)
         this.setPreviousStatement(false);
         this.setNextStatement(true, null);
