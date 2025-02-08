@@ -1,6 +1,8 @@
 import {BaseInstruction, PseudoInstruction} from "@/architectures/instructions.js";
 import {Word} from "@/architectures/system.js";
 import {addressSize} from "@/architectures/armlet/system.js";
+import Random from "java-random";
+
 
 const intToOpCode = (number) => {
     return Number(number).toString(2).padStart(6, '0')
@@ -101,7 +103,6 @@ export class DataDirective extends PseudoInstruction {
 
     toBlock(ws) {
 
-
         if (this.args.length === 0) {
             return null;
         }
@@ -132,6 +133,52 @@ export class DataDirective extends PseudoInstruction {
 
         dataWordsBlock.setCollapsed(true);
         return dataWordsBlock;
+    }
+}
+
+export class RandPermDirective extends PseudoInstruction {
+    static get mnemonic() {
+        return "%randperm"
+    }
+
+    toString() {
+        return `${this.constructor.mnemonic} ${this.args.join(", ")}`;
+    }
+
+    shuffle(lst, seed) {
+        const rnd = new Random(seed);
+
+        for (let i = lst.length - 1; i > 0; i--) {
+            let j = rnd.nextInt(i + 1);
+
+            let tmp = lst[i];
+            lst[i] = lst[j];
+            lst[j] = tmp;
+        }
+    }
+
+    toMachineCode() {
+        let seed = parseInt(this.args[0])
+        let n = parseInt(this.args[1])
+        let lst = Array.from(Array(n).keys());
+
+        this.shuffle(lst, seed)
+
+        let machineCode = ""
+
+        for (let val of lst) {
+            machineCode += Word.fromSignedIntValue(val).toBitString();
+        }
+
+        return machineCode;
+    }
+
+    toBlock(ws) {
+        let randPermBlock = ws.newBlock('randPerm')
+        randPermBlock.initSvg()
+        randPermBlock.setFieldValue(parseInt(this.args[0]), 'seed')
+        randPermBlock.setFieldValue(parseInt(this.args[1]), 'n')
+        return randPermBlock;
     }
 }
 
@@ -1654,5 +1701,6 @@ const immediateInstructionClasses = [
 ];
 
 const pseudoInstructionClasses = [
-    DataDirective
+    DataDirective,
+    RandPermDirective,
 ]
