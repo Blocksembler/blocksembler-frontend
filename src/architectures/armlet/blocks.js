@@ -44,11 +44,38 @@ Blockly.Blocks['labelDef'] = {
     }
 };
 
-Blockly.Blocks['immediate'] = {
+Blockly.Blocks['decImmediate'] = {
     init: function () {
         this.appendDummyInput()
-            .appendField("Immediate: ")
-            .appendField(new Blockly.FieldNumber(0), "value");
+            .appendField("decimal value: ")
+            .appendField(new Blockly.FieldNumber(0, 0, 65535), "value");
+        this.setInputsInline(true);
+        this.setOutput(true, "immediate");
+        this.setColour(atomicValueColor);
+        this.setTooltip("This block represents an immediate integer value.");
+        this.setHelpUrl("");
+    }
+};
+
+const validateHex = (val) => {
+    if (val.startsWith("0x")) {
+        val = val.slice(2);
+    }
+
+    val = val.padStart(4, "0");
+
+    if (!/^[0-9a-fA-F]{4}$/i.test(val)) {
+        val = '0000'
+    }
+
+    return `0x${val}`
+}
+
+Blockly.Blocks['hexImmediate'] = {
+    init: function () {
+        this.appendDummyInput()
+            .appendField("hex value: ")
+            .appendField(new Blockly.FieldTextInput("0x0000", validateHex), "value");
         this.setInputsInline(true);
         this.setOutput(true, "immediate");
         this.setColour(atomicValueColor);
