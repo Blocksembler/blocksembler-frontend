@@ -2,7 +2,7 @@
 import {computed} from "vue";
 import {codeParser, emulator} from "../state";
 
-const memoryToInstructionObjects = (progMemory) => {
+const memoryToInstructionObjects = (progMemory, highlightedLines) => {
   let instructions = [];
 
   let address = 0;
@@ -12,7 +12,17 @@ const memoryToInstructionObjects = (progMemory) => {
     let binVal = progMemory[address].toBitString();
     let decVal = progMemory[address].toUnsignedIntValue();
     let hexVal = progMemory[address].toHexValue()
-    instructions.push({address: address, inst: inst, binVal: binVal, decVal: decVal, hexVal: hexVal});
+
+    let cssClass = highlightedLines.indexOf(address) !== -1 ? "table-active" : "";
+
+    instructions.push({
+      address: address,
+      inst: inst,
+      binVal: binVal,
+      decVal: decVal,
+      hexVal: hexVal,
+      cssClass: cssClass
+    });
 
     address += 1;
   }
@@ -21,9 +31,21 @@ const memoryToInstructionObjects = (progMemory) => {
 }
 
 const instructions = computed(() => {
+  console.log('compute');
+  let highlightedLines = [];
+  if (emulator.loadedProgramSize > 0) {
+    let pcAddress = emulator.registers.pc.toUnsignedIntValue();
+    highlightedLines.push(pcAddress);
+    let nextInst = codeParser.instructionFactory.createFromOpCode(emulator.memory, pcAddress);
+
+    if (nextInst.toMachineCode().length / 16 > 1) {
+      highlightedLines.push(pcAddress + 1);
+    }
+  }
+
   let programMemorySegment = emulator.memory.slice(0, emulator.loadedProgramSize);
 
-  return memoryToInstructionObjects(programMemorySegment);
+  return memoryToInstructionObjects(programMemorySegment, highlightedLines);
 });
 </script>
 <template>
@@ -44,7 +66,7 @@ const instructions = computed(() => {
         </tr>
         </thead>
         <tbody>
-        <tr v-for="instruction in instructions">
+        <tr v-for="instruction in instructions" :class=instruction.cssClass>
           <td>
             <svg
                 v-if="
