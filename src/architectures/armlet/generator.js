@@ -219,3 +219,10 @@ generator.forBlock['decimalWord'] = function (block, _generator) {
 
     return `%data ${dataVal}`;
 }
+
+generator.forBlock['randPerm'] = function (block, _generator) {
+    const n = block.getFieldValue("n");
+    const seed = block.getFieldValue("seed");
+
+    return `%randperm ${seed}, ${n}`;
+}
