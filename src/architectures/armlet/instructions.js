@@ -331,8 +331,12 @@ export class AbstractArmletInstruction extends BaseInstruction {
                 iBlock = ws.newBlock('label');
                 iBlock.initSvg();
                 iBlock.getField('value').setValue(this.immediate.slice(1));
+            } else if (this.immediate.startsWith('0x')) {
+                iBlock = ws.newBlock('hexImmediate');
+                iBlock.initSvg();
+                iBlock.getField('value').setValue(this.immediate);
             } else {
-                iBlock = ws.newBlock('immediate');
+                iBlock = ws.newBlock('decImmediate');
                 iBlock.initSvg();
                 iBlock.getField('value').setValue(Number(this.immediate));
             }
