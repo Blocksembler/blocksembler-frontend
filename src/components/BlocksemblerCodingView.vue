@@ -21,7 +21,9 @@ let options = ref({
   scrollbars: true,
   sounds: true,
   oneBasedIndex: true,
-
+  maxInstances: {
+    'start': 1,
+  },
   multiselectIcon: {
     hideIcon: false,
     weight: 3,
@@ -45,7 +47,7 @@ let options = ref({
   <div class="container-fluid">
     <div class="row">
       <div class="col-8 p-0">
-        <BaseBlocklyEditor ref="blocklyEditor" :options="options" :codingWorkspaceState="codingWorkspaceState"/>
+        <BaseBlocklyEditor ref="blocklyEditor" :codingWorkspaceState="codingWorkspaceState" :options="options"/>
       </div>
       <div class="col-4 p-0">
         <BaseCodeMirrorEditor ref="codeMirrorEditor" :codingWorkspaceState="codingWorkspaceState"/>
