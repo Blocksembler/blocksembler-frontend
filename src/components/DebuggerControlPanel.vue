@@ -126,6 +126,6 @@ const reset = () => {
 <style scoped>
 .navbar {
   background-color: white;
-  z-index: 0;
+  z-index: 2  ;
 }
 </style>
