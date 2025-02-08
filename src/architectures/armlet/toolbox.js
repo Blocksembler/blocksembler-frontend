@@ -16,7 +16,8 @@ export const toolbox = {
             kind: "category",
             name: "Primitives",
             contents: [
-                {kind: "block", type: "immediate"},
+                {kind: "block", type: "decImmediate"},
+                {kind: "block", type: "hexImmediate"},
                 {kind: "block", type: "register"},
                 {kind: "block", type: "label"},
             ]
