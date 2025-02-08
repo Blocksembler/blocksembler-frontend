@@ -161,6 +161,7 @@ export class RandPermDirective extends PseudoInstruction {
         let seed = parseInt(this.args[0])
         let n = parseInt(this.args[1])
         let lst = Array.from(Array(n).keys());
+        lst = lst.map(val => val + 1);
 
         this.shuffle(lst, seed)
 
