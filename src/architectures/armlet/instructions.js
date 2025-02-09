@@ -297,6 +297,12 @@ export class AbstractArmletInstruction extends BaseInstruction {
         let block = ws.newBlock(this.blockType);
         block.initSvg();
 
+        this.setBlockFields(ws, block);
+
+        return block;
+    }
+
+    setBlockFields(ws, block) {
         if (this.lArgument) {
             let destinationBlock = ws.newBlock('register');
             destinationBlock.initSvg();
@@ -353,10 +359,7 @@ export class AbstractArmletInstruction extends BaseInstruction {
         if (this.comment) {
             block.setCommentText(this.comment);
         }
-
-        return block;
     }
-
 }
 
 export class AbstractImmediateArmletInstruction extends AbstractArmletInstruction {
@@ -394,6 +397,14 @@ export class AbstractArmletControlInstruction extends AbstractArmletInstruction 
         return new this([a])
     }
 
+    setBlockFields(ws, block) {
+        super.setBlockFields(ws, block);
+
+        if (block.getField('condition')) {
+            block.getField('condition').setValue(this.constructor.mnemonic);
+        }
+    }
+
     toMachineCode() {
         let l = "000"
         let a = regToBinary(this.aArgument)
@@ -415,6 +426,14 @@ export class AbstractArmletImmediateControlInstruction extends AbstractImmediate
     static fromMachineCode(instWord, immediateWord) {
         let immediate = `${parseInt(immediateWord, 2)}`
         return new this([immediate])
+    }
+
+    setBlockFields(ws, block) {
+        super.setBlockFields(ws, block);
+
+        if (block.getField('condition')) {
+            block.getField('condition').setValue(this.constructor.mnemonic);
+        }
     }
 
     toMachineCode() {
@@ -545,6 +564,12 @@ export class AndInstruction extends AbstractArmletInstruction {
         return new AndInstruction([this.extractL(code), this.extractA(code), this.extractB(code)]);
     }
 
+    setBlockFields(ws, block) {
+        super.setBlockFields(ws, block);
+
+        block.getField('operation').setValue('and');
+    }
+
     executeOn(system) {
         let dest = system.registers[this.lArgument]
         let firstOp = system.registers[this.aArgument]
@@ -570,6 +595,12 @@ export class AndImmediateInstruction extends AbstractImmediateArmletInstruction 
 
     get blockType() {
         return "linst"
+    }
+
+    setBlockFields(ws, block) {
+        super.setBlockFields(ws, block);
+
+        block.getField('operation').setValue('and');
     }
 
     executeOn(system) {
@@ -599,6 +630,12 @@ export class IorInstruction extends AbstractArmletInstruction {
         return "linst"
     }
 
+    setBlockFields(ws, block) {
+        super.setBlockFields(ws, block);
+
+        block.getField('operation').setValue('ior');
+    }
+
     executeOn(system) {
         let dest = system.registers[this.lArgument]
         let firstOp = system.registers[this.aArgument]
@@ -624,6 +661,12 @@ export class IorImmediateInstruction extends AbstractImmediateArmletInstruction 
 
     get blockType() {
         return "linst"
+    }
+
+    setBlockFields(ws, block) {
+        super.setBlockFields(ws, block);
+
+        block.getField('operation').setValue('ior');
     }
 
     executeOn(system) {
@@ -654,6 +697,12 @@ export class EorInstruction extends AbstractArmletInstruction {
         return "linst"
     }
 
+    setBlockFields(ws, block) {
+        super.setBlockFields(ws, block);
+
+        block.getField('operation').setValue('eor');
+    }
+
     executeOn(system) {
         let dest = system.registers[this.lArgument]
         let firstOp = system.registers[this.aArgument]
@@ -679,6 +728,12 @@ export class EorImmediateInstruction extends AbstractImmediateArmletInstruction 
 
     get blockType() {
         return "linst"
+    }
+
+    setBlockFields(ws, block) {
+        super.setBlockFields(ws, block);
+
+        block.getField('operation').setValue('eor');
     }
 
     executeOn(system) {
@@ -735,6 +790,12 @@ export class AddInstruction extends AbstractArmletInstruction {
         return "ainst"
     }
 
+    setBlockFields(ws, block) {
+        super.setBlockFields(ws, block);
+
+        block.getField('operation').setValue('add');
+    }
+
     executeOn(system) {
         let destReg = system.registers[this.lArgument];
         let firstOpReg = system.registers[this.aArgument];
@@ -760,6 +821,12 @@ export class AddImmediateInstruction extends AbstractImmediateArmletInstruction 
 
     get blockType() {
         return "ainst"
+    }
+
+    setBlockFields(ws, block) {
+        super.setBlockFields(ws, block);
+
+        block.getField('operation').setValue('add');
     }
 
     executeOn(system) {
@@ -789,6 +856,12 @@ export class SubInstruction extends AbstractArmletInstruction {
         return "ainst"
     }
 
+    setBlockFields(ws, block) {
+        super.setBlockFields(ws, block);
+
+        block.getField('operation').setValue('sub');
+    }
+
     executeOn(system) {
         let destReg = system.registers[this.lArgument];
         let firstOpReg = system.registers[this.aArgument];
@@ -816,6 +889,12 @@ export class SubImmediateInstruction extends AbstractImmediateArmletInstruction 
 
     get blockType() {
         return "ainst"
+    }
+
+    setBlockFields(ws, block) {
+        super.setBlockFields(ws, block);
+
+        block.getField('operation').setValue('sub');
     }
 
     executeOn(system) {
@@ -1176,6 +1255,10 @@ export class JmpInstruction extends AbstractArmletControlInstruction {
         return intToOpCode(15)
     }
 
+    get blockType() {
+        return "jmp"
+    }
+
     executeOn(system) {
         system.registers['pc'].set(this.getJmpTarget(system))
     }
@@ -1191,7 +1274,7 @@ export class JmpImmediateInstruction extends AbstractArmletImmediateControlInstr
     }
 
     get blockType() {
-        return "cjmp"
+        return "jmp"
     }
 
     executeOn(system) {
