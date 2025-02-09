@@ -429,7 +429,7 @@ const branchingConditions = [
     ['less than', 'blt'],
     ['less or equal', 'ble'],
     ['above', 'bab'],
-    ['below', 'bbl'],
+    ['below', 'bbw'],
     ['above or equal', 'bae'],
     ['below or equal', 'bbe'],
 ];
