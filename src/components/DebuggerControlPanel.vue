@@ -76,23 +76,23 @@ const reset = () => {
     <div>
       <BaseButton @click="assembleHandler">
         <PlayCircleIcon/>
-        Assemble & Load to Memory
+        <span class="d-none d-md-none d-lg-inline ms-1">Load to Memory</span>
       </BaseButton>
       <BaseButton v-if="emulator.isPaused" @click="runProgram">
         <PlayIcon/>
-        Run
+        <span class="d-none d-md-none d-lg-inline ms-1">Run</span>
       </BaseButton>
       <BaseButton v-else @click="pauseProgram">
         <PauseIcon/>
-        Pause
+        <span class="d-none d-md-none d-lg-inline ms-1">Pause</span>
       </BaseButton>
       <BaseButton @click="executeNext">
         <ArrowRightSquareIcon/>
-        Execute & Fetch Next
+        <span class="d-none d-md-none d-lg-inline ms-1">Execute & Fetch Next</span>
       </BaseButton>
       <BaseButton @click="reset">
         <ReplyIcon/>
-        Reset
+        <span class="d-none d-md-none d-lg-inline ms-1">Reset</span>
       </BaseButton>
       <BaseButton
           v-if="emulator.hasConsole"
@@ -101,7 +101,7 @@ const reset = () => {
           data-bs-toggle="modal"
       >
         <TerminalIcon/>
-        Output Console
+        <span class="d-none d-md-none d-lg-inline ms-1">Output Console</span>
       </BaseButton>
     </div>
   </div>
