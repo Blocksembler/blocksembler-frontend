@@ -7,10 +7,10 @@ import {codingWorkspaceState} from "@/state.js";
 <template>
   <div class="container-fluid">
     <div class="row">
-      <div class="col-8 px-3 container">
+      <div class="col-12 col-sm-8 px-3 container">
         <DebuggerPanel/>
       </div>
-      <div class="col-4 p-0">
+      <div class="col-4 p-0 d-none d-sm-block">
         <BaseCodeMirrorEditor :codingWorkspaceState="codingWorkspaceState" :highlightedLine="0"/>
       </div>
     </div>
