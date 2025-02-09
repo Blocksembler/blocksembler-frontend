@@ -95,6 +95,7 @@ const reset = () => {
         Reset
       </BaseButton>
       <BaseButton
+          v-if="emulator.hasConsole"
           :notification-count="output.length"
           data-bs-target="#outputConsole"
           data-bs-toggle="modal"

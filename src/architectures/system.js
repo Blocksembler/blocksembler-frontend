@@ -1,5 +1,5 @@
 export class BaseEmulator {
-    constructor(registers, addressSize, instructionFactory, interruptHandler) {
+    constructor(registers, addressSize, instructionFactory, interruptHandler, hasConsole = true) {
         this.instructionFactory = instructionFactory;
         this.interruptHandler = interruptHandler;
         this.addressSize = addressSize;
@@ -9,6 +9,7 @@ export class BaseEmulator {
         this.isPaused = true;
         this.executionIntervalId = -1;
         this.executionSpeed = 500;
+        this.hasConsole = hasConsole;
         this.output = [];
 
         this.registers = {

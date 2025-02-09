@@ -7,7 +7,7 @@ export class ArmletEmulator extends BaseEmulator {
     constructor() {
         const registers = ArmletEmulator.setUpRegistersStatic();
         const interrupts = ArmletEmulator.setUpInterruptsStatic();
-        super(registers, addressSize, new ArmletInstructionFactory(), interrupts);
+        super(registers, addressSize, new ArmletInstructionFactory(), interrupts, false);
     }
 
     get isEqFlagSet() {
