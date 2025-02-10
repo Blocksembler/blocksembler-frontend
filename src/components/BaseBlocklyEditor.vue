@@ -31,18 +31,28 @@ onMounted(() => {
   multiselectPlugin.init(options);
 
   const runCode = () => {
-    let code = formatAssemblyCode(
-        generator.workspaceToCode(workspace.value)
-    );
+    try {
+      let code = formatAssemblyCode(
+          generator.workspaceToCode(workspace.value)
+      );
 
-    props.codingWorkspaceState.updateSourceCode(code)
+      props.codingWorkspaceState.updateSourceCode(code)
+    } catch (error) {
+      logEvent('failedToGenerateAssemblyCode', error);
+    }
+
   };
 
   jsonWorkspace.value = load();
 
   if (jsonWorkspace.value) {
     Blockly.Events.disable();
-    Blockly.serialization.workspaces.load(jsonWorkspace.value, workspace.value, false);
+    try {
+      Blockly.serialization.workspaces.load(jsonWorkspace.value, workspace.value, false);
+    } catch (error) {
+      logEvent('failedToLoadBlocklyWorkspaceFromLS', error);
+    }
+
     Blockly.Events.enable();
   }
 
