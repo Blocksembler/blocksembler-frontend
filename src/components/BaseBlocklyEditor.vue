@@ -10,6 +10,7 @@ import {jsonWorkspace} from "../state";
 import {loadWorkspaceFromAssemblyCode} from "@/architectures/import.js";
 import {Multiselect} from "@mit-app-inventor/blockly-plugin-workspace-multiselect";
 import {shadowBlockConversionChangeListener} from "@blockly/shadow-block-converter";
+import {logEvent} from "@/logging.js";
 
 const props = defineProps(["options", "codingWorkspaceState"]);
 
@@ -64,6 +65,7 @@ onMounted(() => {
       return;
     }
     runCode();
+    logEvent('blocklyWorkspaceChanged', e);
   });
 
 });
