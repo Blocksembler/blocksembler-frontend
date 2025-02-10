@@ -9,6 +9,7 @@ import PauseIcon from "@/components/icons/PauseIcon.vue";
 import ArrowRightSquareIcon from "@/components/icons/ArrowRightSquareIcon.vue";
 import ReplyIcon from "@/components/icons/ReplyIcon.vue";
 import TerminalIcon from "@/components/icons/TerminalIcon.vue";
+import {logEvent} from "@/logging.js";
 
 const output = reactive(emulator.output);
 
@@ -16,47 +17,59 @@ defineProps(['sourceCode'])
 
 const assembleHandler = () => {
   console.log("start parsing...");
+  let parsedProgram, resolvedProgram;
 
   try {
-    let parsedProgram = codeParser.parseCode(codingWorkspaceState.sourceCode);
-    let resolvedProgram = codeParser.resolveLabels(parsedProgram);
-    console.log("load program to memory...");
-    emulator.loadProgram(resolvedProgram);
-    console.log("assemble & load finished");
+    parsedProgram = codeParser.parseCode(codingWorkspaceState.sourceCode);
   } catch (e) {
-    console.log(e);
+    logEvent('parsingFailed', e);
+    alert('Failed to parse the assembly program!');
+  }
+
+  try {
+    resolvedProgram = codeParser.resolveLabels(parsedProgram);
+  } catch (e) {
+    logEvent('resolvingLabelsFailed', e);
     alert('Failed to parse the assembly program! \n\n Reason: Not every label-primitive defined in code!');
   }
 
+  try {
+    emulator.loadProgram(resolvedProgram);
+  } catch (e) {
+    logEvent('loadingProgramFailed', e);
+    alert('Failed to load program to Emulator!');
+  }
 
 };
 
 const runProgram = () => {
   emulator.executionSpeed = settings.executionSpeed
   emulator.startExecution()
+
+  logEvent('startExecution');
 }
 
 const pauseProgram = () => {
   emulator.pauseExecution()
+  logEvent('pauseExecution');
 }
 
 const executeNext = () => {
   emulator.executeSingleInstruction();
+  logEvent('executeSingleStep');
 };
 
 const reset = () => {
-  console.log("set emulator to not terminated state")
   emulator.isTerminated = false;
-  console.log("set emulator to paused state")
   emulator.isPaused = true;
-  console.log("reset registers");
   emulator.resetRegisters();
-  console.log("reset memory");
   emulator.resetMemory();
-  console.log("reset output");
+
   while (emulator.output.length > 0) {
     emulator.output.pop();
   }
+
+  logEvent('resetEmulator');
 };
 
 </script>
