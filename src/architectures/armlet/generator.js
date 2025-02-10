@@ -226,3 +226,10 @@ generator.forBlock['randPerm'] = function (block, _generator) {
 
     return `%randperm ${seed}, ${n}`;
 }
+
+generator.forBlock['rand'] = function (block, _generator) {
+    const n = block.getFieldValue("n");
+    const seed = block.getFieldValue("seed");
+
+    return `%rand ${n}, ${seed}`;
+}
