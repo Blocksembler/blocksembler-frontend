@@ -10,6 +10,7 @@ export const toolbox = {
                 {kind: "block", type: "labelDef"},
                 {kind: "block", type: "data"},
                 {kind: "block", type: "decimalWord"},
+                {kind: "block", type: "rand"},
                 {kind: "block", type: "randPerm"},
             ]
         },
