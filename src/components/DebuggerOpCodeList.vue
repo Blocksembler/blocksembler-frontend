@@ -31,7 +31,6 @@ const memoryToInstructionObjects = (progMemory, highlightedLines) => {
 }
 
 const instructions = computed(() => {
-  console.log('compute');
   let highlightedLines = [];
   if (emulator.loadedProgramSize > 0) {
     let pcAddress = emulator.registers.pc.toUnsignedIntValue();
