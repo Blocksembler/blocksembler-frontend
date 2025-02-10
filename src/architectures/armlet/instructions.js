@@ -183,6 +183,57 @@ export class RandPermDirective extends PseudoInstruction {
     }
 }
 
+export class RandDirective extends PseudoInstruction {
+    static get mnemonic() {
+        return "%rand"
+    }
+
+    toString() {
+        return `${this.constructor.mnemonic} ${this.args.join(", ")}`;
+    }
+
+    toMachineCode() {
+        let n = parseInt(this.args[0])
+        let seed;
+
+        if (this.args.length === 1) {
+            seed = 2 ** 16 - 1
+        } else {
+            seed = parseInt(this.args[1])
+        }
+
+        const random = new Random(seed);
+        const randomValues = [];
+
+        for (let i = 0; i < n; i++) {
+            randomValues.push(random.nextInt(2 ** 16))
+        }
+
+        let machineCode = ""
+
+        for (let val of randomValues) {
+            machineCode += Word.fromSignedIntValue(val).toBitString();
+        }
+
+        return machineCode;
+    }
+
+    toBlock(ws) {
+        let randPermBlock = ws.newBlock('rand')
+        randPermBlock.initSvg()
+
+        randPermBlock.setFieldValue(parseInt(this.args[0]), 'n')
+
+        if (this.args.length === 1) {
+            randPermBlock.setFieldValue(2 ** 16 - 1, 'seed')
+        } else {
+            randPermBlock.setFieldValue(parseInt(this.args[1]), 'seed')
+        }
+
+        return randPermBlock;
+    }
+}
+
 export class MultilineComment {
     constructor(text) {
         this.text = text;
@@ -1791,4 +1842,5 @@ const immediateInstructionClasses = [
 const pseudoInstructionClasses = [
     DataDirective,
     RandPermDirective,
+    RandDirective,
 ]
