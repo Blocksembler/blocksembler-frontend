@@ -38,7 +38,7 @@ onMounted(() => {
 
       props.codingWorkspaceState.updateSourceCode(code)
     } catch (error) {
-      logEvent('failedToGenerateAssemblyCode', error);
+      logEvent('failedToGenerateAssemblyCode', error.toString());
     }
 
   };
@@ -50,7 +50,7 @@ onMounted(() => {
     try {
       Blockly.serialization.workspaces.load(jsonWorkspace.value, workspace.value, false);
     } catch (error) {
-      logEvent('failedToLoadBlocklyWorkspaceFromLS', error);
+      logEvent('failedToLoadBlocklyWorkspaceFromLS', error.toString());
     }
 
     Blockly.Events.enable();

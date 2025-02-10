@@ -376,6 +376,6 @@ export class ImmutableWord extends Word {
     }
 
     set(word) {
-        console.log("set instruction on immutable word prevented!");
+        // Do Nothing
     }
 }
