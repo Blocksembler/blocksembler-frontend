@@ -2,11 +2,19 @@
 import {codingWorkspaceState, settings} from "@/state.js";
 import {saveAs} from "file-saver";
 import BaseModal from "@/components/BaseModal.vue";
+import {downloadLogData, logEvent} from "@/logging.js";
+import CloudDownloadIcon from "@/components/icons/CloudDownloadIcon.vue";
 
 let emit = defineEmits(['importProject', 'exportProject']);
 
 let exportProject = () => {
   saveAs(new Blob([codingWorkspaceState.sourceCode]), `project-${Date.now()}.s`);
+  logEvent('buttonClick', {'source': 'exportProjectButton'})
+}
+
+let exportLogData = () => {
+  downloadLogData();
+  logEvent('buttonClick', {'source': 'exportLogButton'})
 }
 
 let importProject = () => {
@@ -14,15 +22,28 @@ let importProject = () => {
 
   fileReader.onload = (e) => {
     const sourceCode = e.target.result;
-    codingWorkspaceState.initWorkspace(sourceCode);
+    try {
+      codingWorkspaceState.initWorkspace(sourceCode);
+      logEvent('sourceCodeLoaded', {'content': sourceCode});
+    } catch (e) {
+      logEvent('sourceCodeLoadingFailed');
+    }
   }
 
+  logEvent('buttonClick', {'source': 'importProjectButton'})
   fileReader.readAsText(document.getElementById("file-input").files[0]);
 }
 
 let createNewProject = () => {
+  logEvent('buttonClick', {'source': 'createNewProjectButton'})
   codingWorkspaceState.initWorkspace("");
 }
+
+let editCode = () => logEvent('buttonClick', {'source': 'editCodeButton'});
+
+let debugCode = () => logEvent('buttonClick', {'source': 'debugCodeButton'});
+
+let openSettings = () => logEvent('buttonClick', {'source': 'settingsButton'});
 
 </script>
 <template>
@@ -68,23 +89,32 @@ let createNewProject = () => {
               </ul>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/#/editor">
+              <a class="nav-link" href="/#/editor" @click=editCode>
                 Edit Code
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/#/debugger">
+              <a class="nav-link" href="/#/debugger" @click=debugCode>
                 Run Code
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" data-bs-target="#settingsModal" data-bs-toggle="modal" href="#">
+              <a class="nav-link" data-bs-target="#settingsModal" data-bs-toggle="modal" href="#" @click=openSettings>
                 Settings
+              </a>
+            </li>
+            <li class="nav-item d-inline d-lg-none">
+              <a class="nav-link" data-bs-target="#settingsModal" data-bs-toggle="modal" href="#" @click=openSettings>
+                Download Log Data
               </a>
             </li>
           </ul>
         </div>
       </div>
+      <button class="btn btn-outline-secondary text-nowrap me-2 d-none d-lg-inline" @click="exportLogData">
+        <CloudDownloadIcon/>
+        Download Log Data
+      </button>
     </nav>
     <BaseModal id="settingsModal" savable title="Settings">
       <label class="form-label" for="customRange1">Milliseconds per Instruction</label>
@@ -95,6 +125,9 @@ let createNewProject = () => {
              min="1"
              type="range">
       <a>{{ settings.executionSpeed }}ms per instruction</a>
+    </BaseModal>
+    <BaseModal id="restoreModal" saveable title="Restore Last Session">
+      <a>Do you want to restore your last coding session?</a>
     </BaseModal>
   </header>
 
