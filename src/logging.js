@@ -21,7 +21,6 @@ export const logEvent = (type, data = {}) => {
     open.onsuccess = (e) => {
         let db = e.target.result;
 
-        console.log(event);
         db.transaction('messages', 'readwrite').objectStore('messages').add(event).onerror = (e) => {
             console.log(e);
         };
