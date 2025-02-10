@@ -10,6 +10,7 @@ import ArrowRightSquareIcon from "@/components/icons/ArrowRightSquareIcon.vue";
 import ReplyIcon from "@/components/icons/ReplyIcon.vue";
 import TerminalIcon from "@/components/icons/TerminalIcon.vue";
 import {logEvent} from "@/logging.js";
+import BaseDropDown from "@/components/BaseDropDown.vue";
 
 const output = reactive(emulator.output);
 
@@ -59,11 +60,19 @@ const executeNext = () => {
   logEvent('executeSingleStep');
 };
 
-const reset = () => {
+const reset = (buttonKey, event) => {
+  event.preventDefault();
+
   emulator.isTerminated = false;
   emulator.isPaused = true;
-  emulator.resetRegisters();
-  emulator.resetMemory();
+
+  if (buttonKey === 'reg-only' || buttonKey === '__default__') {
+    emulator.resetRegisters();
+  }
+
+  if (buttonKey === 'memory-only' || buttonKey === '__default__') {
+    emulator.resetMemory();
+  }
 
   while (emulator.output.length > 0) {
     emulator.output.pop();
@@ -72,6 +81,10 @@ const reset = () => {
   logEvent('resetEmulator');
 };
 
+const resetButtonItems = [
+  {key: 'memory-only', label: 'Reset Memory only'},
+  {key: 'reg-only', label: 'Reset Registers only'},
+];
 </script>
 
 <template>
@@ -103,10 +116,10 @@ const reset = () => {
         <ArrowRightSquareIcon/>
         <span class="d-none d-md-none d-lg-inline ms-1">Execute & Fetch Next</span>
       </BaseButton>
-      <BaseButton @click="reset">
+      <BaseDropDown :items=resetButtonItems @click="reset">
         <ReplyIcon/>
-        <span class="d-none d-md-none d-lg-inline ms-1">Reset</span>
-      </BaseButton>
+        <span class="d-none d-md-none d-lg-inline ms-1">Reset All</span>
+      </BaseDropDown>
       <BaseButton
           v-if="emulator.hasConsole"
           :notification-count="output.length"
