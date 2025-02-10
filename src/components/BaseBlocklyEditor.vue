@@ -65,6 +65,9 @@ onMounted(() => {
       return;
     }
     runCode();
+  });
+
+  workspace.value.addChangeListener(function (e) {
     logEvent('blocklyWorkspaceChanged', e);
   });
 
