@@ -1,3 +1,5 @@
+import {Exception} from "sass";
+
 export class BaseEmulator {
     constructor(registers, addressSize, instructionFactory, interruptHandler, hasConsole = true) {
         this.instructionFactory = instructionFactory;
@@ -376,6 +378,6 @@ export class ImmutableWord extends Word {
     }
 
     set(word) {
-        console.log("set instruction on immutable word prevented!");
+        throw new Exception("Tried to modify an immutable word!");
     }
 }

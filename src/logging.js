@@ -1,9 +1,9 @@
 const logDbName = "BlocksemblerLogDB"
 const logDbVersion = 1
 
-export const logEvent = (type, data = {}) => {
-    data.ts = new Date().toUTCString();
-    let event = {type, data};
+export const logEvent = (type, payload = {}) => {
+    let ts = new Date().toUTCString();
+    let event = {type, ts, payload};
 
     let open = indexedDB.open(logDbName, logDbVersion);
 

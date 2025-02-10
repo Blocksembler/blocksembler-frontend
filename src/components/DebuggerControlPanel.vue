@@ -17,27 +17,28 @@ const output = reactive(emulator.output);
 defineProps(['sourceCode'])
 
 const assembleHandler = () => {
-  console.log("start parsing...");
   let parsedProgram, resolvedProgram;
 
   try {
     parsedProgram = codeParser.parseCode(codingWorkspaceState.sourceCode);
   } catch (e) {
-    logEvent('parsingFailed', e);
+    logEvent('parsingFailed', e.toString());
     alert('Failed to parse the assembly program!');
+    return;
   }
 
   try {
     resolvedProgram = codeParser.resolveLabels(parsedProgram);
   } catch (e) {
-    logEvent('resolvingLabelsFailed', e);
+    logEvent('resolvingLabelsFailed', e.toString());
     alert('Failed to parse the assembly program! \n\n Reason: Not every label-primitive defined in code!');
+    return;
   }
 
   try {
     emulator.loadProgram(resolvedProgram);
   } catch (e) {
-    logEvent('loadingProgramFailed', e);
+    logEvent('loadingProgramFailed', e.toString());
     alert('Failed to load program to Emulator!');
   }
 
