@@ -28,6 +28,7 @@ import {
     BneInstruction,
     CmpImmediateInstruction,
     CmpInstruction,
+    DataDirective,
     EorImmediateInstruction,
     EorInstruction,
     IorImmediateInstruction,
@@ -41,13 +42,91 @@ import {
     LsrInstruction,
     MovImmediateInstruction,
     MovInstruction,
+    MultilineComment,
     NegInstruction,
     NopInstruction,
+    RandDirective,
+    RandPermDirective,
     StoInstruction,
     SubImmediateInstruction,
     SubInstruction
 } from "@/architectures/armlet/instructions.js";
 import {AddInstruction, AndInstruction, NotInstruction} from "@/architectures/anna/instructions.js";
+import {ParsingError} from "@/architectures/parser.js";
+
+
+test('test new parser', () => {
+    let sourceCode = [
+        '@inlinelabel: mov $2, >test',
+        '',
+        '',
+        '# this is a comment',
+        '# abc',
+        '',
+        '@test:',
+        '',
+        '# test 2',
+        '# abc',
+        '',
+        'mov $1, $2 # in-line comment',
+        '',
+        '',
+        'nop',
+    ];
+
+    let expectedProgram = [
+        new MovInstruction(["$2", "2"], "@inlinelabel"),
+        new MultilineComment("this is a comment\nabc"),
+        new MultilineComment("test 2\nabc"),
+        new MovInstruction(["$1", "$2"], "@test", "in-line comment"),
+        new NopInstruction()
+    ]
+
+    let parser = new ArmletAssemblyParser(new ArmletInstructionFactory());
+    let generatedProgram = parser.parseCode(sourceCode.join('\n'));
+
+    expect(generatedProgram).toEqual(expectedProgram);
+});
+
+test('test error on undefined label', () => {
+    let sourceCode = [
+        'mov $2, >test',
+        'nop',
+    ];
+
+    let parser = new ArmletAssemblyParser(new ArmletInstructionFactory());
+
+    expect(() => parser.parseCode(sourceCode.join('\n')))
+        .toThrow(new ParsingError(1, 'Label "test" not defined.'));
+
+});
+
+test('test error on defining the same label twice', () => {
+    let sourceCode = [
+        '@label:',
+        'mov $2, 123',
+        '@label:',
+        'nop',
+    ];
+
+    let parser = new ArmletAssemblyParser(new ArmletInstructionFactory());
+
+    expect(() => parser.parseCode(sourceCode.join('\n')))
+        .toThrow(new ParsingError(3, 'Label "@label" already defined.'));
+})
+
+test('test error on invalid instruction', () => {
+    let sourceCode = [
+        'mov $1, $0',
+        'mo $2, $1',
+        'nop'
+    ]
+
+    let parser = new ArmletAssemblyParser(new ArmletInstructionFactory());
+
+    expect(() => parser.parseCode(sourceCode.join('\n')))
+        .toThrow(new ParsingError(2, 'Failed to parse instruction at line 2'));
+});
 
 test('test parsing programm with all instructions', () => {
     let program = [
@@ -98,6 +177,9 @@ test('test parsing programm with all instructions', () => {
         "bbw 1",
         "bae 1",
         "bbe 1",
+        "%data 1, 2, 3",
+        "%randperm 1, 2",
+        "%rand 3, 4",
     ]
 
     let expectedProgram = [
@@ -148,10 +230,37 @@ test('test parsing programm with all instructions', () => {
         new BbwImmediateInstruction(['1']),
         new BaeImmediateInstruction(['1']),
         new BbeImmediateInstruction(['1']),
+        new DataDirective(["1", "2", "3"]),
+        new RandPermDirective(["1", "2"]),
+        new RandDirective(["3", "4"]),
     ]
 
     let parser = new ArmletAssemblyParser(new ArmletInstructionFactory());
-    let parsedProgram = parser.resolveLabels(parser.parseCode(program.join('\n')))
+    let parsedProgram = parser.parseCode(program.join('\n'))
 
     expect(parsedProgram).toEqual(expectedProgram);
+});
+
+test("label on directivees", () => {
+    const sourceProgram = [
+        "mov $7, >len",
+        "loa $0, $7",
+        "mov $2, >target",
+        "@len:",
+        "%data 0",
+        "@target:",
+        "%data 1, 2, 3",
+    ]
+
+    const expectedProgram = [
+        new MovImmediateInstruction(["$7", "5"]),
+        new LoaInstruction(["$0", "$7"]),
+        new MovImmediateInstruction(["$2", "6"]),
+        new DataDirective(["0"], "@len"),
+        new DataDirective(["1", "2", "3"], "@target"),
+    ]
+
+    let parser = new ArmletAssemblyParser(new ArmletInstructionFactory());
+
+    expect(parser.parseCode(sourceProgram.join('\n'))).toEqual(expectedProgram);
 });
