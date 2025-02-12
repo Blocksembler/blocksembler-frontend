@@ -1,117 +1,183 @@
 import {MultilineComment} from "@/architectures/armlet/instructions.js";
+import {ParsingError} from "@/architectures/parser.js";
 
 export class ArmletAssemblyParser {
     constructor(factory) {
         this.instructionFactory = factory;
     }
 
-    parseCode(code) {
-        let lines = code.split("\n").map((line) => line.trim()).filter((line) => line.length > 0);
-        let parsedProgram = [];
+    parseCode(code, resolveLabels = true) {
+        let sourceLines = []
+        let parsedProgram = []
+        code.split('\n').forEach((line, idx) => {
+            sourceLines.push({lineNumber: idx, code: line.trim()})
+        })
 
-        let idx = 0;
+        sourceLines = this.squashEmptyLines(sourceLines);
+        sourceLines = this.categorizeLines(sourceLines);
 
-        let multilineComment = "";
+        const sourceMap = {}
 
-        while (idx < lines.length) {
-            let separatedLine = this.separateInstructionAndComment(lines[idx]);
-            let instruction = separatedLine.instruction;
-            let comment = separatedLine.comment;
+        for (const line of sourceLines) {
+            if (line.type === 'comment') {
+                parsedProgram.push(new MultilineComment(line.comment))
+            } else if (line.type === 'instruction') {
+                try {
+                    let comment = this.extractComment(line.code);
+                    let mnemonic = this.extractMnemonic(line.code);
+                    let args = this.extractArgs(line.code);
 
-            if (instruction) {
-                if (multilineComment.length > 0) {
-                    parsedProgram.push(new MultilineComment(multilineComment));
-                    multilineComment = "";
+                    let inst = this.instructionFactory.createFromMnemonic(mnemonic, args);
+                    inst.label = line.label;
+                    inst.comment = comment;
+
+                    sourceMap[inst] = {
+                        inst: line.lineNumber + 1,
+                        label: line.labelLineNr + 1
+                    };
+
+                    parsedProgram.push(inst);
+                } catch (e) {
+                    throw new ParsingError(line.lineNumber + 1,
+                        `Failed to parse instruction at line ${line.lineNumber + 1}`,
+                        e,);
                 }
-
-                if (instruction.startsWith('@')) {
-                    let nextCommand = this.separateInstructionAndComment(lines[idx + 1])
-                    idx += 1;
-                    instruction += " " + nextCommand.instruction;
-                    if (comment.length > 0) {
-                        comment += "\n";
-                    }
-                    comment += nextCommand.comment;
-                }
-
-                parsedProgram.push(this.parseInstructionLine(instruction, comment));
-
-            } else if (comment) {
-                multilineComment += `${comment}\n`;
-            } else if (multilineComment.length > 0) {
-                parsedProgram.push(new MultilineComment(multilineComment));
-                multilineComment = "";
             }
-
-            idx += 1;
+        }
+        if (resolveLabels) {
+            return this.resolveLabels(parsedProgram, sourceMap);
         }
 
         return parsedProgram;
     }
 
-    separateInstructionAndComment(line) {
-        let commentStart = line.indexOf('#')
+    extractComment(code) {
+        code = code.trim()
+        let hashIdx = code.indexOf('#');
 
-        if (commentStart < 0) {
-            return {'instruction': line.trim(), 'comment': ''};
+        if (hashIdx !== -1) {
+            return code.slice(hashIdx + 1).trim();
         }
-        return {'instruction': line.slice(0, commentStart).trim(), 'comment': line.slice(commentStart + 1).trim()}
+
+        return "";
     }
 
-    parseInstructionLine(instruction, comment) {
-        let tokens = instruction.split(" ").map(token => token.trim()).filter((token) => token.length > 0);
+    extractMnemonic(code) {
+        code = code.trim()
+        let spaceIdx = code.indexOf(' ');
 
-        let label = this.extractLabel(tokens);
-        let type = this.extractType(tokens);
+        if (spaceIdx !== -1) {
+            return code.slice(0, spaceIdx).trim();
+        }
 
-        for (let idx in tokens) {
-            if (tokens[idx].endsWith(",")) {
-                tokens[idx] = tokens[idx].substring(0, tokens[idx].length - 1).trim();
+        return code
+    }
+
+    extractArgs(code) {
+        code = code.trim()
+        if (code.indexOf('#') !== -1) {
+            code = code.slice(0, code.indexOf('#'));
+        }
+
+        let firstSpaceIdx = code.indexOf(' ');
+
+        if (firstSpaceIdx !== -1) {
+            return code.slice(firstSpaceIdx + 1)
+                .trim().split(',')
+                .map(item => item.trim());
+        }
+
+        return []
+    }
+
+    squashEmptyLines(instructions) {
+        return instructions.filter((elem, idx) => {
+            let isEmpty = elem.code.length === 0;
+            let lastWasEmpty = instructions.at(idx - 1).code.length === 0
+            return !isEmpty || !lastWasEmpty;
+        })
+    }
+
+    categorizeLines(lines) {
+        let newLines = [];
+
+        let label = null;
+        let labelLineNr = -1;
+        let multiLineComment = [];
+
+        for (let line of lines) {
+            if (line.code.length === 0) {
+                if (multiLineComment.length > 0) {
+                    newLines.push({type: "comment", comment: multiLineComment.join('\n')})
+                    multiLineComment = [];
+                }
+            } else if (line.code.startsWith('#')) {
+                multiLineComment.push(line.code.slice(1).trim());
+            } else if (line.code.startsWith('@')) {
+                label = line.code.slice(0, line.code.indexOf(':'));
+                labelLineNr = line.lineNumber
+
+                let command = line.code.split(':')[1].trim()
+
+                if (command.length > 0) {
+                    line.code = command
+                    newLines.push({
+                        type: "instruction",
+                        label: label,
+                        labelLineNr: labelLineNr,
+                        ...line
+                    });
+
+                    label = null;
+                    labelLineNr = -1
+                }
+
+            } else {
+                newLines.push({
+                    type: "instruction",
+                    label: label,
+                    labelLineNr: labelLineNr,
+                    ...line
+                });
+
+                label = null
+                labelLineNr = -1;
             }
         }
 
-        let inst = this.instructionFactory.createFromMnemonic(type, tokens);
-        inst.comment = comment;
-        inst.label = label;
-        return inst;
+        return newLines;
     }
 
-    extractLabel(tokens) {
-        if (tokens[0].endsWith(":")) {
-            let label = tokens.splice(0, 1)[0];
-            label = label.slice(0, label.length - 1);
-            return label;
-        }
+    resolveLabels(program, sourceMap) {
+        let labelAddresses = {}
 
-        return null;
-    }
+        let currentAddress = 0
+        for (let inst of program) {
+            if (inst.label) {
+                if (inst.label in labelAddresses) {
+                    throw new ParsingError(sourceMap[inst].label, `Label "${inst.label}" already defined.`);
+                }
 
-    extractType(tokens) {
-        let type = tokens.splice(0, 1);
-        return type[0];
-    }
-
-    resolveLabels(program) {
-        let labelAddresses = {};
-
-        let address = 0
-        for (let instruction of program) {
-            if (instruction.label) {
-                labelAddresses[instruction.label] = address;
+                labelAddresses[inst.label] = currentAddress;
             }
 
-            let instructionSize = instruction.toMachineCode().length / 16
-            address += instructionSize
+            currentAddress += Number(inst.toMachineCode().length / 16);
         }
 
-        program.forEach((instruction, _address) => {
-            for (let idx in instruction.args) {
-                let args = instruction.args;
-                if (args[idx][0] === ">") {
-                    args[idx] = labelAddresses['@' + args[idx].slice(1)].toString();
+        for (const inst of program) {
+            for (const argIdx in inst.args) {
+                if (inst.args[argIdx].startsWith(">")) {
+                    let label = inst.args[argIdx].slice(1);
+                    let val = labelAddresses[`@${label}`]
+
+                    if (!val) {
+                        throw new ParsingError(sourceMap[inst].inst, `Label "${label}" not defined.`);
+                    }
+
+                    inst.args[argIdx] = val.toString();
                 }
             }
-        });
+        }
 
         return program;
     }
