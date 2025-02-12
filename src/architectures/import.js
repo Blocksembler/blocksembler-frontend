@@ -18,7 +18,7 @@ export const loadWorkspaceFromAssemblyCode = (ws, assemblyCode) => {
     let startBlock = ws.newBlock('start');
     startBlock.initSvg();
 
-    const parsedProgram = codeParser.parseCode(assemblyCode);
+    const parsedProgram = codeParser.parseCode(assemblyCode, false);
 
     let prevBlock = startBlock;
     for (const instruction of parsedProgram) {
