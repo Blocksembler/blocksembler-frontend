@@ -79,8 +79,8 @@ onMounted(() => {
 
   workspace.value.addChangeListener(function (e) {
     delete e['blocks'];
-
-    logEvent('blocklyWorkspaceChanged', e);
+    delete e['xml'];
+    logEvent('blocklyWorkspaceChanged', JSON.stringify(e));
   });
 
 });
