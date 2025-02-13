@@ -2,14 +2,25 @@
 import {computed, ref} from "vue";
 import {emulator} from "../state";
 
-const startAddress = ref(0);
-const size = ref(9);
+const startAddress = ref("0");
+const size = ref("9");
 
 const memory = computed(() => {
+  const sliceStart = Number(startAddress.value)
+  const sliceSize = Number(size.value)
+  const sliceEnd = sliceStart + sliceSize;
+
+  console.log(sliceStart, sliceSize, sliceEnd);
+
+  if (!sliceStart || !sliceEnd) {
+    return emulator.getMemoryFragment(0, 9);
+  }
+
   return emulator.getMemoryFragment(
-      startAddress.value,
-      startAddress.value + size.value
+      sliceStart,
+      sliceEnd,
   );
+
 });
 
 </script>
@@ -20,7 +31,7 @@ const memory = computed(() => {
       <form>
         <div class="mb-3">
           <label class="form-label" for="startAddress">Start Address</label>
-          <input id="startAddress" v-model="startAddress" class="form-control" type="number">
+          <input id="startAddress" v-model="startAddress" class="form-control">
         </div>
         <div class="mb-3">
           <label class="form-label" for="size">Size (in Bytes)</label>
