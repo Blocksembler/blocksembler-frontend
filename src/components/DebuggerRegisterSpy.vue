@@ -7,7 +7,7 @@ const registers = reactive(emulator.registers);
 <template>
   <div class="card">
     <div class="card-header"><h4>Registers</h4></div>
-    <div class="card-body">
+    <div class="card-body overflow-auto">
       <table class="table">
         <thead>
         <tr>
