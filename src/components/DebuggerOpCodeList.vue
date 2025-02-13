@@ -52,7 +52,7 @@ const instructions = computed(() => {
     <div class="card-header">
       <h4>Machine Instructions</h4>
     </div>
-    <div class="card-body">
+    <div class="card-body overflow-auto">
       <table v-if="instructions.length !== 0" class="table">
         <thead>
         <tr>
