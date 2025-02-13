@@ -76,7 +76,7 @@ export class ArmletAssemblyParser {
     extractArgs(code) {
         code = code.trim()
         if (code.indexOf('#') !== -1) {
-            code = code.slice(0, code.indexOf('#'));
+            code = code.slice(0, code.indexOf('#')).trim();
         }
 
         let firstSpaceIdx = code.indexOf(' ');
