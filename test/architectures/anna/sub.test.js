@@ -42,8 +42,8 @@ test("test subtraction with positive result", () => {
     let mockSystem = {
         registers: {
             pc: pcWord,
-            1: reg1Word,
-            2: reg2Word,
+            r1: reg1Word,
+            r2: reg2Word,
         },
     };
 
@@ -63,8 +63,8 @@ test("test subtraction with negative result", () => {
     let mockSystem = {
         registers: {
             pc: pcWord,
-            1: reg1Word,
-            2: reg2Word,
+            r1: reg1Word,
+            r2: reg2Word,
         },
     };
 

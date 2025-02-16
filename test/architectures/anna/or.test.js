@@ -37,8 +37,8 @@ test("test or instruction", () => {
     let mockSystem = {
         registers: {
             pc: pcWord,
-            1: reg1Word,
-            2: reg2Word,
+            r1: reg1Word,
+            r2: reg2Word,
         },
     };
 

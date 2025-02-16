@@ -1,7 +1,8 @@
 <script setup>
 import {reactive} from "vue";
+import {codingWorkspaceState, settings} from "../state";
+import {logEvent} from "@/logging.js";
 import BaseButton from "./BaseButton.vue";
-import {codeParser, codingWorkspaceState, emulator, settings} from "../state";
 import BaseModal from "./BaseModal.vue";
 import PlayCircleIcon from "@/components/icons/PlayCircleIcon.vue";
 import PlayIcon from "@/components/icons/PlayIcon.vue";
@@ -9,18 +10,18 @@ import PauseIcon from "@/components/icons/PauseIcon.vue";
 import ArrowRightSquareIcon from "@/components/icons/ArrowRightSquareIcon.vue";
 import ReplyIcon from "@/components/icons/ReplyIcon.vue";
 import TerminalIcon from "@/components/icons/TerminalIcon.vue";
-import {logEvent} from "@/logging.js";
 import BaseDropDown from "@/components/BaseDropDown.vue";
 
-const output = reactive(emulator.output);
 
-defineProps(['sourceCode'])
+const output = reactive(codingWorkspaceState.archPlugin.emulator.output);
 
 const assembleHandler = () => {
   let parsedProgram;
+  let emulator = codingWorkspaceState.archPlugin.emulator;
+  let parser = codingWorkspaceState.archPlugin.parser;
 
   try {
-    parsedProgram = codeParser.parseCode(codingWorkspaceState.sourceCode);
+    parsedProgram = parser.parseCode(codingWorkspaceState.sourceCode);
   } catch (e) {
     logEvent('parsingFailed', e.toString());
     alert(e.message);
@@ -37,6 +38,7 @@ const assembleHandler = () => {
 };
 
 const runProgram = () => {
+  let emulator = codingWorkspaceState.archPlugin.emulator;
   emulator.executionSpeed = settings.executionSpeed
   emulator.startExecution()
 
@@ -44,17 +46,21 @@ const runProgram = () => {
 }
 
 const pauseProgram = () => {
+  let emulator = codingWorkspaceState.archPlugin.emulator;
   emulator.pauseExecution()
   logEvent('pauseExecution');
 }
 
 const executeNext = () => {
+  let emulator = codingWorkspaceState.archPlugin.emulator;
   emulator.executeSingleInstruction();
   logEvent('executeSingleStep');
 };
 
 const reset = (buttonKey, event) => {
   event.preventDefault();
+
+  let emulator = codingWorkspaceState.archPlugin.emulator;
 
   emulator.isTerminated = false;
   emulator.isPaused = true;
@@ -97,7 +103,7 @@ const resetButtonItems = [
         <PlayCircleIcon/>
         <span class="d-none d-md-none d-lg-inline ms-1">Load to Memory</span>
       </BaseButton>
-      <BaseButton v-if="emulator.isPaused" @click="runProgram">
+      <BaseButton v-if="codingWorkspaceState.archPlugin.emulator.isPaused" @click="runProgram">
         <PlayIcon/>
         <span class="d-none d-md-none d-lg-inline ms-1">Run</span>
       </BaseButton>
@@ -109,12 +115,8 @@ const resetButtonItems = [
         <ArrowRightSquareIcon/>
         <span class="d-none d-md-none d-lg-inline ms-1">Execute & Fetch Next</span>
       </BaseButton>
-      <BaseDropDown :items=resetButtonItems @click="reset">
-        <ReplyIcon/>
-        <span class="d-none d-md-none d-lg-inline ms-1">Reset All</span>
-      </BaseDropDown>
       <BaseButton
-          v-if="emulator.hasConsole"
+          v-if="codingWorkspaceState.archPlugin.emulator.hasConsole"
           :notification-count="output.length"
           data-bs-target="#outputConsole"
           data-bs-toggle="modal"
@@ -122,6 +124,10 @@ const resetButtonItems = [
         <TerminalIcon/>
         <span class="d-none d-md-none d-lg-inline ms-1">Output Console</span>
       </BaseButton>
+      <BaseDropDown :items=resetButtonItems @click="reset">
+        <ReplyIcon/>
+        <span class="d-none d-md-none d-lg-inline ms-1">Reset All</span>
+      </BaseDropDown>
     </div>
   </div>
 </template>

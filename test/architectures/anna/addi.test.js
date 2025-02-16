@@ -36,7 +36,7 @@ test("test add immediate instruction", () => {
     let mockSystem = {
         registers: {
             pc: pcWord,
-            1: reg1Word,
+            r1: reg1Word,
         },
     };
 

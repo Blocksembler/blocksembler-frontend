@@ -98,21 +98,14 @@ export class BaseEmulator {
             return
         }
 
-        let nextInstruction = this.loadNextInstruction();
+        let nextInstruction = this.loadInstructionAt(this.registers.pc.toUnsignedIntValue());
         let instructionLength = Math.floor(nextInstruction.toMachineCode().length / this.addressSize);
         nextInstruction.executeOn(this);
         this.registers.pc.set(this.registers.pc.addImmedate(instructionLength));
     }
 
-    loadNextInstruction() {
-        let nextInstructionAddress = this.registers.pc.toUnsignedIntValue();
-        return this.instructionFactory.createFromOpCode(this.memory, nextInstructionAddress);
-    }
-
-    loadPreviousInstruction() {
-        let prevInstructionAddress = this.registers.pc.toUnsignedIntValue() - 1;
-
-        return this.instructionFactory.createFromOpCode(this.memory, prevInstructionAddress);
+    loadInstructionAt(address) {
+        return this.instructionFactory.createFromOpCode(this.memory, address);
     }
 
     storeToMemory(address, register) {

@@ -26,6 +26,7 @@ let importProject = () => {
       codingWorkspaceState.initWorkspace(sourceCode);
       logEvent('sourceCodeLoaded', {'content': sourceCode});
     } catch (e) {
+      console.log(e);
       logEvent('sourceCodeLoadingFailed');
     }
   }

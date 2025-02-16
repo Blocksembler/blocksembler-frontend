@@ -1,121 +1,83 @@
-import {expect, test, vi} from "vitest";
+import {expect, test} from "vitest";
 import {AnnaAssemblyParser} from "@/architectures/anna/parser.js";
-import {BranchEqualZeroInstruction} from "@/architectures/anna/instructions.js";
+import {
+    AddImmedateInstruction,
+    AddInstruction,
+    BranchEqualZeroInstruction,
+    OrInstruction
+} from "@/architectures/anna/instructions.js";
+
+import {MultilineComment} from "@/architectures/instructions.js";
 
 test("parse empty file", () => {
     let emptyFile = "";
 
     let parser = new AnnaAssemblyParser({});
-    let result = parser.resolveLabels(parser.parseCode(emptyFile));
+    let result = parser.parseCode(emptyFile);
 
     expect(result).toMatchObject([]);
 });
 
 test("parse single-line assembler code", () => {
-    let assemblerCode = "add r1 r2 r3";
+    let assemblerCode = ["add r1 r2 r3"];
 
-    let mockFactory = {
-        createFromMnemonic: function (type, args) {
-            return {type: type, args: args};
-        },
-    };
+    let parser = new AnnaAssemblyParser();
+    let result = parser.parseCode(assemblerCode.join('\n'));
 
-    let parser = new AnnaAssemblyParser(mockFactory);
-    let result = parser.resolveLabels(parser.parseCode(assemblerCode));
-
-    expect(result).toMatchObject(
-        new Array({
-            type: "add",
-            args: ["r1", "r2", "r3"],
-        })
-    );
+    expect(result).toEqual([
+        new AddInstruction(["r1", "r2", "r3"]),
+    ]);
 });
 
 test("parse addi instruction", () => {
-    let assemblerCode = "addi r1 r2 -1";
+    let assemblerCode = ["addi r1 r2 -1"];
+    let parser = new AnnaAssemblyParser();
+    let result = parser.parseCode(assemblerCode.join('\n'));
 
-    let mockFactory = {
-        createFromMnemonic: function (type, args) {
-            return {type: type, args: args};
-        },
-    };
-
-    let parser = new AnnaAssemblyParser(mockFactory);
-    let result = parser.resolveLabels(parser.parseCode(assemblerCode));
-
-    expect(result).toMatchObject(
-        new Array({
-            type: "addi",
-            label: null,
-            args: ["r1", "r2", "-1"],
-        })
-    );
+    expect(result).toEqual([
+        new AddImmedateInstruction(["r1", "r2", "-1"]),
+    ]);
 });
 
 test("parse multi-line assembler code", () => {
-    let assemblerCode = "add r1 r2 r3\nor r4 r5 r6";
+    let assemblerCode = [
+        "add r1 r2 r3",
+        "or r4 r5 r6",
+    ];
 
-    let mockFactory = {
-        createFromMnemonic: function (type, args) {
-            return {type: type, args: args};
-        },
-    };
+    let parser = new AnnaAssemblyParser();
+    let result = parser.parseCode(assemblerCode.join('\n'));
 
-    let parser = new AnnaAssemblyParser(mockFactory);
-    let result = parser.resolveLabels(parser.parseCode(assemblerCode));
-
-    expect(result).toMatchObject([
-        {
-            type: "add",
-            args: ["r1", "r2", "r3"],
-
-        },
-        {
-            type: "or",
-            args: ["r4", "r5", "r6"],
-        },
+    expect(result).toEqual([
+        new AddInstruction(["r1", "r2", "r3"]),
+        new OrInstruction(["r4", "r5", "r6"]),
     ]);
 });
 
 test("parse multi-line assembler code with comments", () => {
-    let assemblerCode =
-        "# this is a comment\nadd r1 r2 r3 # this is a line comment\nor r4 r5 r6\n# add r1 r2 r3 <- this command should be ignored";
+    let assemblerCode = [
+        "# this is a comment",
+        "add r1 r2 r3 # this is a line comment",
+        "or r4 r5 r6",
+        "# add r1 r2 r3 <- this command should be ignored",
+    ]
 
-    let mockFactory = {
-        createFromMnemonic: function (type, args) {
-            return {type: type, args: args};
-        },
-    };
+    let parser = new AnnaAssemblyParser();
+    let result = parser.parseCode(assemblerCode.join('\n'));
 
-    let parser = new AnnaAssemblyParser(mockFactory);
-    let result = parser.resolveLabels(parser.parseCode(assemblerCode));
-
-    expect(result).toMatchObject([
-        {
-            type: "add",
-            args: ["r1", "r2", "r3"],
-        },
-        {
-            type: "or",
-            args: ["r4", "r5", "r6"],
-        },
+    expect(result).toEqual([
+        new MultilineComment("this is a comment"),
+        new AddInstruction(["r1", "r2", "r3"], "", "this is a line comment"),
+        new OrInstruction(["r4", "r5", "r6"]),
     ]);
 });
 
 test("parse assembler code with labels", () => {
-    let assemblerCode = "loop: bez r0 &loop";
-    let mockFactory = {
-        createFromMnemonic: vi.fn().mockImplementationOnce((type, meta) => {
-            return new BranchEqualZeroInstruction(meta);
-        }),
-    };
+    let assemblerCode = ["loop: bez r0 &loop"];
 
-    let parser = new AnnaAssemblyParser(mockFactory);
-    let result = parser.resolveLabels(parser.parseCode(assemblerCode));
-    expect(result).toMatchObject([
-        {
-            label: "loop",
-            args: ["r0", -1],
-        },
+    let parser = new AnnaAssemblyParser();
+    let result = parser.parseCode(assemblerCode.join('\n'));
+    expect(result).toEqual([
+        new BranchEqualZeroInstruction(["r0", "-1"], "loop")
     ]);
 });
