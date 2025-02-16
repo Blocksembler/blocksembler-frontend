@@ -1,6 +1,6 @@
 import * as Blockly from "blockly";
 
-export const blocks = Blockly.common.createBlockDefinitionsFromJsonArray([
+export const setupBlocklyBlocks = () => Blockly.common.defineBlocksWithJsonArray([
     {
         type: "add",
         message0: "add %1 %2 and %3 and store result to %4",

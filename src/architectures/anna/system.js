@@ -12,14 +12,14 @@ export class AnnaEmulator extends BaseEmulator {
 
     static setUpRegisters() {
         return {
-            0: ImmutableWord.fromSignedIntValue(0, addressSize),
-            1: Word.fromSignedIntValue(0, addressSize),
-            2: Word.fromSignedIntValue(0, addressSize),
-            3: Word.fromSignedIntValue(0, addressSize),
-            4: Word.fromSignedIntValue(0, addressSize),
-            5: Word.fromSignedIntValue(0, addressSize),
-            6: Word.fromSignedIntValue(0, addressSize),
-            7: Word.fromSignedIntValue(0, addressSize),
+            r0: ImmutableWord.fromSignedIntValue(0, addressSize),
+            r1: Word.fromSignedIntValue(0, addressSize),
+            r2: Word.fromSignedIntValue(0, addressSize),
+            r3: Word.fromSignedIntValue(0, addressSize),
+            r4: Word.fromSignedIntValue(0, addressSize),
+            r5: Word.fromSignedIntValue(0, addressSize),
+            r6: Word.fromSignedIntValue(0, addressSize),
+            r7: Word.fromSignedIntValue(0, addressSize),
         };
     }
 

@@ -1,13 +1,14 @@
 <script setup>
 import {computed} from "vue";
-import {codeParser, emulator} from "../state";
+import {codingWorkspaceState} from "@/state.js";
 
 const memoryToInstructionObjects = (progMemory, highlightedLines) => {
   let instructions = [];
+  let emulator = codingWorkspaceState.archPlugin.emulator;
 
   let address = 0;
   while (address < progMemory.length) {
-    let inst = codeParser.instructionFactory.createFromOpCode(progMemory, address);
+    let inst = emulator.loadInstructionAt(address);
 
     let binVal = progMemory[address].toBitString();
     let decVal = progMemory[address].toUnsignedIntValue();
@@ -32,10 +33,12 @@ const memoryToInstructionObjects = (progMemory, highlightedLines) => {
 
 const instructions = computed(() => {
   let highlightedLines = [];
+  let emulator = codingWorkspaceState.archPlugin.emulator;
+
   if (emulator.loadedProgramSize > 0) {
     let pcAddress = emulator.registers.pc.toUnsignedIntValue();
     highlightedLines.push(pcAddress);
-    let nextInst = codeParser.instructionFactory.createFromOpCode(emulator.memory, pcAddress);
+    let nextInst = emulator.loadInstructionAt(pcAddress);
 
     if (nextInst.toMachineCode().length / 16 > 1) {
       highlightedLines.push(pcAddress + 1);
@@ -70,7 +73,7 @@ const instructions = computed(() => {
             <svg
                 v-if="
                   instruction.address ===
-                  emulator.registers.pc.toUnsignedIntValue()
+                  codingWorkspaceState.archPlugin.emulator.registers.pc.toUnsignedIntValue()
                 "
                 class="bi bi-arrow-right-square"
                 fill="currentColor"

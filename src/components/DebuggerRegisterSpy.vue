@@ -1,8 +1,8 @@
 <script setup>
 import {reactive} from "vue";
-import {emulator} from "../state";
+import {codingWorkspaceState} from "@/state.js";
 
-const registers = reactive(emulator.registers);
+const registers = reactive(codingWorkspaceState.archPlugin.emulator.registers);
 </script>
 <template>
   <div class="card">
