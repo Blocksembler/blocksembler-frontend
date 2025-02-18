@@ -69,16 +69,16 @@ export class BaseParser {
 
         line = line.trim()
 
-        if (line.indexOf(this.labelSeparator) !== -1) {
-            const labelCharIdx = line.indexOf(this.labelSeparator);
-            label = line.slice(0, labelCharIdx).trim();
-            line = line.slice(labelCharIdx + 1).trim()
-        }
-
         if (line.indexOf(this.commentChar) !== -1) {
             const commentCharIdx = line.indexOf(this.commentChar);
             comment = line.slice(commentCharIdx + 1).trim();
             line = line.slice(0, commentCharIdx).trim()
+        }
+
+        if (line.indexOf(this.labelSeparator) !== -1) {
+            const labelCharIdx = line.indexOf(this.labelSeparator);
+            label = line.slice(0, labelCharIdx).trim();
+            line = line.slice(labelCharIdx + 1).trim()
         }
 
         if (line.indexOf(' ') !== -1) {
