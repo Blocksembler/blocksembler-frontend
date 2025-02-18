@@ -1,7 +1,6 @@
 <script setup>
 import BaseCodeMirrorEditor from "./BaseCodeMirrorEditor.vue";
 import DebuggerPanel from "./DebuggerPanel.vue";
-import {codingWorkspaceState} from "@/state.js";
 </script>
 
 <template>
@@ -11,7 +10,7 @@ import {codingWorkspaceState} from "@/state.js";
         <DebuggerPanel/>
       </div>
       <div class="col-4 p-0 d-none d-sm-block">
-        <BaseCodeMirrorEditor :codingWorkspaceState="codingWorkspaceState" :highlightedLine="0"/>
+        <BaseCodeMirrorEditor :highlightedLine="0"/>
       </div>
     </div>
   </div>

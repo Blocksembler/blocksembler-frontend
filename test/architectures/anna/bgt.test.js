@@ -3,7 +3,7 @@ import {AnnaInstructionFactory, BranchGreaterZeroInstruction} from "@/architectu
 import {Word} from "@/architectures/system.js";
 
 test("test branch if greater zero instruction to machine code", () => {
-    let instruction = new BranchGreaterZeroInstruction( ["r1", 11]);
+    let instruction = new BranchGreaterZeroInstruction(["r1", 11]);
     let expectedCode = "1011001000001011";
 
     expect(instruction.toMachineCode()).toBe(expectedCode);
@@ -39,7 +39,7 @@ test("test branch if greater than zero instruction", () => {
     let mockSystem = {
         registers: {
             pc: pcWord,
-            1: reg1Word,
+            r1: reg1Word,
         },
     };
 
@@ -57,11 +57,11 @@ test("test branch if NOT greater than zero instruction", () => {
     let mockSystem = {
         registers: {
             pc: pcWord,
-            1: reg1Word,
+            r1: reg1Word,
         },
     };
 
-    let instruction = new BranchGreaterZeroInstruction( ["r1", -10]);
+    let instruction = new BranchGreaterZeroInstruction(["r1", -10]);
 
     instruction.executeOn(mockSystem);
 

@@ -156,9 +156,9 @@ export class AddInstruction extends AnnaRTypeInstruction {
     }
 
     executeOn(system) {
-        let target = system.registers[this.rd];
-        let firstOperand = system.registers[this.rs1];
-        let secondOperand = system.registers[this.rs2];
+        let target = system.registers[`r${this.rd}`];
+        let firstOperand = system.registers[`r${this.rs1}`];
+        let secondOperand = system.registers[`r${this.rs2}`];
 
         let result = firstOperand.add(secondOperand);
         target.set(result);
@@ -175,8 +175,8 @@ export class AddImmedateInstruction extends AnnaI6TypeInstruction {
     }
 
     executeOn(system) {
-        let target = system.registers[this.rd];
-        let firstOperand = system.registers[this.rs];
+        let target = system.registers[`r${this.rd}`];
+        let firstOperand = system.registers[`r${this.rs}`];
         let immedate = Number(this.imm);
 
         let result = firstOperand.addImmedate(immedate);
@@ -194,9 +194,9 @@ export class SubtractInstruction extends AnnaRTypeInstruction {
     }
 
     executeOn(system) {
-        let target = system.registers[this.rd];
-        let firstOperand = system.registers[this.rs1];
-        let secondOperand = system.registers[this.rs2];
+        let target = system.registers[`r${this.rd}`];
+        let firstOperand = system.registers[`r${this.rs1}`];
+        let secondOperand = system.registers[`r${this.rs2}`];
 
         let result = firstOperand.subtract(secondOperand);
         target.set(result);
@@ -213,9 +213,9 @@ export class AndInstruction extends AnnaRTypeInstruction {
     }
 
     executeOn(system) {
-        let target = system.registers[this.rd];
-        let firstOperand = system.registers[this.rs1];
-        let secondOperand = system.registers[this.rs2];
+        let target = system.registers[`r${this.rd}`];
+        let firstOperand = system.registers[`r${this.rs1}`];
+        let secondOperand = system.registers[`r${this.rs2}`];
 
         let result = firstOperand.and(secondOperand);
         target.set(result);
@@ -232,9 +232,9 @@ export class OrInstruction extends AnnaRTypeInstruction {
     }
 
     executeOn(system) {
-        let target = system.registers[this.rd];
-        let firstOperand = system.registers[this.rs1];
-        let secondOperand = system.registers[this.rs2];
+        let target = system.registers[`r${this.rd}`];
+        let firstOperand = system.registers[`r${this.rs1}`];
+        let secondOperand = system.registers[`r${this.rs2}`];
 
         let result = firstOperand.or(secondOperand);
         target.set(result);
@@ -258,8 +258,8 @@ export class NotInstruction extends AnnaRTypeInstruction {
     }
 
     executeOn(system) {
-        let target = system.registers[this.rd];
-        let operand = system.registers[this.rs1];
+        let target = system.registers[`r${this.rd}`];
+        let operand = system.registers[`r${this.rs1}`];
 
         target.set(operand.invert());
     }
@@ -275,8 +275,8 @@ export class ShiftInstruction extends AnnaI6TypeInstruction {
     }
 
     executeOn(system) {
-        let target = system.registers[this.rd];
-        let operand = system.registers[this.rs];
+        let target = system.registers[`r${this.rd}`];
+        let operand = system.registers[`r${this.rs}`];
         let immedate = Number(this.imm);
 
         target.set(operand.shift(immedate));
@@ -293,7 +293,7 @@ export class LoadLowerImmedateInstruction extends AnnaI8TypeInstruction {
     }
 
     executeOn(system) {
-        let target = system.registers[this.rd];
+        let target = system.registers[`r${this.rd}`];
         let immediate = Number(this.imm);
 
         let mask = Word.fromString("0000000011111111");
@@ -313,7 +313,7 @@ export class LoadUpperImmedateInstruction extends AnnaI8TypeInstruction {
     }
 
     executeOn(system) {
-        let target = system.registers[this.rd];
+        let target = system.registers[`r${this.rd}`];
         let immedate = Number(this.imm);
 
         let mask = Word.fromString("0000000011111111");
@@ -333,8 +333,8 @@ export class LoadWordInstruction extends AnnaI6TypeInstruction {
     }
 
     executeOn(system) {
-        let target = system.registers[this.rd];
-        let source = system.registers[this.rs];
+        let target = system.registers[`r${this.rd}`];
+        let source = system.registers[`r${this.rs}`];
         let offset = Number(this.imm);
 
         target.set(system.loadFromMemory(source.toSignedIntValue() + offset));
@@ -351,8 +351,8 @@ export class StoreWordInstruction extends AnnaI6TypeInstruction {
     }
 
     executeOn(system) {
-        let destination = system.registers[this.rd];
-        let source = system.registers[this.rs];
+        let destination = system.registers[`r${this.rd}`];
+        let source = system.registers[`r${this.rs}`];
         let offset = this.imm;
 
         system.storeToMemory(source.toSignedIntValue() + offset, destination);
@@ -369,7 +369,7 @@ export class BranchEqualZeroInstruction extends AnnaI8TypeInstruction {
     }
 
     executeOn(system) {
-        let checkWord = system.registers[this.rd];
+        let checkWord = system.registers[`r${this.rd}`];
 
         if (checkWord.toSignedIntValue() === 0) {
             let pcVal = system.registers["pc"].toSignedIntValue();
@@ -388,7 +388,7 @@ export class BranchGreaterZeroInstruction extends AnnaI8TypeInstruction {
     }
 
     executeOn(system) {
-        let checkWord = system.registers[this.rd];
+        let checkWord = system.registers[`r${this.rd}`];
 
         if (checkWord.toSignedIntValue() > 0) {
             let pcVal = system.registers["pc"].toSignedIntValue();
@@ -438,7 +438,7 @@ export class InputInstruction extends AnnaRTypeInstruction {
     }
 
     executeOn(system) {
-        let target = system.registers[this.rd];
+        let target = system.registers[`r${this.rd}`];
         let result = system.callInterrupt("input");
 
         target.set(Word.fromSignedIntValue(result));
@@ -461,7 +461,7 @@ export class OutputInstruction extends AnnaRTypeInstruction {
     }
 
     executeOn(system) {
-        let source = system.registers[this.rd];
+        let source = system.registers[`r${this.rd}`];
 
         system.callInterrupt("output", source);
     }

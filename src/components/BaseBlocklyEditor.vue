@@ -1,18 +1,15 @@
 <script setup>
-import {onMounted, ref, shallowRef} from "vue";
+import {onMounted, ref, shallowRef, watch} from "vue";
 import * as Blockly from "blockly";
-
-import "../architectures/armlet/blocks";
-import {generator} from "../architectures/armlet/generator";
-import {formatAssemblyCode} from "../architectures/formatter.js";
-import {load, save} from "../util/serialization";
-import {jsonWorkspace} from "../state";
-import {loadWorkspaceFromAssemblyCode} from "@/architectures/import.js";
-import {Multiselect} from "@mit-app-inventor/blockly-plugin-workspace-multiselect";
-import {shadowBlockConversionChangeListener} from "@blockly/shadow-block-converter";
+import {codingWorkspaceState} from "@/state.js";
 import {logEvent} from "@/logging.js";
+import {load, save} from "../util/serialization";
+import {formatAssemblyCode} from "../architectures/formatter.js";
+import {Multiselect} from "@mit-app-inventor/blockly-plugin-workspace-multiselect";
 
-const props = defineProps(["options", "codingWorkspaceState"]);
+import {shadowBlockConversionChangeListener} from "@blockly/shadow-block-converter";
+
+const props = defineProps(["options"]);
 
 const blocklyToolbox = ref();
 const blocklyDiv = ref();
@@ -32,28 +29,30 @@ onMounted(() => {
 
   const runCode = () => {
     try {
-      let code = formatAssemblyCode(
-          generator.workspaceToCode(workspace.value)
-      );
-
-      props.codingWorkspaceState.updateSourceCode(code)
+      let generator = codingWorkspaceState.archPlugin.blocklyGenerator;
+      codingWorkspaceState.sourceCode = formatAssemblyCode(generator.workspaceToCode(workspace.value));
     } catch (error) {
+
+      console.log(error);
       logEvent('failedToGenerateAssemblyCode', error.toString());
     }
-
   };
 
-  jsonWorkspace.value = load();
+  let jsonWorkspace = load();
 
-  if (jsonWorkspace.value) {
+  if (jsonWorkspace) {
     Blockly.Events.disable();
     try {
-      Blockly.serialization.workspaces.load(jsonWorkspace.value, workspace.value, false);
+      let archName = jsonWorkspace.archName;
+      let blocklyWorkspace = jsonWorkspace.blocklyWorkspace;
+
+      codingWorkspaceState.loadPlugin(archName);
+      Blockly.serialization.workspaces.load(blocklyWorkspace, workspace.value, false);
     } catch (error) {
       logEvent('failedToLoadBlocklyWorkspaceFromLS', error.toString());
+    } finally {
+      Blockly.Events.enable();
     }
-
-    Blockly.Events.enable();
   }
 
   runCode();
@@ -63,7 +62,12 @@ onMounted(() => {
       return;
     }
 
-    save(Blockly.serialization.workspaces.save(workspace.value));
+    const data = {
+      archName: codingWorkspaceState.archPlugin.name,
+      blocklyWorkspace: Blockly.serialization.workspaces.save(workspace.value),
+    }
+
+    save(data);
   });
 
   workspace.value.addChangeListener((e) => {
@@ -85,13 +89,43 @@ onMounted(() => {
 
 });
 
-const refresh = (code) => {
+const onInitWorkspaceHandler = (code) => {
   Blockly.Events.disable();
   loadWorkspaceFromAssemblyCode(workspace.value, code);
   Blockly.Events.enable();
 }
 
-props.codingWorkspaceState.addBlockEditorRefreshCallback(refresh)
+const loadWorkspaceFromAssemblyCode = (ws, assemblyCode) => {
+  ws.clear()
+  const startBlock = ws.newBlock('start');
+  startBlock.initSvg();
+
+  const parser = codingWorkspaceState.archPlugin.parser;
+  const parsedProgram = parser.parseCode(assemblyCode, false);
+
+  let prevBlock = startBlock;
+  for (const instruction of parsedProgram) {
+
+    if (instruction.label) {
+      let labelDefBlock = ws.newBlock('labelDef')
+      labelDefBlock.initSvg();
+      labelDefBlock.getField('label').setValue(instruction.label.slice(1));
+
+      prevBlock.nextConnection.connect(labelDefBlock.previousConnection);
+      prevBlock = labelDefBlock;
+    }
+
+    const instructionBlock = instruction.toBlock(ws)
+    prevBlock.nextConnection.connect(instructionBlock.previousConnection);
+    prevBlock = instructionBlock;
+  }
+}
+
+codingWorkspaceState.addOnInitWorkspaceListener(onInitWorkspaceHandler)
+
+watch(() => codingWorkspaceState.archPlugin, () => {
+  workspace.value.updateToolbox(codingWorkspaceState.archPlugin.blocklyToolbox);
+})
 
 </script>
 
