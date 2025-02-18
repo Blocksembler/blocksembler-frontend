@@ -1,27 +1,40 @@
-export const formatAssemblyCode = (code, indent = 5) => {
-    const lines = code.split("\n");
-
-    let formattedCode = "";
-
-    for (let line of lines) {
-        formattedCode += formatLine(line, indent);
+export class BaseFormatter {
+    constructor(labelIndent, instructionIndent, labelChar = ":", commentChar = "#") {
+        this.labelIndent = labelIndent;
+        this.instructionIndent = instructionIndent;
+        this.labelChar = labelChar;
+        this.commentChar = commentChar;
     }
 
-    return `${formattedCode}`;
-};
+    formatCode = (code) => {
+        const lines = code.split("\n");
+        return lines.map(line => this.formatLine(line)).join('\n');
+    };
 
-const formatLine = (line, indent) => {
-    let formattedLine;
-    if (isLabeledLine(line)) {
-        let label = `${line.split(":")[0].trim()}:`;
-        let instruction = line.split(":")[1].trim();
-        formattedLine = `\n${label.padEnd(indent, " ")}${instruction}`;
-    } else {
-        formattedLine = "".padStart(indent, " ") + line.trim();
+    formatLine(line) {
+        const labelEnd = line.indexOf(this.labelChar);
+        const commentStart = line.indexOf(this.commentChar);
+
+        let label = "", instruction, comment = "";
+
+        if (commentStart !== -1) {
+            comment = line.slice(commentStart).trim();
+            line = line.slice(0, commentStart);
+        }
+
+        if (labelEnd !== -1) {
+            label = line.slice(0, labelEnd + 1).trim();
+            line = label.slice(labelEnd + 1)
+        }
+
+        label = label.padEnd(this.labelIndent, " ")
+
+        instruction = line.trim().padEnd(this.instructionIndent, " ")
+
+        if (instruction.trim() === "" && label.trim() === "") {
+            return ` ${comment}`;
+        }
+
+        return `${label}${instruction}${comment}`;
     }
-    return `${formattedLine}\n`;
-};
-
-const isLabeledLine = (line) => {
-    return line.trim().startsWith("@");
-};
+}
