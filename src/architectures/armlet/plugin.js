@@ -4,6 +4,7 @@ import {toolbox} from "@/architectures/armlet/toolbox.js";
 import {ArmletBlocklyGenerator} from "@/architectures/armlet/generator.js";
 import {ArmletAssemblyParser} from "@/architectures/armlet/parser.js";
 import {ArmletInstructionFactory} from "@/architectures/armlet/instructions.js";
+import {BaseFormatter} from "@/architectures/formatter.js";
 
 const instructionFactory = new ArmletInstructionFactory();
 
@@ -14,4 +15,5 @@ export default {
     setupBlockBlocks: setupBlocklyBlocks,
     blocklyToolbox: toolbox,
     blocklyGenerator: new ArmletBlocklyGenerator().generator,
+    formatter: new BaseFormatter(5, 20, ':', '#')
 }
