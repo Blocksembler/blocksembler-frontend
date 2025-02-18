@@ -42,7 +42,6 @@ import {
     LsrInstruction,
     MovImmediateInstruction,
     MovInstruction,
-    MultilineComment,
     NegInstruction,
     NopInstruction,
     RandDirective,
@@ -53,6 +52,8 @@ import {
 } from "@/architectures/armlet/instructions.js";
 import {AddInstruction, AndInstruction, NotInstruction} from "@/architectures/anna/instructions.js";
 import {ParsingError} from "@/architectures/parser.js";
+
+import {MultilineComment} from "@/architectures/instructions.js";
 
 
 test('test new parser', () => {
@@ -75,7 +76,7 @@ test('test new parser', () => {
     ];
 
     let expectedProgram = [
-        new MovInstruction(["$2", "2"], "@inlinelabel"),
+        new MovImmediateInstruction(["$2", "2"], "@inlinelabel"),
         new MultilineComment("this is a comment\nabc"),
         new MultilineComment("test 2\nabc"),
         new MovInstruction(["$1", "$2"], "@test", "in-line comment"),
@@ -97,7 +98,7 @@ test('test error on undefined label', () => {
     let parser = new ArmletAssemblyParser(new ArmletInstructionFactory());
 
     expect(() => parser.parseCode(sourceCode.join('\n')))
-        .toThrow(new ParsingError(1, 'Label "test" not defined.'));
+        .toThrow(new ParsingError(1, 'Label "@test" not defined.'));
 
 });
 

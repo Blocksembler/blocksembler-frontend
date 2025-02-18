@@ -38,7 +38,7 @@ test("test branch if equal to zero instruction", () => {
     let mockSystem = {
         registers: {
             pc: pcWord,
-            1: reg1Word,
+            r1: reg1Word,
         },
     };
 
@@ -56,11 +56,11 @@ test("test branch if NOT equal to zero instruction", () => {
     let mockSystem = {
         registers: {
             pc: pcWord,
-            1: reg1Word,
+            r1: reg1Word,
         },
     };
 
-    let instruction = new BranchEqualZeroInstruction( ["r1", -10]);
+    let instruction = new BranchEqualZeroInstruction(["r1", -10]);
 
     instruction.executeOn(mockSystem);
 

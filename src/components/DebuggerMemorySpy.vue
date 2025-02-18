@@ -1,11 +1,13 @@
 <script setup>
 import {computed, ref} from "vue";
-import {emulator} from "../state";
+import {codingWorkspaceState} from "@/state.js";
 
 const startAddress = ref("0");
 const size = ref("9");
 
 const memory = computed(() => {
+  const emulator = codingWorkspaceState.archPlugin.emulator;
+
   const sliceStart = Number(startAddress.value)
   const sliceSize = Number(size.value)
   const sliceEnd = sliceStart + sliceSize;

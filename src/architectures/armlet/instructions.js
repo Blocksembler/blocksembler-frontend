@@ -234,29 +234,6 @@ export class RandDirective extends PseudoInstruction {
     }
 }
 
-export class MultilineComment {
-    constructor(text) {
-        this.text = text;
-    }
-
-    toString() {
-        return this.text;
-    }
-
-    toMachineCode() {
-        return "";
-    }
-
-    toBlock(ws) {
-        let multilineCommentBlock = ws.newBlock('comment')
-        multilineCommentBlock.initSvg()
-        multilineCommentBlock.getField('text').setValue(this.text);
-
-        multilineCommentBlock.setCollapsed(true);
-        return multilineCommentBlock
-    }
-}
-
 export class AbstractArmletInstruction extends BaseInstruction {
 
     get lArgument() {

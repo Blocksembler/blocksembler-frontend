@@ -47,9 +47,9 @@ test("add two registers and store to different register", () => {
     let mockSystem = {
         registers: {
             pc: pcWord,
-            1: reg1Word,
-            2: reg2Word,
-            3: reg3Word,
+            r1: reg1Word,
+            r2: reg2Word,
+            r3: reg3Word,
         },
     };
 
@@ -70,8 +70,8 @@ test("add two registers and store to first operand", () => {
     let mockSystem = {
         registers: {
             pc: pcWord,
-            1: reg1Word,
-            2: reg2Word,
+            r1: reg1Word,
+            r2: reg2Word,
         },
     };
 
@@ -91,8 +91,8 @@ test("test overflow behaviour 0xff + 0x01", () => {
     let mockSystem = {
         registers: {
             pc: pcWord,
-            1: reg1Word,
-            2: reg2Word,
+            r1: reg1Word,
+            r2: reg2Word,
         },
     };
 

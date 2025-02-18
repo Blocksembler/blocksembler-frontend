@@ -1,39 +1,39 @@
-import {reactive, ref} from "vue";
-import {ArmletEmulator} from "./architectures/armlet/system";
-import {BlocksemblerSettings} from "./settings.js";
-import {ArmletAssemblyParser} from "@/architectures/armlet/parser.js";
+import {reactive} from "vue";
 import {formatAssemblyCode} from "@/architectures/formatter.js";
+import {BlocksemblerSettings} from "@/settings.js";
+import {pluginRegistry} from "@/architectures/pluginRegistry.js";
+import {setupDefaultBlocks} from "@/architectures/blocks.js";
 
+const defaultArchitecture = "armlet";
 
-class CodingWorkspaceState {
+class BlocksemblerState {
     constructor() {
+        this.loadPlugin(defaultArchitecture);
+        setupDefaultBlocks();
+
         this.sourceCode = "";
-        this.blockEditorCallbacks = [];
+        this.onInitWorkspaceListener = [];
     }
 
-    initWorkspace(sourceCode) {
+    initWorkspace(sourceCode, architecture = defaultArchitecture) {
+        this.loadPlugin(architecture);
+
         this.sourceCode = formatAssemblyCode(sourceCode);
-        this.blockEditorCallbacks.forEach(callback => callback(this.sourceCode))
+        this.onInitWorkspaceListener.forEach(callback => callback(this.sourceCode))
     }
 
-    updateSourceCode(sourceCode) {
-        this.sourceCode = sourceCode;
+    addOnInitWorkspaceListener(listener) {
+        this.onInitWorkspaceListener.push(listener);
     }
 
-    addBlockEditorRefreshCallback(callback) {
-        this.blockEditorCallbacks.push(callback);
+    loadPlugin(pluginName) {
+        this.archPlugin = pluginRegistry[pluginName];
+        this.archPlugin.setupBlockBlocks();
     }
 }
 
-export const codingWorkspaceState = reactive(new CodingWorkspaceState());
 
-export const loadedAssemblyCode = ref("");
-export const jsonWorkspace = ref({});
+export const codingWorkspaceState = reactive(new BlocksemblerState());
+
 
 export const settings = reactive(new BlocksemblerSettings())
-
-export const emulator = reactive(new ArmletEmulator());
-
-export const codeParser = reactive(
-    new ArmletAssemblyParser(emulator.getInstructionFactory())
-);

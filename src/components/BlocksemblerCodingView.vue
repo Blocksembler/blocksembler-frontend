@@ -1,6 +1,5 @@
 <script setup>
 import {ref} from 'vue'
-import {toolbox} from "../architectures/armlet/toolbox";
 
 import BaseBlocklyEditor from "./BaseBlocklyEditor.vue";
 import BaseCodeMirrorEditor from "./BaseCodeMirrorEditor.vue";
@@ -8,7 +7,7 @@ import {codingWorkspaceState} from "@/state.js";
 
 
 let options = ref({
-  toolbox: toolbox,
+  toolbox: codingWorkspaceState.archPlugin.blocklyToolbox,
   collapse: true,
   comments: true,
   disable: true,
@@ -47,10 +46,10 @@ let options = ref({
   <div class="container-fluid">
     <div class="row">
       <div class="col-8 p-0">
-        <BaseBlocklyEditor ref="blocklyEditor" :codingWorkspaceState="codingWorkspaceState" :options="options"/>
+        <BaseBlocklyEditor ref="blocklyEditor" :options="options"/>
       </div>
       <div class="col-4 p-0">
-        <BaseCodeMirrorEditor ref="codeMirrorEditor" :codingWorkspaceState="codingWorkspaceState"/>
+        <BaseCodeMirrorEditor ref="codeMirrorEditor"/>
       </div>
     </div>
   </div>

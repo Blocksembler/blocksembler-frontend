@@ -1,6 +1,4 @@
-import * as Blockly from "blockly";
-
-export const generator = new Blockly.Generator("armlet");
+import {BaseBlocklyGenerator} from "@/architectures/generator.js";
 
 const Order = {
     ATOMIC: 0,
@@ -21,215 +19,208 @@ const handleComments = (block) => {
     return commentText.slice(0, commentText.length - 1);
 }
 
-generator.scrub_ = function (block, code, thisOnly) {
-    const nextBlock = block.nextConnection && block.nextConnection.targetBlock();
-
-    if (block.parentBlock_ === null && block.type !== "start") {
-        return null;
+export class ArmletBlocklyGenerator extends BaseBlocklyGenerator {
+    constructor() {
+        super("armlet");
     }
 
-    if (nextBlock && !thisOnly) {
-        if (code.length === 0) {
-            return `${code}${generator.blockToCode(nextBlock)}`;
+    setupGenerator() {
+        super.setupGenerator();
+
+        this.generator.forBlock["start"] = (block, _generator) => {
+            return handleComments(block);
+        };
+
+        this.generator.forBlock["comment"] = (block, _generator) => {
+            const commentText = block.getFieldValue('text');
+            let source = "\n"
+
+            for (let line of commentText.split("\n")) {
+                source += ` # ${line} \n`;
+            }
+            return source
         }
-        return `${code}\n${generator.blockToCode(nextBlock)}`;
+
+        this.generator.forBlock["labelDef"] = (block, _generator) => {
+            const label = block.getFieldValue("label");
+            return `@${label}:` + handleComments(block);
+        };
+
+        this.generator.forBlock["register"] = (block, _generator) => {
+            const registerNr = block.getFieldValue("value");
+
+            return [`$${registerNr}`, Order.ATOMIC];
+        };
+
+        this.generator.forBlock["label"] = (block, _generator) => {
+            const label = block.getFieldValue("value");
+
+            return [`>${label}`, Order.ATOMIC];
+        };
+
+        this.generator.forBlock["decImmediate"] = (block, _generator) => {
+            const immediate = block.getFieldValue("value");
+
+            return [`${immediate}`, Order.ATOMIC];
+        };
+
+        this.generator.forBlock["hexImmediate"] = (block, _generator) => {
+            const immediate = block.getFieldValue("value");
+
+            return [`${immediate}`, Order.ATOMIC];
+        };
+
+        this.generator.forBlock["nop"] = (block, _generator) => {
+            return `nop` + handleComments(block);
+        }
+
+        this.generator.forBlock["hlt"] = (block, _generator) => {
+            return `hlt` + handleComments(block);
+        }
+
+        this.generator.forBlock["trp"] = (block, _generator) => {
+            return `trp` + handleComments(block);
+        }
+
+        this.generator.forBlock["mov"] = (block, _generator) => {
+            const l = this.generator.valueToCode(block, "L", Order.ATOMIC);
+            const a = this.generator.valueToCode(block, "A", Order.ATOMIC);
+
+            return `mov ${l}, ${a}` + handleComments(block);
+        }
+
+        this.generator.forBlock["linst"] = (block, _generator) => {
+            const l = this.generator.valueToCode(block, "L", Order.ATOMIC);
+            const a = this.generator.valueToCode(block, "A", Order.ATOMIC);
+            const b = this.generator.valueToCode(block, "B", Order.ATOMIC);
+
+            const op = block.getFieldValue('operation')
+
+            return `${op} ${l}, ${a}, ${b}` + handleComments(block);
+        }
+
+        this.generator.forBlock["not"] = (block, _generator) => {
+            const l = this.generator.valueToCode(block, "L", Order.ATOMIC);
+            const a = this.generator.valueToCode(block, "A", Order.ATOMIC);
+
+
+            return `not ${l}, ${a}` + handleComments(block);
+        }
+
+        this.generator.forBlock["ainst"] = (block, _generator) => {
+            const l = this.generator.valueToCode(block, "L", Order.ATOMIC);
+            const a = this.generator.valueToCode(block, "A", Order.ATOMIC);
+            const b = this.generator.valueToCode(block, "B", Order.ATOMIC);
+
+            const op = block.getFieldValue('operation')
+
+            return `${op} ${l}, ${a}, ${b}` + handleComments(block);
+        }
+
+        this.generator.forBlock["neg"] = (block, _generator) => {
+            const l = this.generator.valueToCode(block, "L", Order.ATOMIC);
+            const a = this.generator.valueToCode(block, "A", Order.ATOMIC);
+
+            return `neg ${l}, ${a}` + handleComments(block);
+        }
+
+        this.generator.forBlock["lsl"] = (block, _generator) => {
+            const l = this.generator.valueToCode(block, "L", Order.ATOMIC);
+            const a = this.generator.valueToCode(block, "A", Order.ATOMIC);
+            const b = this.generator.valueToCode(block, "B", Order.ATOMIC);
+
+            return `lsl ${l}, ${a}, ${b}` + handleComments(block);
+        }
+
+        this.generator.forBlock["lsr"] = (block, _generator) => {
+            const l = this.generator.valueToCode(block, "L", Order.ATOMIC);
+            const a = this.generator.valueToCode(block, "A", Order.ATOMIC);
+            const b = this.generator.valueToCode(block, "B", Order.ATOMIC);
+
+            return `lsr ${l}, ${a}, ${b} ` + handleComments(block);
+        }
+
+        this.generator.forBlock["asr"] = (block, _generator) => {
+            const l = this.generator.valueToCode(block, "L", Order.ATOMIC);
+            const a = this.generator.valueToCode(block, "A", Order.ATOMIC);
+            const b = this.generator.valueToCode(block, "B", Order.ATOMIC);
+
+            return `asr ${l}, ${a}, ${b} ` + handleComments(block);
+        }
+
+        this.generator.forBlock["cmp"] = (block, _generator) => {
+            const a = this.generator.valueToCode(block, "A", Order.ATOMIC);
+            const b = this.generator.valueToCode(block, "B", Order.ATOMIC);
+
+            return `cmp ${a}, ${b} ` + handleComments(block);
+        }
+
+        this.generator.forBlock["jmp"] = (block, _generator) => {
+            const a = this.generator.valueToCode(block, "A", Order.ATOMIC);
+
+            return `jmp ${a} ` + handleComments(block);
+        }
+
+        this.generator.forBlock["cjmp"] = (block, _generator) => {
+            const a = this.generator.valueToCode(block, "A", Order.ATOMIC);
+            const op = block.getField("condition").getValue();
+
+            return `${op} ${a} ` + handleComments(block);
+        }
+
+
+        this.generator.forBlock["loa"] = (block, _generator) => {
+            const l = this.generator.valueToCode(block, "L", Order.ATOMIC);
+            const a = this.generator.valueToCode(block, "A", Order.ATOMIC);
+
+            return `loa ${l}, ${a} ` + handleComments(block);
+        }
+
+        this.generator.forBlock["sto"] = (block, _generator) => {
+            const l = this.generator.valueToCode(block, "L", Order.ATOMIC);
+            const a = this.generator.valueToCode(block, "A", Order.ATOMIC);
+
+            return `sto ${l}, ${a} ` + handleComments(block);
+        }
+
+        this.generator.forBlock['data'] = (block, _generator) => {
+            let code = "%data ";
+
+            let child = block.getChildren(true);
+
+            if (child) {
+                child = child[0];
+            } else {
+                child = null;
+            }
+
+            while (child) {
+                let val = child.getFieldValue('data')
+                code += `${val}, `;
+                child = child.getNextBlock();
+            }
+
+            return code.slice(0, code.length - 2);
+        }
+
+        this.generator.forBlock['decimalWord'] = (block, _generator) => {
+            const dataVal = block.getFieldValue("data");
+
+            return `%data ${dataVal}`;
+        }
+
+        this.generator.forBlock['randPerm'] = (block, _generator) => {
+            const n = block.getFieldValue("n");
+            const seed = block.getFieldValue("seed");
+
+            return `%randperm ${seed}, ${n}`;
+        }
+
+        this.generator.forBlock['rand'] = (block, _generator) => {
+            const n = block.getFieldValue("n");
+            const seed = block.getFieldValue("seed");
+
+            return `%rand ${n}, ${seed}`;
+        }
     }
-
-    return code;
-};
-
-generator.forBlock["start"] = function (block, _generator) {
-    return handleComments(block);
-};
-
-generator.forBlock["comment"] = function (block, _generator) {
-    const commentText = block.getFieldValue('text');
-    let source = "\n"
-
-    for (let line of commentText.split("\n")) {
-        source += ` # ${line} \n`;
-    }
-    return source
-}
-
-generator.forBlock["labelDef"] = function (block, _generator) {
-    const label = block.getFieldValue("label");
-    return `@${label}:` + handleComments(block);
-};
-
-generator.forBlock["register"] = function (block, _generator) {
-    const registerNr = block.getFieldValue("value");
-
-    return [`$${registerNr}`, Order.ATOMIC];
-};
-
-generator.forBlock["label"] = function (block, _generator) {
-    const label = block.getFieldValue("value");
-
-    return [`>${label}`, Order.ATOMIC];
-};
-
-generator.forBlock["decImmediate"] = function (block, _generator) {
-    const immediate = block.getFieldValue("value");
-
-    return [`${immediate}`, Order.ATOMIC];
-};
-
-generator.forBlock["hexImmediate"] = function (block, _generator) {
-    const immediate = block.getFieldValue("value");
-
-    return [`${immediate}`, Order.ATOMIC];
-};
-
-generator.forBlock["nop"] = function (block, _generator) {
-    return `nop` + handleComments(block);
-}
-
-generator.forBlock["hlt"] = function (block, _generator) {
-    return `hlt` + handleComments(block);
-}
-
-generator.forBlock["trp"] = function (block, _generator) {
-    return `trp` + handleComments(block);
-}
-
-generator.forBlock["mov"] = function (block, _generator) {
-    const l = generator.valueToCode(block, "L", Order.ATOMIC);
-    const a = generator.valueToCode(block, "A", Order.ATOMIC);
-
-    return `mov ${l}, ${a}` + handleComments(block);
-}
-
-generator.forBlock["linst"] = function (block, _generator) {
-    const l = generator.valueToCode(block, "L", Order.ATOMIC);
-    const a = generator.valueToCode(block, "A", Order.ATOMIC);
-    const b = generator.valueToCode(block, "B", Order.ATOMIC);
-
-    const op = block.getFieldValue('operation')
-
-    return `${op} ${l}, ${a}, ${b}` + handleComments(block);
-}
-
-generator.forBlock["not"] = function (block, _generator) {
-    const l = generator.valueToCode(block, "L", Order.ATOMIC);
-    const a = generator.valueToCode(block, "A", Order.ATOMIC);
-
-
-    return `not ${l}, ${a}` + handleComments(block);
-}
-
-generator.forBlock["ainst"] = function (block, _generator) {
-    const l = generator.valueToCode(block, "L", Order.ATOMIC);
-    const a = generator.valueToCode(block, "A", Order.ATOMIC);
-    const b = generator.valueToCode(block, "B", Order.ATOMIC);
-
-    const op = block.getFieldValue('operation')
-
-    return `${op} ${l}, ${a}, ${b}` + handleComments(block);
-}
-
-generator.forBlock["neg"] = function (block, _generator) {
-    const l = generator.valueToCode(block, "L", Order.ATOMIC);
-    const a = generator.valueToCode(block, "A", Order.ATOMIC);
-
-    return `neg ${l}, ${a}` + handleComments(block);
-}
-
-generator.forBlock["lsl"] = function (block, _generator) {
-    const l = generator.valueToCode(block, "L", Order.ATOMIC);
-    const a = generator.valueToCode(block, "A", Order.ATOMIC);
-    const b = generator.valueToCode(block, "B", Order.ATOMIC);
-
-    return `lsl ${l}, ${a}, ${b}` + handleComments(block);
-}
-
-generator.forBlock["lsr"] = function (block, _generator) {
-    const l = generator.valueToCode(block, "L", Order.ATOMIC);
-    const a = generator.valueToCode(block, "A", Order.ATOMIC);
-    const b = generator.valueToCode(block, "B", Order.ATOMIC);
-
-    return `lsr ${l}, ${a}, ${b} ` + handleComments(block);
-}
-
-generator.forBlock["asr"] = function (block, _generator) {
-    const l = generator.valueToCode(block, "L", Order.ATOMIC);
-    const a = generator.valueToCode(block, "A", Order.ATOMIC);
-    const b = generator.valueToCode(block, "B", Order.ATOMIC);
-
-    return `asr ${l}, ${a}, ${b} ` + handleComments(block);
-}
-
-generator.forBlock["cmp"] = function (block, _generator) {
-    const a = generator.valueToCode(block, "A", Order.ATOMIC);
-    const b = generator.valueToCode(block, "B", Order.ATOMIC);
-
-    return `cmp ${a}, ${b} ` + handleComments(block);
-}
-
-generator.forBlock["jmp"] = function (block, _generator) {
-    const a = generator.valueToCode(block, "A", Order.ATOMIC);
-
-    return `jmp ${a} ` + handleComments(block);
-}
-
-generator.forBlock["cjmp"] = function (block, _generator) {
-    const a = generator.valueToCode(block, "A", Order.ATOMIC);
-    const op = block.getField("condition").getValue();
-
-    return `${op} ${a} ` + handleComments(block);
-}
-
-
-generator.forBlock["loa"] = function (block, _generator) {
-    const l = generator.valueToCode(block, "L", Order.ATOMIC);
-    const a = generator.valueToCode(block, "A", Order.ATOMIC);
-
-    return `loa ${l}, ${a} ` + handleComments(block);
-}
-
-generator.forBlock["sto"] = function (block, _generator) {
-    const l = generator.valueToCode(block, "L", Order.ATOMIC);
-    const a = generator.valueToCode(block, "A", Order.ATOMIC);
-
-    return `sto ${l}, ${a} ` + handleComments(block);
-}
-
-generator.forBlock['data'] = function (block, _generator) {
-    let code = "%data ";
-
-    let child = block.getChildren(true);
-
-    if (child) {
-        child = child[0];
-    } else {
-        child = null;
-    }
-
-    while (child) {
-        let val = child.getFieldValue('data')
-        code += `${val}, `;
-        child = child.getNextBlock();
-    }
-
-    return code.slice(0, code.length - 2);
-}
-
-generator.forBlock['decimalWord'] = function (block, _generator) {
-    const dataVal = block.getFieldValue("data");
-
-    return `%data ${dataVal}`;
-}
-
-generator.forBlock['randPerm'] = function (block, _generator) {
-    const n = block.getFieldValue("n");
-    const seed = block.getFieldValue("seed");
-
-    return `%randperm ${seed}, ${n}`;
-}
-
-generator.forBlock['rand'] = function (block, _generator) {
-    const n = block.getFieldValue("n");
-    const seed = block.getFieldValue("seed");
-
-    return `%rand ${n}, ${seed}`;
 }

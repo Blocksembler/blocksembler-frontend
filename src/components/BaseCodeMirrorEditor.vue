@@ -5,8 +5,7 @@ import {EditorState} from "@codemirror/state";
 import {EditorView, lineNumbers} from "@codemirror/view";
 
 import {oneDark} from "@codemirror/theme-one-dark";
-
-const props = defineProps(['codingWorkspaceState'])
+import {codingWorkspaceState} from "@/state.js";
 
 let codemirrorTextarea = ref();
 let view = ref();
@@ -14,7 +13,7 @@ let view = ref();
 
 onMounted(() => {
   let state = EditorState.create({
-    doc: props.codingWorkspaceState.sourceCode,
+    doc: codingWorkspaceState.sourceCode,
     extensions: [
       oneDark,
       lineNumbers(),
@@ -48,7 +47,7 @@ const loadCode = (code) => {
   }
 }
 
-watch(() => props.codingWorkspaceState.sourceCode, (code) => loadCode(code));
+watch(() => codingWorkspaceState.sourceCode, code => loadCode(code));
 
 </script>
 
