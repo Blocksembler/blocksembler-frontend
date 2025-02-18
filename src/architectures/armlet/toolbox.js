@@ -8,7 +8,18 @@ export const toolbox = {
                 {kind: "block", type: "start"},
                 {kind: "block", type: "comment"},
                 {kind: "block", type: "labelDef"},
-                {kind: "block", type: "data"},
+                {
+                    kind: "block",
+                    type: "data",
+                    inputs: {
+                        "dataWords": {
+                            shadow: {
+                                type: "decimalWord"
+                            }
+
+                        }
+                    },
+                },
                 {kind: "block", type: "decimalWord"},
                 {kind: "block", type: "rand"},
                 {kind: "block", type: "randPerm"},
