@@ -1,5 +1,5 @@
-import armlet from "@/architectures/armlet/armlet.js"
-import anna from "@/architectures/anna/anna.js"
+import armlet from "@/architectures/armlet/plugin.js"
+import anna from "@/architectures/anna/plugin.js"
 
 const plugins = [armlet, anna];
 

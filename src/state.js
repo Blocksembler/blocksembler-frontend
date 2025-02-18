@@ -1,5 +1,4 @@
 import {reactive} from "vue";
-import {formatAssemblyCode} from "@/architectures/formatter.js";
 import {BlocksemblerSettings} from "@/settings.js";
 import {pluginRegistry} from "@/architectures/pluginRegistry.js";
 import {setupDefaultBlocks} from "@/architectures/blocks.js";
@@ -18,7 +17,7 @@ class BlocksemblerState {
     initWorkspace(sourceCode, architecture = defaultArchitecture) {
         this.loadPlugin(architecture);
 
-        this.sourceCode = formatAssemblyCode(sourceCode);
+        this.sourceCode = this.archPlugin.formatter.formatCode(sourceCode);
         this.onInitWorkspaceListener.forEach(callback => callback(this.sourceCode))
     }
 
