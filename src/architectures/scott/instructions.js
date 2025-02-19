@@ -1,20 +1,47 @@
 import {BaseInstruction} from "@/architectures/instructions.js";
+import {Word} from "@/architectures/system.js";
 
 export class ScottInstructionFactory {
     createFromMnemonic(mnemonic, args) {
+        const instClass = allInstructionClasses.filter(instClass => instClass.mnemonic === mnemonic)[0];
 
+        if (!instClass) {
+            throw new Error(`No instruction for mnemonic "${mnemonic}" found.`);
+        }
+
+        return new instClass(args);
     }
 
 
     createFromOpCode(memory, address) {
+        const opCode = memory[address].toBitString().slice(0, 4);
+        const instClass = instructionClasses.filter(instClass => instClass.opCode === opCode)[0];
 
+        if (!instClass) {
+            throw new Error(`No instruction for opCode "${opCode}" found.`);
+        }
+
+        return instClass.fromMachineCode(memory[address], memory[address + 1]);
     }
 }
 
 class ScottInstruction extends BaseInstruction {
+
+    get regALabel() {
+        return this.args[0]
+    }
+
+    get regBLabel() {
+        return this.args[1]
+    }
+
+    get immediate() {
+        return ""
+    }
+
     static fromMachineCode(instWord, immediateWord) {
-        const regA = `R${parseInt(instWord.slice(4, 6))}`
-        const regB = `R${parseInt(instWord.slice(6, 8))}`
+        const regA = `R${parseInt(instWord.toBitString().slice(4, 6), 2)}`
+        const regB = `R${parseInt(instWord.toBitString().slice(6, 8), 2)}`
 
         return new this([regA, regB]);
     }
@@ -24,10 +51,58 @@ class ScottInstruction extends BaseInstruction {
     }
 
     toMachineCode() {
-        let regACode = Number(this.args[0][1]).toString(2);
-        let regBCode = Number(this.args[1][1]).toString(2);
+        let regACode = "00";
+        if (this.regALabel !== "") {
+            regACode = Number(this.regALabel[1]).toString(2).padStart(2, "0");
+        }
 
-        return `${this.constructor.opCode}${regACode}${regBCode}}`;
+        let regBCode = "00";
+        if (this.regBLabel !== "") {
+            regBCode = Number(this.regBLabel[1]).toString(2).padStart(2, "0");
+        }
+
+        if (this.immediate !== "") {
+            const encodedImmediate = Number(this.immediate).toString(2).padStart(8, "0");
+            return `${this.constructor.opCode}${regACode}${regBCode}${encodedImmediate}`;
+        }
+
+        return `${this.constructor.opCode}${regACode}${regBCode}`;
+    }
+
+    setCFlag(system, regAVal, regBVal) {
+        if (regAVal > regBVal) {
+            system.registers.flags.bits[0] = 1
+        } else {
+            system.registers.flags.bits[0] = 0
+        }
+    }
+
+    setZFlag(system, regBVal) {
+        if (regBVal === 0) {
+            system.registers.flags.bits[3] = 1
+        } else {
+            system.registers.flags.bits[3] = 0
+        }
+    }
+
+    setAFlag(system, regAVal, regBVal) {
+        if (regAVal > regBVal) {
+            system.registers.flags.bits[1] = 1
+        } else {
+            system.registers.flags.bits[1] = 0
+        }
+    }
+
+    setEFlag(system, regAVal, regBVal) {
+        if (regAVal === regBVal) {
+            system.registers.flags.bits[2] = 1
+        } else {
+            system.registers.flags.bits[2] = 0
+        }
+    }
+
+    toBlock(ws) {
+        // TODO: create block
     }
 }
 
@@ -42,11 +117,14 @@ export class AddInstruction extends ScottInstruction {
     }
 
     executeOn(system) {
-        // TODO: execute instruction behaviour
-    }
+        const regA = system.registers[this.regALabel]
+        const regAVal = regA.toUnsignedIntValue();
+        const regB = system.registers[this.regBLabel]
 
-    toBlock(ws) {
-        // TODO: create block
+        system.registers[this.regBLabel].set(regA.add(regB));
+
+        this.setCFlag(system, regAVal, regB.toUnsignedIntValue());
+        this.setZFlag(system, regB.toUnsignedIntValue());
     }
 }
 
@@ -60,11 +138,17 @@ export class ShiftRightInstruction extends ScottInstruction {
     }
 
     executeOn(system) {
-        // TODO: execute instruction behaviour
+        const regA = system.registers[this.regALabel];
+        this.setCFlag(system, regA.toUnsignedIntValue());
+
+        system.registers[this.regBLabel].set(regA.shift(-1))
+
+        this.setZFlag(system, regA.toUnsignedIntValue());
     }
 
-    toBlock(ws) {
-        // TODO: create block
+    setCFlag(system, regAVal) {
+        const regA = Word.fromSignedIntValue(regAVal, 8);
+        system.registers.flags.bits[0] = regA.bits[0];
     }
 }
 
@@ -78,11 +162,17 @@ export class ShiftLeftInstruction extends ScottInstruction {
     }
 
     executeOn(system) {
-        // TODO: execute instruction behaviour
+        const regA = system.registers[this.regALabel];
+        this.setCFlag(system, regA.toUnsignedIntValue());
+
+        system.registers[this.regBLabel].set(regA.shift(1))
+
+        this.setZFlag(system, system.registers[this.regBLabel].toUnsignedIntValue());
+
     }
 
-    toBlock(ws) {
-        // TODO: create block
+    setCFlag(system, regA) {
+        system.registers.flags.bits[0] = Word.fromSignedIntValue(regA).bits[7]
     }
 }
 
@@ -96,11 +186,10 @@ export class NotInstruction extends ScottInstruction {
     }
 
     executeOn(system) {
-        // TODO: execute instruction behaviour
-    }
+        const regA = system.registers[this.regALabel];
+        system.registers[this.regBLabel].set(regA.invert())
 
-    toBlock(ws) {
-        // TODO: create block
+        this.setZFlag(system, system.registers[this.regBLabel].toUnsignedIntValue());
     }
 }
 
@@ -114,11 +203,11 @@ export class AndInstruction extends ScottInstruction {
     }
 
     executeOn(system) {
-        // TODO: execute instruction behaviour
-    }
+        const regA = system.registers[this.regALabel];
+        const regB = system.registers[this.regBLabel];
+        system.registers[this.regBLabel].set(regA.and(regB));
 
-    toBlock(ws) {
-        // TODO: create block
+        this.setZFlag(system, regB.toUnsignedIntValue());
     }
 }
 
@@ -132,11 +221,11 @@ export class OrInstruction extends ScottInstruction {
     }
 
     executeOn(system) {
-        // TODO: execute instruction behaviour
-    }
+        const regA = system.registers[this.regALabel];
+        const regB = system.registers[this.regBLabel];
+        system.registers[this.regBLabel].set(regA.or(regB));
 
-    toBlock(ws) {
-        // TODO: create block
+        this.setZFlag(system, regB.toUnsignedIntValue());
     }
 }
 
@@ -150,11 +239,11 @@ export class XorInstruction extends ScottInstruction {
     }
 
     executeOn(system) {
-        // TODO: execute instruction behaviour
-    }
+        const regA = system.registers[this.regALabel];
+        const regB = system.registers[this.regBLabel];
+        system.registers[this.regBLabel].set(regA.xor(regB));
 
-    toBlock(ws) {
-        // TODO: create block
+        this.setZFlag(system, regB.toUnsignedIntValue());
     }
 }
 
@@ -168,11 +257,14 @@ export class CmpInstruction extends ScottInstruction {
     }
 
     executeOn(system) {
-        // TODO: execute instruction behaviour
-    }
+        const regA = system.registers[this.regALabel];
+        const regAVal = regA.toUnsignedIntValue();
 
-    toBlock(ws) {
-        // TODO: create block
+        const regB = system.registers[this.regBLabel];
+        const regBVal = regB.toUnsignedIntValue();
+
+        this.setAFlag(system, regAVal, regBVal);
+        this.setEFlag(system, regAVal, regBVal);
     }
 }
 
@@ -186,11 +278,9 @@ export class LoadInstruction extends ScottInstruction {
     }
 
     executeOn(system) {
-        // TODO: execute instruction behaviour
-    }
-
-    toBlock(ws) {
-        // TODO: create block
+        const regAVal = system.registers[this.regALabel].toUnsignedIntValue();
+        const memoryWord = system.memory[regAVal]
+        system.registers[this.regBLabel].set(memoryWord);
     }
 }
 
@@ -204,11 +294,9 @@ export class StoreInstruction extends ScottInstruction {
     }
 
     executeOn(system) {
-        // TODO: execute instruction behaviour
-    }
-
-    toBlock(ws) {
-        // TODO: create block
+        const regAVal = system.registers[this.regALabel].toUnsignedIntValue();
+        const regB = system.registers[this.regBLabel];
+        system.memory[regAVal].set(regB)
     }
 }
 
@@ -221,25 +309,28 @@ export class DataInstruction extends ScottInstruction {
         return "0010"
     }
 
-    static fromMachineCode(instWord, immediateWord) {
-        const regA = `R${parseInt(instWord.slice(4, 6))}`
-        const regB = `R${parseInt(instWord.slice(6, 8))}`
-
-        return this.constructor([regA, regB]);
+    get regALabel() {
+        return "";
     }
 
-    toMachineCode() {
-        let regBCode = Number(this.args[0][1]).toString(2);
-        let binaryImmediate = Number(this.args[1]).toString(2).padStart(8, "0")
-        return `${this.constructor.opCode}00${regBCode}}` + binaryImmediate;
+    get regBLabel() {
+        return this.args[0];
+    }
+
+    get immediate() {
+        return this.args[1];
+    }
+
+    static fromMachineCode(instWord, immediateWord) {
+        const regB = `R${parseInt(instWord.toBitString().slice(6, 8), 2)}`
+        const immediate = immediateWord.toUnsignedIntValue().toString();
+
+        return new this([regB, immediate]);
     }
 
     executeOn(system) {
-        // TODO: execute instruction behaviour
-    }
-
-    toBlock(ws) {
-        // TODO: create block
+        const immediateVal = parseInt(this.immediate);
+        system.registers[this.regBLabel].set(Word.fromSignedIntValue(immediateVal, 8));
     }
 }
 
@@ -252,12 +343,23 @@ export class JumpRegisterInstruction extends ScottInstruction {
         return "0011"
     }
 
-    executeOn(system) {
-        // TODO: execute instruction behaviour
+    get regALabel() {
+        return "";
     }
 
-    toBlock(ws) {
-        // TODO: create block
+    get regBLabel() {
+        return this.args[0]
+    }
+
+    static fromMachineCode(instWord, immediateWord) {
+        const regB = `R${parseInt(instWord.toBitString().slice(6, 8), 2)}`
+
+        return new this([regB]);
+    }
+
+    executeOn(system) {
+        const nextInstructionAddress = system.registers[this.regBLabel].toUnsignedIntValue();
+        system.registers.pc.set(Word.fromSignedIntValue(nextInstructionAddress - 1, 8));
     }
 }
 
@@ -270,12 +372,26 @@ export class JumpInstruction extends ScottInstruction {
         return "0100"
     }
 
-    executeOn(system) {
-        // TODO: execute instruction behaviour
+    get regALabel() {
+        return "";
     }
 
-    toBlock(ws) {
-        // TODO: create block
+    get regBLabel() {
+        return "";
+    }
+
+    get immediate() {
+        return this.args[0]
+    }
+
+    static fromMachineCode(instWord, immediateWord) {
+        const immediate = `${parseInt(immediateWord.toBitString(), 2)}`
+        return new this([immediate]);
+    }
+
+    executeOn(system) {
+        const nextInstructionAddress = Number(this.immediate);
+        system.registers.pc.set(Word.fromSignedIntValue(nextInstructionAddress - 1, 8));
     }
 }
 
@@ -288,179 +404,269 @@ class ConditionalJumpInstruction extends ScottInstruction {
         return ['immediate']
     }
 
+    static get conditionCode() {
+        return "0000"
+    }
+
+    get regALabel() {
+        return "";
+    }
+
+    get regBLabel() {
+        return "";
+    }
+
+    get immediate() {
+        return this.args[0]
+    }
+
+    static fromMachineCode(instWord, immediateWord) {
+        const conditionCode = instWord.toBitString().slice(4, 8);
+        const instClass = conditionalJumpClasses.filter(c => c.conditionCode === conditionCode)[0];
+
+        if (!instClass) {
+            throw new Error(`No conditional jump instruction found for conditionCode "${conditionCode}".`);
+        }
+
+        const immediate = immediateWord.toUnsignedIntValue().toString();
+
+        return new instClass([immediate]);
+    }
+
+    toMachineCode() {
+        const encodedImmediate = Number(this.immediate).toString(2).padStart(8, "0");
+        return `${this.constructor.opCode}${this.constructor.conditionCode}${encodedImmediate}`;
+    }
+
     executeOn(system) {
         if (this.evaluateCondition(system)) {
-            system.registers.pc = this.immediate
+            system.registers.pc.set(Word.fromSignedIntValue(Number(this.immediate) - 1), 8);
         }
     }
 
     evaluateCondition(system) {
         return true;
     }
-
-    toBlock(ws) {
-        // TODO: create block
-    }
 }
 
 export class JumpIfCarryInstruction extends ConditionalJumpInstruction {
     static get mnemonic() {
-        return "JC"
+        return "jc"
+    }
+
+    static get conditionCode() {
+        return "1000";
     }
 
     evaluateCondition(system) {
-        return system.registers.flags.bits[0] === "1";
+        return system.registers.flags.bits[0] === 1;
     }
 }
 
 export class JumpIfALargerInstruction extends ConditionalJumpInstruction {
     static get mnemonic() {
-        return "JA"
+        return "ja"
+    }
+
+    static get conditionCode() {
+        return "0100";
     }
 
     evaluateCondition(system) {
-        return system.registers.flags.bits[1] === "1";
+        return system.registers.flags.bits[1] === 1;
     }
 }
 
 export class JumpIfEqualInstruction extends ConditionalJumpInstruction {
     static get mnemonic() {
-        return "JE"
+        return "je"
+    }
+
+    static get conditionCode() {
+        return "0010";
     }
 
     evaluateCondition(system) {
-        return system.registers.flags.bits[2] === "1";
+        return system.registers.flags.bits[2] === 1;
     }
 }
 
 export class JumpIfZeroInstruction extends ConditionalJumpInstruction {
     static get mnemonic() {
-        return "JZ"
+        return "jz"
+    }
+
+    static get conditionCode() {
+        return "0001";
     }
 
     evaluateCondition(system) {
-        return system.registers.flags.bits[3] === "1";
+        return system.registers.flags.bits[3] === 1;
     }
 }
 
 export class JumpIfCarryOrALargerInstruction extends ConditionalJumpInstruction {
     static get mnemonic() {
-        return "JCA"
+        return "jca"
+    }
+
+    static get conditionCode() {
+        return "1100";
     }
 
     evaluateCondition(system) {
-        return system.registers.flags.bits[0] === "1" || system.registers.flags.bits[1] === "1";
+        return system.registers.flags.bits[0] === 1 || system.registers.flags.bits[1] === 1;
     }
 }
 
 export class JumpIfCarryOrEqualInstruction extends ConditionalJumpInstruction {
     static get mnemonic() {
-        return "JCE"
+        return "jce"
+    }
+
+    static get conditionCode() {
+        return "1010";
     }
 
     evaluateCondition(system) {
-        return system.registers.flags.bits[0] === "1" || system.registers.flags.bits[2] === "1";
+        return system.registers.flags.bits[0] === 1 || system.registers.flags.bits[2] === 1;
     }
 }
 
 export class JumpIfCarryOrZeroInstruction extends ConditionalJumpInstruction {
     static get mnemonic() {
-        return "JCZ"
+        return "jcz"
+    }
+
+    static get conditionCode() {
+        return "1001";
     }
 
     evaluateCondition(system) {
-        return system.registers.flags.bits[0] === "1" || system.registers.flags.bits[3] === "1";
+        return system.registers.flags.bits[0] === 1 || system.registers.flags.bits[3] === 1;
     }
 }
 
 export class JumpIfALargerOrEqualInstruction extends ConditionalJumpInstruction {
     static get mnemonic() {
-        return "JAE"
+        return "jae"
+    }
+
+    static get conditionCode() {
+        return "0110";
     }
 
     evaluateCondition(system) {
-        return system.registers.flags.bits[1] === "1" || system.registers.flags.bits[2] === "1";
+        return system.registers.flags.bits[1] === 1 || system.registers.flags.bits[2] === 1;
     }
 }
 
 export class JumpIfALargerOrZeroInstruction extends ConditionalJumpInstruction {
     static get mnemonic() {
-        return "JAZ"
+        return "jaz"
+    }
+
+    static get conditionCode() {
+        return "0101";
     }
 
     evaluateCondition(system) {
-        return system.registers.flags.bits[1] === "1" ||
-            system.registers.flags.bits[3] === "1";
+        return system.registers.flags.bits[1] === 1 ||
+            system.registers.flags.bits[3] === 1;
     }
 }
 
 export class JumpIfEqualOrZeroInstruction extends ConditionalJumpInstruction {
     static get mnemonic() {
-        return "JEZ"
+        return "jez"
+    }
+
+    static get conditionCode() {
+        return "0011";
     }
 
     evaluateCondition(system) {
-        return system.registers.flags.bits[2] === "1"
-            || system.registers.flags.bits[3] === "1";
+        return system.registers.flags.bits[2] === 1
+            || system.registers.flags.bits[3] === 1;
     }
 }
 
 export class JumpIfCarryALargerOrEqualInstruction extends ConditionalJumpInstruction {
     static get mnemonic() {
-        return "JCAE"
+        return "jcae"
+    }
+
+    static get conditionCode() {
+        return "1110";
     }
 
     evaluateCondition(system) {
-        return system.registers.flags.bits[0] === "1"
-            || system.registers.flags.bits[1] === "1"
-            || system.registers.flags.bits[2] === "1";
+        return system.registers.flags.bits[0] === 1
+            || system.registers.flags.bits[1] === 1
+            || system.registers.flags.bits[2] === 1;
     }
 }
 
 export class JumpIfCarryALargerOrZeroInstruction extends ConditionalJumpInstruction {
     static get mnemonic() {
-        return "JCAZ"
+        return "jcaz"
+    }
+
+    static get conditionCode() {
+        return "1101";
     }
 
     evaluateCondition(system) {
-        return system.registers.flags.bits[0] === "1"
-            || system.registers.flags.bits[1] === "1"
-            || system.registers.flags.bits[3] === "1";
+        return system.registers.flags.bits[0] === 1
+            || system.registers.flags.bits[1] === 1
+            || system.registers.flags.bits[3] === 1;
     }
 }
 
 export class JumpIfCarryEqualOrZeroInstruction extends ConditionalJumpInstruction {
     static get mnemonic() {
-        return "JCEZ"
+        return "jcez"
+    }
+
+    static get conditionCode() {
+        return "1011";
     }
 
     evaluateCondition(system) {
-        return system.registers.flags.bits[0] === "1"
-            || system.registers.flags.bits[2] === "1"
-            || system.registers.flags.bits[3] === "1";
+        return system.registers.flags.bits[0] === 1
+            || system.registers.flags.bits[2] === 1
+            || system.registers.flags.bits[3] === 1;
     }
 }
 
 export class JumpIfALargerEqualOrZeroInstruction extends ConditionalJumpInstruction {
     static get mnemonic() {
-        return "JAEZ"
+        return "jaez"
+    }
+
+    static get conditionCode() {
+        return "0111";
     }
 
     evaluateCondition(system) {
-        return system.registers.flags.bits[1] === "1"
-            || system.registers.flags.bits[2] === "1"
-            || system.registers.flags.bits[3] === "1";
+        return system.registers.flags.bits[1] === 1
+            || system.registers.flags.bits[2] === 1
+            || system.registers.flags.bits[3] === 1;
     }
 }
 
 
 export class JumpIfCarryALargerEqualOrZeroInstruction extends ConditionalJumpInstruction {
     static get mnemonic() {
-        return "JCAEZ"
+        return "jcaez"
+    }
+
+    static get conditionCode() {
+        return "1111";
     }
 
     evaluateCondition(system) {
-        return system.registers.flags.toString() !== "0000";
+        return system.registers.flags.toBitString() !== "0000";
     }
 }
 
@@ -474,12 +680,16 @@ export class ClearFlagsInstruction extends ScottInstruction {
         return "0110"
     }
 
-    executeOn(system) {
-        // TODO: execute instruction behaviour
+    static fromMachineCode(instWord, immediateWord) {
+        return new this()
     }
 
-    toBlock(ws) {
-        // TODO: create block
+    toMachineCode() {
+        return `${this.constructor.opCode}` + "0000";
+    }
+
+    executeOn(system) {
+        system.registers.flags.set(Word.fromString("0000", 4));
     }
 }
 
@@ -497,6 +707,11 @@ export const instructionClasses = [
     DataInstruction,
     JumpRegisterInstruction,
     JumpInstruction,
+    ConditionalJumpInstruction,
+    ClearFlagsInstruction,
+]
+
+export const conditionalJumpClasses = [
     JumpIfCarryInstruction,
     JumpIfALargerInstruction,
     JumpIfEqualInstruction,
@@ -512,5 +727,6 @@ export const instructionClasses = [
     JumpIfCarryEqualOrZeroInstruction,
     JumpIfALargerEqualOrZeroInstruction,
     JumpIfCarryALargerEqualOrZeroInstruction,
-    ClearFlagsInstruction,
 ]
+
+export const allInstructionClasses = instructionClasses.concat(conditionalJumpClasses);
