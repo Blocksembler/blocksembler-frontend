@@ -1,8 +1,4 @@
-import {BaseBlocklyGenerator} from "@/architectures/generator.js";
-
-const Order = {
-    ATOMIC: 0,
-};
+import {BaseBlocklyGenerator, Order} from "@/architectures/generator.js";
 
 const handleComments = (block) => {
     let comment = block.getCommentText()
@@ -30,16 +26,6 @@ export class ArmletBlocklyGenerator extends BaseBlocklyGenerator {
         this.generator.forBlock["start"] = (block, _generator) => {
             return handleComments(block);
         };
-
-        this.generator.forBlock["comment"] = (block, _generator) => {
-            const commentText = block.getFieldValue('text');
-            let source = "\n"
-
-            for (let line of commentText.split("\n")) {
-                source += ` # ${line} \n`;
-            }
-            return source
-        }
 
         this.generator.forBlock["labelDef"] = (block, _generator) => {
             const label = block.getFieldValue("label");

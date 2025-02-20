@@ -1,5 +1,9 @@
 import * as Blockly from "blockly";
 
+export const Order = {
+    ATOMIC: 0,
+};
+
 export class BaseBlocklyGenerator {
     constructor(name) {
         this.generator = new Blockly.Generator(name);

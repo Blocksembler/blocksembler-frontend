@@ -20,7 +20,7 @@ test("test creating clf instruction from machine code", () => {
 test("test creating clf instruction from mnemonic", () => {
     const factory = new ScottInstructionFactory()
 
-    const clfInst = factory.createFromMnemonic("clf", ["123"]);
+    const clfInst = factory.createFromMnemonic("CLF", ["123"]);
 
     expect(clfInst).toStrictEqual(new ClearFlagsInstruction(["123"]));
 });

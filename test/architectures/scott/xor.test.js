@@ -20,7 +20,7 @@ test("test creating xor instruction from machine code", () => {
 test("test creating xor instruction from mnemonic", () => {
     const factory = new ScottInstructionFactory()
 
-    const xorInst = factory.createFromMnemonic("xor", ["R1", "R2"]);
+    const xorInst = factory.createFromMnemonic("XOR", ["R1", "R2"]);
 
     expect(xorInst).toStrictEqual(new XorInstruction(["R1", "R2"]));
 });

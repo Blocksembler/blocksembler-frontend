@@ -39,7 +39,7 @@ class ScottInstruction extends BaseInstruction {
         return ""
     }
 
-    static fromMachineCode(instWord, immediateWord) {
+    static fromMachineCode(instWord, _immediateWord) {
         const regA = `R${parseInt(instWord.toBitString().slice(4, 6), 2)}`
         const regB = `R${parseInt(instWord.toBitString().slice(6, 8), 2)}`
 
@@ -109,7 +109,7 @@ class ScottInstruction extends BaseInstruction {
 
 export class AddInstruction extends ScottInstruction {
     static get mnemonic() {
-        return "add"
+        return "ADD"
     }
 
     static get opCode() {
@@ -130,7 +130,7 @@ export class AddInstruction extends ScottInstruction {
 
 export class ShiftRightInstruction extends ScottInstruction {
     static get mnemonic() {
-        return "shr"
+        return "SHR"
     }
 
     static get opCode() {
@@ -154,7 +154,7 @@ export class ShiftRightInstruction extends ScottInstruction {
 
 export class ShiftLeftInstruction extends ScottInstruction {
     static get mnemonic() {
-        return "shl"
+        return "SHL"
     }
 
     static get opCode() {
@@ -178,7 +178,7 @@ export class ShiftLeftInstruction extends ScottInstruction {
 
 export class NotInstruction extends ScottInstruction {
     static get mnemonic() {
-        return "not"
+        return "NOT"
     }
 
     static get opCode() {
@@ -195,7 +195,7 @@ export class NotInstruction extends ScottInstruction {
 
 export class AndInstruction extends ScottInstruction {
     static get mnemonic() {
-        return "and"
+        return "AND"
     }
 
     static get opCode() {
@@ -213,7 +213,7 @@ export class AndInstruction extends ScottInstruction {
 
 export class OrInstruction extends ScottInstruction {
     static get mnemonic() {
-        return "or"
+        return "OR"
     }
 
     static get opCode() {
@@ -231,7 +231,7 @@ export class OrInstruction extends ScottInstruction {
 
 export class XorInstruction extends ScottInstruction {
     static get mnemonic() {
-        return "xor"
+        return "XOR"
     }
 
     static get opCode() {
@@ -249,7 +249,7 @@ export class XorInstruction extends ScottInstruction {
 
 export class CmpInstruction extends ScottInstruction {
     static get mnemonic() {
-        return "cmp"
+        return "CMP"
     }
 
     static get opCode() {
@@ -270,7 +270,7 @@ export class CmpInstruction extends ScottInstruction {
 
 export class LoadInstruction extends ScottInstruction {
     static get mnemonic() {
-        return "ld"
+        return "LD"
     }
 
     static get opCode() {
@@ -286,7 +286,7 @@ export class LoadInstruction extends ScottInstruction {
 
 export class StoreInstruction extends ScottInstruction {
     static get mnemonic() {
-        return "st"
+        return "ST"
     }
 
     static get opCode() {
@@ -302,7 +302,7 @@ export class StoreInstruction extends ScottInstruction {
 
 export class DataInstruction extends ScottInstruction {
     static get mnemonic() {
-        return "data"
+        return "DATA"
     }
 
     static get opCode() {
@@ -336,7 +336,7 @@ export class DataInstruction extends ScottInstruction {
 
 export class JumpRegisterInstruction extends ScottInstruction {
     static get mnemonic() {
-        return "jmpr"
+        return "JMPR"
     }
 
     static get opCode() {
@@ -363,9 +363,9 @@ export class JumpRegisterInstruction extends ScottInstruction {
     }
 }
 
-export class JumpInstruction extends ScottInstruction {
+export class JumpAddressInstruction extends ScottInstruction {
     static get mnemonic() {
-        return "jmp"
+        return "JMP"
     }
 
     static get opCode() {
@@ -391,7 +391,7 @@ export class JumpInstruction extends ScottInstruction {
 
     executeOn(system) {
         const nextInstructionAddress = Number(this.immediate);
-        system.registers.pc.set(Word.fromSignedIntValue(nextInstructionAddress - 1, 8));
+        system.registers.pc.set(Word.fromSignedIntValue(nextInstructionAddress - 2, 8));
     }
 }
 
@@ -440,7 +440,7 @@ class ConditionalJumpInstruction extends ScottInstruction {
 
     executeOn(system) {
         if (this.evaluateCondition(system)) {
-            system.registers.pc.set(Word.fromSignedIntValue(Number(this.immediate) - 1), 8);
+            system.registers.pc.set(Word.fromSignedIntValue(Number(this.immediate) - 2), 8);
         }
     }
 
@@ -451,7 +451,7 @@ class ConditionalJumpInstruction extends ScottInstruction {
 
 export class JumpIfCarryInstruction extends ConditionalJumpInstruction {
     static get mnemonic() {
-        return "jc"
+        return "JC"
     }
 
     static get conditionCode() {
@@ -465,7 +465,7 @@ export class JumpIfCarryInstruction extends ConditionalJumpInstruction {
 
 export class JumpIfALargerInstruction extends ConditionalJumpInstruction {
     static get mnemonic() {
-        return "ja"
+        return "JA"
     }
 
     static get conditionCode() {
@@ -479,7 +479,7 @@ export class JumpIfALargerInstruction extends ConditionalJumpInstruction {
 
 export class JumpIfEqualInstruction extends ConditionalJumpInstruction {
     static get mnemonic() {
-        return "je"
+        return "JE"
     }
 
     static get conditionCode() {
@@ -493,7 +493,7 @@ export class JumpIfEqualInstruction extends ConditionalJumpInstruction {
 
 export class JumpIfZeroInstruction extends ConditionalJumpInstruction {
     static get mnemonic() {
-        return "jz"
+        return "JZ"
     }
 
     static get conditionCode() {
@@ -507,7 +507,7 @@ export class JumpIfZeroInstruction extends ConditionalJumpInstruction {
 
 export class JumpIfCarryOrALargerInstruction extends ConditionalJumpInstruction {
     static get mnemonic() {
-        return "jca"
+        return "JCA"
     }
 
     static get conditionCode() {
@@ -521,7 +521,7 @@ export class JumpIfCarryOrALargerInstruction extends ConditionalJumpInstruction 
 
 export class JumpIfCarryOrEqualInstruction extends ConditionalJumpInstruction {
     static get mnemonic() {
-        return "jce"
+        return "JCE"
     }
 
     static get conditionCode() {
@@ -535,7 +535,7 @@ export class JumpIfCarryOrEqualInstruction extends ConditionalJumpInstruction {
 
 export class JumpIfCarryOrZeroInstruction extends ConditionalJumpInstruction {
     static get mnemonic() {
-        return "jcz"
+        return "JCZ"
     }
 
     static get conditionCode() {
@@ -549,7 +549,7 @@ export class JumpIfCarryOrZeroInstruction extends ConditionalJumpInstruction {
 
 export class JumpIfALargerOrEqualInstruction extends ConditionalJumpInstruction {
     static get mnemonic() {
-        return "jae"
+        return "JAE"
     }
 
     static get conditionCode() {
@@ -563,7 +563,7 @@ export class JumpIfALargerOrEqualInstruction extends ConditionalJumpInstruction 
 
 export class JumpIfALargerOrZeroInstruction extends ConditionalJumpInstruction {
     static get mnemonic() {
-        return "jaz"
+        return "JAZ"
     }
 
     static get conditionCode() {
@@ -578,7 +578,7 @@ export class JumpIfALargerOrZeroInstruction extends ConditionalJumpInstruction {
 
 export class JumpIfEqualOrZeroInstruction extends ConditionalJumpInstruction {
     static get mnemonic() {
-        return "jez"
+        return "JEZ"
     }
 
     static get conditionCode() {
@@ -593,7 +593,7 @@ export class JumpIfEqualOrZeroInstruction extends ConditionalJumpInstruction {
 
 export class JumpIfCarryALargerOrEqualInstruction extends ConditionalJumpInstruction {
     static get mnemonic() {
-        return "jcae"
+        return "JCAE"
     }
 
     static get conditionCode() {
@@ -609,7 +609,7 @@ export class JumpIfCarryALargerOrEqualInstruction extends ConditionalJumpInstruc
 
 export class JumpIfCarryALargerOrZeroInstruction extends ConditionalJumpInstruction {
     static get mnemonic() {
-        return "jcaz"
+        return "JCAZ"
     }
 
     static get conditionCode() {
@@ -625,7 +625,7 @@ export class JumpIfCarryALargerOrZeroInstruction extends ConditionalJumpInstruct
 
 export class JumpIfCarryEqualOrZeroInstruction extends ConditionalJumpInstruction {
     static get mnemonic() {
-        return "jcez"
+        return "JCEZ"
     }
 
     static get conditionCode() {
@@ -641,7 +641,7 @@ export class JumpIfCarryEqualOrZeroInstruction extends ConditionalJumpInstructio
 
 export class JumpIfALargerEqualOrZeroInstruction extends ConditionalJumpInstruction {
     static get mnemonic() {
-        return "jaez"
+        return "JAEZ"
     }
 
     static get conditionCode() {
@@ -658,7 +658,7 @@ export class JumpIfALargerEqualOrZeroInstruction extends ConditionalJumpInstruct
 
 export class JumpIfCarryALargerEqualOrZeroInstruction extends ConditionalJumpInstruction {
     static get mnemonic() {
-        return "jcaez"
+        return "JCAEZ"
     }
 
     static get conditionCode() {
@@ -673,7 +673,7 @@ export class JumpIfCarryALargerEqualOrZeroInstruction extends ConditionalJumpIns
 
 export class ClearFlagsInstruction extends ScottInstruction {
     static get mnemonic() {
-        return "clf"
+        return "CLF"
     }
 
     static get opCode() {
@@ -706,7 +706,7 @@ export const instructionClasses = [
     StoreInstruction,
     DataInstruction,
     JumpRegisterInstruction,
-    JumpInstruction,
+    JumpAddressInstruction,
     ConditionalJumpInstruction,
     ClearFlagsInstruction,
 ]

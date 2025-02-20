@@ -13,6 +13,6 @@ const registers = {
 
 export class ScottEmulator extends BaseEmulator {
     constructor() {
-        super(registers, addressSize, new ScottInstructionFactory(), {}, true);
+        super(registers, addressSize, new ScottInstructionFactory(), {}, false);
     }
 }

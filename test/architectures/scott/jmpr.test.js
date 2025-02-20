@@ -20,7 +20,7 @@ test("test creating jmpr instruction from machine code", () => {
 test("test creating jmpr instruction from mnemonic", () => {
     const factory = new ScottInstructionFactory()
 
-    const jmprInst = factory.createFromMnemonic("jmpr", ["R1"]);
+    const jmprInst = factory.createFromMnemonic("JMPR", ["R1"]);
 
     expect(jmprInst).toStrictEqual(new JumpRegisterInstruction(["R1"]));
 });

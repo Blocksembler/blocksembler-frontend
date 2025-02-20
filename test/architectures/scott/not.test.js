@@ -20,7 +20,7 @@ test("test creating not instruction from machine code", () => {
 test("test creating not instruction from mnemonic", () => {
     const factory = new ScottInstructionFactory()
 
-    const notInst = factory.createFromMnemonic("not", ["R1", "R2"]);
+    const notInst = factory.createFromMnemonic("NOT", ["R1", "R2"]);
 
     expect(notInst).toStrictEqual(new NotInstruction(["R1", "R2"]));
 });

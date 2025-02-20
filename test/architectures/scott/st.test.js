@@ -20,7 +20,7 @@ test("test creating st instruction from machine code", () => {
 test("test creating st instruction from mnemonic", () => {
     const factory = new ScottInstructionFactory()
 
-    const stInst = factory.createFromMnemonic("st", ["R1", "R2"]);
+    const stInst = factory.createFromMnemonic("ST", ["R1", "R2"]);
 
     expect(stInst).toStrictEqual(new StoreInstruction(["R1", "R2"]));
 });

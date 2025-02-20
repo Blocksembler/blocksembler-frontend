@@ -35,7 +35,7 @@ test("test creating shr instruction from machine code", () => {
 test("test creating shr instruction from mnemonic", () => {
     const factory = new ScottInstructionFactory();
 
-    const shrInst = factory.createFromMnemonic("shr", ["R1", "R3"]);
+    const shrInst = factory.createFromMnemonic("SHR", ["R1", "R3"]);
 
     expect(shrInst).toStrictEqual(new ShiftRightInstruction(["R1", "R3"]));
 });

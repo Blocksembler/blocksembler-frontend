@@ -1,8 +1,4 @@
-import {BaseBlocklyGenerator} from "@/architectures/generator.js";
-
-const Order = {
-    ATOMIC: 0,
-};
+import {BaseBlocklyGenerator, Order} from "@/architectures/generator.js";
 
 
 export class AnnaBlocklyGenerator extends BaseBlocklyGenerator {

@@ -21,7 +21,7 @@ test("test creating data instruction from machine code", () => {
 test("test creating data instruction from mnemonic", () => {
     const factory = new ScottInstructionFactory()
 
-    const dataInst = factory.createFromMnemonic("data", ["R1", "123"]);
+    const dataInst = factory.createFromMnemonic("DATA", ["R1", "123"]);
 
     expect(dataInst).toStrictEqual(new DataInstruction(["R1", "123"]));
 });

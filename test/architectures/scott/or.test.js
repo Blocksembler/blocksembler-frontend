@@ -20,7 +20,7 @@ test("test creating or instruction from machine code", () => {
 test("test creating or instruction from mnemonic", () => {
     const factory = new ScottInstructionFactory()
 
-    const orInst = factory.createFromMnemonic("or", ["R1", "R2"]);
+    const orInst = factory.createFromMnemonic("OR", ["R1", "R2"]);
 
     expect(orInst).toStrictEqual(new OrInstruction(["R1", "R2"]));
 });

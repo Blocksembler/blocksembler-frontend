@@ -20,7 +20,7 @@ test("test creating cmp instruction from machine code", () => {
 test("test creating cmp instruction from mnemonic", () => {
     const factory = new ScottInstructionFactory()
 
-    const cmpInst = factory.createFromMnemonic("cmp", ["R1", "R2"]);
+    const cmpInst = factory.createFromMnemonic("CMP", ["R1", "R2"]);
 
     expect(cmpInst).toStrictEqual(new CmpInstruction(["R1", "R2"]));
 });

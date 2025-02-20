@@ -43,21 +43,21 @@ const jumpInstructionInstances = [
 ];
 
 const jumpInstructionMnemonics = [
-    ["jc", ["123"]],
-    ["ja", ["123"]],
-    ["je", ["123"]],
-    ["jz", ["123"]],
-    ["jca", ["123"]],
-    ["jce", ["123"]],
-    ["jcz", ["123"]],
-    ["jae", ["123"]],
-    ["jaz", ["123"]],
-    ["jez", ["123"]],
-    ["jcae", ["123"]],
-    ["jcaz", ["123"]],
-    ["jcez", ["123"]],
-    ["jaez", ["123"]],
-    ["jcaez", ["123"]],
+    ["JC", ["123"]],
+    ["JA", ["123"]],
+    ["JE", ["123"]],
+    ["JZ", ["123"]],
+    ["JCA", ["123"]],
+    ["JCE", ["123"]],
+    ["JCZ", ["123"]],
+    ["JAE", ["123"]],
+    ["JAZ", ["123"]],
+    ["JEZ", ["123"]],
+    ["JCAE", ["123"]],
+    ["JCAZ", ["123"]],
+    ["JCEZ", ["123"]],
+    ["JAEZ", ["123"]],
+    ["JCAEZ", ["123"]],
 ];
 
 const jumpInstructionCodes = [
@@ -115,8 +115,6 @@ test("test creating jmp instruction from mnemonic", () => {
 test("test conditional jump instructions", () => {
     const mockSystem = new ScottEmulator()
 
-    const jcInstruction = new JumpIfCarryInstruction(["123"]);
-
     jumpInstructionInstances.forEach((inst) => {
         mockSystem.registers.flags.set(Word.fromString("0000", 4));
         mockSystem.registers.pc.set(Word.fromSignedIntValue(0, 8));
@@ -130,6 +128,6 @@ test("test conditional jump instructions", () => {
 
         inst.executeOn(mockSystem)
 
-        expect(mockSystem.registers.pc.toUnsignedIntValue()).toBe(122);
+        expect(mockSystem.registers.pc.toUnsignedIntValue()).toBe(123 - 2);
     })
 });

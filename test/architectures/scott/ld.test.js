@@ -20,7 +20,7 @@ test("test creating ld instruction from machine code", () => {
 test("test creating ld instruction from mnemonic", () => {
     const factory = new ScottInstructionFactory()
 
-    const ldInst = factory.createFromMnemonic("ld", ["R1", "R2"]);
+    const ldInst = factory.createFromMnemonic("LD", ["R1", "R2"]);
 
     expect(ldInst).toStrictEqual(new LoadInstruction(["R1", "R2"]));
 });

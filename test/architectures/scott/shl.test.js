@@ -23,7 +23,7 @@ test("test creating shl instruction from machine code", () => {
 test("test creating shl instruction from mnemonic", () => {
     const factory = new ScottInstructionFactory();
 
-    const shlInst = factory.createFromMnemonic("shl", ["R1", "R3"]);
+    const shlInst = factory.createFromMnemonic("SHL", ["R1", "R3"]);
 
     expect(shlInst).toStrictEqual(new ShiftLeftInstruction(["R1", "R3"]));
 });

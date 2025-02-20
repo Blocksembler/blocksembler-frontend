@@ -8,11 +8,12 @@ export class ParsingError extends Error {
 }
 
 export class BaseParser {
-    constructor(factory, commentChar, argSeparator, labelSeparator) {
+    constructor(factory, commentChar, argSeparator, labelSeparator, addressSize = 16) {
         this.instructionFactory = factory;
         this.commentChar = commentChar;
         this.argSeparator = argSeparator;
         this.labelSeparator = labelSeparator;
+        this.addressSize = addressSize;
     }
 
     parseCode(code, resolveLabels = true) {
@@ -180,7 +181,7 @@ export class BaseParser {
             }
             instructionAddress[inst] = currentAddress;
 
-            currentAddress += Number(inst.toMachineCode().length / 16);
+            currentAddress += Number(inst.toMachineCode().length / this.addressSize);
         }
 
         for (const inst of program) {
