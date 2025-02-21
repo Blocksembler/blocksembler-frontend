@@ -107,19 +107,9 @@ const loadWorkspaceFromAssemblyCode = (ws, assemblyCode) => {
 
   let prevBlock = startBlock;
   for (const instruction of parsedProgram) {
-
-    if (instruction.label) {
-      let labelDefBlock = ws.newBlock('labelDef')
-      labelDefBlock.initSvg();
-      labelDefBlock.getField('label').setValue(instruction.label.slice(1));
-
-      prevBlock.nextConnection.connect(labelDefBlock.previousConnection);
-      prevBlock = labelDefBlock;
-    }
-
-    const instructionBlock = instruction.toBlock(ws)
-    prevBlock.nextConnection.connect(instructionBlock.previousConnection);
-    prevBlock = instructionBlock;
+    const instructionBlocks = instruction.toBlocks(ws)
+    prevBlock.nextConnection.connect(instructionBlocks[0].previousConnection);
+    prevBlock = instructionBlocks[instructionBlocks.length - 1];
   }
 }
 
