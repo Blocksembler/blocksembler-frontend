@@ -1,15 +1,15 @@
 export class BaseInstruction {
-    constructor(args = [], label = "", comment = "") {
+    constructor(args = [], labels = [], comment = "") {
         this.args = args;
-        this.label = label;
+        this.labels = labels;
         this.comment = comment;
     }
 }
 
 export class PseudoInstruction {
-    constructor(args, label = "", comment = "") {
+    constructor(args, labels = [], comment = "") {
         this.args = args;
-        this.label = label;
+        this.labels = labels;
         this.comment = comment;
     }
 }
