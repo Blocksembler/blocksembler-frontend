@@ -4,6 +4,28 @@ import {addressSize} from "@/architectures/armlet/system.js";
 import Random from "java-random";
 
 
+const createLabelBlocks = (ws, labels) => {
+    const blocks = [];
+    let prevBlock = null;
+
+    for (let label of labels) {
+        let labelDefBlock = ws.newBlock('labelDef')
+        labelDefBlock.initSvg();
+
+        labelDefBlock.getField('label').setValue(label.name.slice(1));
+
+        if (prevBlock) {
+            prevBlock.nextConnection.connect(labelDefBlock.previousConnection);
+        }
+
+        blocks.push(labelDefBlock);
+        prevBlock = labelDefBlock;
+    }
+
+    return blocks
+}
+
+
 const intToOpCode = (number) => {
     return Number(number).toString(2).padStart(6, '0')
 }
@@ -101,7 +123,8 @@ export class DataDirective extends PseudoInstruction {
             .join('')
     }
 
-    toBlock(ws) {
+    toBlocks(ws) {
+        const blocks = createLabelBlocks(ws, this.labels);
 
         if (this.args.length === 0) {
             return null;
@@ -111,7 +134,14 @@ export class DataDirective extends PseudoInstruction {
             let dataWord = ws.newBlock('decimalWord')
             dataWord.initSvg()
             dataWord.setFieldValue(this.args[0], 'data')
-            return dataWord
+
+            if (blocks.length > 0) {
+                const prevBlock = blocks[blocks.length - 1];
+                prevBlock.nextConnection.connect(dataWord.previousConnection);
+            }
+
+            blocks.push(dataWord);
+            return blocks
         }
 
         let dataWordsBlock = ws.newBlock('data')
@@ -132,7 +162,14 @@ export class DataDirective extends PseudoInstruction {
         }
 
         dataWordsBlock.setCollapsed(true);
-        return dataWordsBlock;
+
+        if (blocks.length > 0) {
+            const prevBlock = blocks[blocks.length - 1];
+            prevBlock.nextConnection.connect(dataWordsBlock.previousConnection);
+        }
+
+        blocks.push(dataWordsBlock)
+        return blocks;
     }
 }
 
@@ -174,12 +211,23 @@ export class RandPermDirective extends PseudoInstruction {
         return machineCode;
     }
 
-    toBlock(ws) {
+    toBlocks(ws) {
+
+        const blocks = createLabelBlocks(ws, this.labels);
+
         let randPermBlock = ws.newBlock('randPerm')
         randPermBlock.initSvg()
         randPermBlock.setFieldValue(parseInt(this.args[0]), 'seed')
         randPermBlock.setFieldValue(parseInt(this.args[1]), 'n')
-        return randPermBlock;
+
+        if (blocks.length > 0) {
+            const prevBlock = blocks[blocks.length - 1];
+            prevBlock.nextConnection.connect(randPermBlock.previousConnection);
+        }
+
+        blocks.push(randPermBlock)
+
+        return blocks;
     }
 }
 
@@ -218,7 +266,9 @@ export class RandDirective extends PseudoInstruction {
         return machineCode;
     }
 
-    toBlock(ws) {
+    toBlocks(ws) {
+        const blocks = createLabelBlocks(ws, this.labels);
+
         let randPermBlock = ws.newBlock('rand')
         randPermBlock.initSvg()
 
@@ -230,7 +280,14 @@ export class RandDirective extends PseudoInstruction {
             randPermBlock.setFieldValue(parseInt(this.args[1]), 'seed')
         }
 
-        return randPermBlock;
+        if (blocks.length > 0) {
+            const prevBlock = blocks[blocks.length - 1];
+            prevBlock.nextConnection.connect(randPermBlock.previousConnection);
+        }
+
+        blocks.push(randPermBlock)
+
+        return blocks;
     }
 }
 
@@ -321,13 +378,23 @@ export class AbstractArmletInstruction extends BaseInstruction {
         return cmd
     }
 
-    toBlock(ws) {
+    toBlocks(ws) {
+        const blocks = createLabelBlocks(ws, this.labels);
+
         let block = ws.newBlock(this.blockType);
         block.initSvg();
 
         this.setBlockFields(ws, block);
 
-        return block;
+
+        if (blocks.length > 0) {
+            const prevBlock = blocks[blocks.length - 1];
+            prevBlock.nextConnection.connect(block.previousConnection);
+        }
+
+
+        blocks.push(block);
+        return blocks;
     }
 
     setBlockFields(ws, block) {

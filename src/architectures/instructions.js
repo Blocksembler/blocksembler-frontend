@@ -27,12 +27,12 @@ export class MultilineComment {
         return "";
     }
 
-    toBlock(ws) {
+    toBlocks(ws) {
         let multilineCommentBlock = ws.newBlock('comment')
         multilineCommentBlock.initSvg()
         multilineCommentBlock.getField('text').setValue(this.text);
 
         multilineCommentBlock.setCollapsed(true);
-        return multilineCommentBlock
+        return [multilineCommentBlock]
     }
 }
