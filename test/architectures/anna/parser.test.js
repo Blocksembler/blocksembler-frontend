@@ -67,8 +67,9 @@ test("parse multi-line assembler code with comments", () => {
 
     expect(result).toEqual([
         new MultilineComment("this is a comment"),
-        new AddInstruction(["r1", "r2", "r3"], "", "this is a line comment"),
+        new AddInstruction(["r1", "r2", "r3"], [], "this is a line comment"),
         new OrInstruction(["r4", "r5", "r6"]),
+        new MultilineComment("add r1 r2 r3 <- this command should be ignored")
     ]);
 });
 
@@ -78,6 +79,6 @@ test("parse assembler code with labels", () => {
     let parser = new AnnaAssemblyParser();
     let result = parser.parseCode(assemblerCode.join('\n'));
     expect(result).toEqual([
-        new BranchEqualZeroInstruction(["r0", "-1"], "loop")
+        new BranchEqualZeroInstruction(["r0", "-1"], [{"name": "loop", "lineNumber": 1}])
     ]);
 });

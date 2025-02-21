@@ -3,7 +3,7 @@ import {BlocksemblerSettings} from "@/settings.js";
 import {pluginRegistry} from "@/architectures/pluginRegistry.js";
 import {setupDefaultBlocks} from "@/architectures/blocks.js";
 
-const defaultArchitecture = "armlet";
+const defaultArchitecture = "scott";
 
 class BlocksemblerState {
     constructor() {
