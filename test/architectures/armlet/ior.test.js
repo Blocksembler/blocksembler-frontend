@@ -63,14 +63,14 @@ test("create ior instruction from machine code", () => {
 });
 
 test("create ior instruction with immediate from machine code", () => {
-   let machineCode = "0" + "000" + "010" + "111" + "011100" + "0000000000001010";
+    let machineCode = "0" + "000" + "010" + "111" + "011100" + "0000000000001010";
 
-   let expectedInstruction = new IorImmediateInstruction(['$7', '$2', '10']);
+    let expectedInstruction = new IorImmediateInstruction(['$7', '$2', '10']);
 
-   let factory = new ArmletInstructionFactory();
-   let instruction = factory.createFromOpCode([Word.fromString(machineCode), Word.fromSignedIntValue(10)], 0);
+    let factory = new ArmletInstructionFactory();
+    let instruction = factory.createFromOpCode([Word.fromString(machineCode), Word.fromSignedIntValue(10)], 0);
 
-   expect(instruction).toMatchObject(expectedInstruction);
+    expect(instruction).toMatchObject(expectedInstruction);
 });
 
 test("test execute ior instruction", () => {

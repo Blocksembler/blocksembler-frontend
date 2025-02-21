@@ -109,7 +109,7 @@ test("execute bne instruction with immediate when condition is true", () => {
 
     let mockSystem = generateMockSystem([0, 0, 0, 0, 0, 0, 0, 0, 0], instruction)
     let expectedSystemState = generateMockSystem([10, 0, 0, 0, 0, 0, 0, 0, 0], instruction)
-    
+
     instruction.executeOn(mockSystem);
 
     expect(mockSystem.registers).toStrictEqual(expectedSystemState.registers);

@@ -1,6 +1,5 @@
 export class BlocksemblerSettings {
-    constructor()
-    {
+    constructor() {
         this.executionSpeed = 500;
     }
 }
