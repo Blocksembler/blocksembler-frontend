@@ -24,7 +24,7 @@ export class BaseFormatter {
 
         if (labelEnd !== -1) {
             label = line.slice(0, labelEnd + 1).trim();
-            line = label.slice(labelEnd + 1)
+            line = line.slice(labelEnd + 1)
         }
 
         label = label.padEnd(this.labelIndent, " ")
