@@ -8,7 +8,12 @@ const memoryToInstructionObjects = (progMemory, highlightedLines) => {
 
   let address = 0;
   while (address < progMemory.length) {
-    let inst = emulator.loadInstructionAt(address);
+    let inst;
+    try {
+      inst = emulator.loadInstructionAt(address);
+    } catch (e) {
+      inst = "Invalid Instruction";
+    }
 
     let binVal = progMemory[address].toBitString();
     let decVal = progMemory[address].toUnsignedIntValue();
