@@ -20,14 +20,14 @@ export class BaseParser {
         let sourceLines = []
         let parsedProgram = []
         code.split('\n').forEach((line, idx) => {
-            sourceLines.push({lineNumber: idx, code: line.trim()})
+            sourceLines.push({lineNumber: idx + 1, code: line.trim()})
         })
 
         sourceLines = this.squashEmptyLines(sourceLines).map(l => {
-            let [label, mnemonic, args, comment] = this.parseLine(l.code);
+            let [labels, mnemonic, args, comment] = this.parseLine(l);
             return {
                 lineNumber: l.lineNumber,
-                label,
+                labels: labels,
                 mnemonic,
                 args,
                 comment,
@@ -37,7 +37,7 @@ export class BaseParser {
         sourceLines = this.squashComments(sourceLines);
         sourceLines = this.moveLabelsToNextMnemonic(sourceLines);
 
-        const sourceMap = {}
+        const instLineNumberMap = {}
 
         for (const line of sourceLines) {
             if (line.mnemonic === "" && line.comment !== "") {
@@ -45,21 +45,19 @@ export class BaseParser {
             } else if (line.mnemonic !== "") {
                 try {
                     let inst = this.instructionFactory.createFromMnemonic(line.mnemonic, line.args);
-                    inst.label = line.label;
+                    inst.labels = line.labels;
                     inst.comment = line.comment;
 
-                    sourceMap[inst] = {
-                        inst: line.lineNumber + 1, label: line.labelLineNr + 1
-                    };
+                    instLineNumberMap[inst] = line.lineNumber;
 
                     parsedProgram.push(inst);
                 } catch (e) {
-                    throw new ParsingError(line.lineNumber + 1, `Failed to parse instruction at line ${line.lineNumber + 1}`, e,);
+                    throw new ParsingError(line.lineNumber, `Failed to parse instruction at line ${line.lineNumber}`, e,);
                 }
             }
         }
         if (resolveLabels) {
-            return this.resolveLabels(parsedProgram, sourceMap);
+            return this.resolveLabels(parsedProgram, instLineNumberMap);
         }
 
         return parsedProgram;
@@ -68,33 +66,36 @@ export class BaseParser {
     parseLine(line) {
         let label = "", mnemonic, args, comment = "";
 
-        line = line.trim()
 
-        if (line.indexOf(this.commentChar) !== -1) {
-            const commentCharIdx = line.indexOf(this.commentChar);
-            comment = line.slice(commentCharIdx + 1).trim();
-            line = line.slice(0, commentCharIdx).trim()
+        let code = line.code.trim()
+
+        if (code.indexOf(this.commentChar) !== -1) {
+            const commentCharIdx = code.indexOf(this.commentChar);
+            comment = code.slice(commentCharIdx + 1).trim();
+            code = code.slice(0, commentCharIdx).trim()
         }
 
-        if (line.indexOf(this.labelSeparator) !== -1) {
-            const labelCharIdx = line.indexOf(this.labelSeparator);
-            label = line.slice(0, labelCharIdx).trim();
-            line = line.slice(labelCharIdx + 1).trim()
+        if (code.indexOf(this.labelSeparator) !== -1) {
+            const labelCharIdx = code.indexOf(this.labelSeparator);
+            label = code.slice(0, labelCharIdx).trim();
+            code = code.slice(labelCharIdx + 1).trim()
         }
 
-        if (line.indexOf(' ') !== -1) {
-            const spaceIdx = line.indexOf(' ')
-            mnemonic = line.slice(0, spaceIdx).trim();
-            line = line.slice(spaceIdx + 1).trim()
+        if (code.indexOf(' ') !== -1) {
+            const spaceIdx = code.indexOf(' ')
+            mnemonic = code.slice(0, spaceIdx).trim();
+            code = code.slice(spaceIdx + 1).trim()
         } else {
-            mnemonic = line.trim()
-            line = ""
+            mnemonic = code.trim()
+            code = ""
         }
 
-        args = line.trim().split(this.argSeparator).map(item => item.trim());
+        args = code.trim().split(this.argSeparator).map(item => item.trim());
         args = args.filter(e => e);
 
-        return [label, mnemonic, args, comment];
+        const labels = label !== "" ? [{name: label, lineNumber: line.lineNumber}] : [];
+
+        return [labels, mnemonic, args, comment];
     }
 
     squashEmptyLines(lines) {
@@ -112,7 +113,7 @@ export class BaseParser {
         let commentLineNumber = -1;
 
         for (const line of lines) {
-            if (line.label === "" && line.mnemonic === "" && line.args.length === 0 && line.comment !== "") {
+            if (line.labels.length === 0 && line.mnemonic === "" && line.args.length === 0 && line.comment !== "") {
                 if (commentLineNumber === -1) {
                     commentLineNumber = line.lineNumber;
                 }
@@ -137,26 +138,32 @@ export class BaseParser {
             }
         }
 
+        if (adjacentCommentLines.length > 0) {
+            result.push({
+                commentLineNumber: commentLineNumber,
+                label: "",
+                mnemonic: "",
+                args: [],
+                comment: adjacentCommentLines.join('\n')
+            });
+        }
+
         return result;
     }
 
     moveLabelsToNextMnemonic(lines) {
         const result = []
 
-        let currentLabel = ""
-        let labelLine = -1
+        let currentLabels = []
 
         for (const line of lines) {
-            if (line.label !== "") {
-                currentLabel = line.label;
-                labelLine = line.lineNumber;
+            if (line.labels) {
+                currentLabels = currentLabels.concat(line.labels);
             }
 
             if (line.mnemonic !== "") {
-                line.label = currentLabel;
-                line.labelLineNr = labelLine;
-                currentLabel = "";
-                labelLine = -1;
+                line.labels = currentLabels;
+                currentLabels = [];
                 result.push(line);
             } else if (line.comment !== "") {
                 result.push(line);
@@ -172,12 +179,14 @@ export class BaseParser {
 
         let currentAddress = 0
         for (let inst of program) {
-            if (inst.label) {
-                if (inst.label in labelAddresses) {
-                    throw new ParsingError(sourceMap[inst].label, `Label "${inst.label}" already defined.`);
-                }
+            if (inst.labels && inst.labels.length > 0) {
+                for (let label of inst.labels) {
+                    if (label.name in labelAddresses) {
+                        throw new ParsingError(label.lineNumber, `Label "${label.name}" already defined.`);
+                    }
 
-                labelAddresses[inst.label] = currentAddress;
+                    labelAddresses[label.name] = currentAddress;
+                }
             }
             instructionAddress[inst] = currentAddress;
 
@@ -191,7 +200,7 @@ export class BaseParser {
                     let labelAddress = labelAddresses[label]
 
                     if (labelAddress === undefined) {
-                        throw new ParsingError(sourceMap[inst].inst, `Label "${label}" not defined.`);
+                        throw new ParsingError(sourceMap[inst], `Label "${label}" not defined.`);
                     }
 
                     inst.args[argIdx] = this.labelToVal(labelAddress, instructionAddress[inst]).toString();

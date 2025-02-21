@@ -32,12 +32,12 @@ test("test parsing a full assembly program", () => {
     const expected = [
         new DataInstruction(["R0", "123"]),
         new DataInstruction(["R1", "0"]),
-        new DataInstruction(["R2", "1"], ".loop"),
+        new DataInstruction(["R2", "1"], [{name: ".loop", lineNumber: 3}]),
         new AndInstruction(["R0", "R2"]),
         new CmpInstruction(["R1", "R2"]),
         new JumpIfEqualInstruction(["11"]),
         new AddInstruction(["R2", "R3"]),
-        new ShiftRightInstruction(["R0", "R0"], ".was_zero"),
+        new ShiftRightInstruction(["R0", "R0"], [{name: ".was_zero", lineNumber: 9}]),
         new JumpAddressInstruction(["4"]),
     ]
 
