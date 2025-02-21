@@ -60,7 +60,7 @@ export class BaseEmulator {
         let addr = 0;
 
         while (addr < this.loadedProgramSize) {
-            this.memory[addr] = Word.fromString(code.slice(addr * this.addressSize, (addr + 1) * this.addressSize));
+            this.memory[addr] = Word.fromString(code.slice(addr * this.addressSize, (addr + 1) * this.addressSize), this.addressSize);
             addr += 1
         }
     }
@@ -240,11 +240,11 @@ export class Word {
 
     add(word) {
         let result = this.toSignedIntValue() + word.toSignedIntValue();
-        return Word.fromSignedIntValue(result, this.size);
+        return Word.fromSignedIntValue(result, this.length);
     }
 
     addImmedate(immediate) {
-        let immedateWord = Word.fromSignedIntValue(immediate);
+        let immedateWord = Word.fromSignedIntValue(immediate, this.bits.length);
         return this.add(immedateWord);
     }
 
