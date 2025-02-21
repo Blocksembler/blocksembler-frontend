@@ -76,10 +76,10 @@ test('test new parser', () => {
     ];
 
     let expectedProgram = [
-        new MovImmediateInstruction(["$2", "2"], "@inlinelabel"),
+        new MovImmediateInstruction(["$2", "2"], [{"name": "@inlinelabel", "lineNumber": 1}]),
         new MultilineComment("this is a comment\nabc"),
         new MultilineComment("test 2\nabc"),
-        new MovInstruction(["$1", "$2"], "@test", "in-line comment"),
+        new MovInstruction(["$1", "$2"], [{"name": "@test", "lineNumber": 7}], "in-line comment"),
         new NopInstruction()
     ]
 
@@ -242,7 +242,7 @@ test('test parsing programm with all instructions', () => {
     expect(parsedProgram).toEqual(expectedProgram);
 });
 
-test("label on directivees", () => {
+test("label on directives", () => {
     const sourceProgram = [
         "mov $7, >len",
         "loa $0, $7",
@@ -257,8 +257,8 @@ test("label on directivees", () => {
         new MovImmediateInstruction(["$7", "5"]),
         new LoaInstruction(["$0", "$7"]),
         new MovImmediateInstruction(["$2", "6"]),
-        new DataDirective(["0"], "@len"),
-        new DataDirective(["1", "2", "3"], "@target"),
+        new DataDirective(["0"], [{"name": "@len", "lineNumber": 4}]),
+        new DataDirective(["1", "2", "3"], [{"name": "@target", "lineNumber": 6}]),
     ]
 
     let parser = new ArmletAssemblyParser(new ArmletInstructionFactory());
