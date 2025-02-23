@@ -190,7 +190,7 @@ export class BaseParser {
             }
             instructionAddress[inst] = currentAddress;
 
-            currentAddress += Number(inst.toMachineCode().length / this.addressSize);
+            currentAddress += Math.floor(Number(inst.toMachineCode().length / this.addressSize));
         }
 
         for (const inst of program) {
