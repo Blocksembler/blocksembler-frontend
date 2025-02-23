@@ -71,7 +71,7 @@ export class BaseParser {
 
         if (code.indexOf(this.commentChar) !== -1) {
             const commentCharIdx = code.indexOf(this.commentChar);
-            comment = code.slice(commentCharIdx + 1).trim();
+            comment = code.slice(commentCharIdx + 1);
             code = code.slice(0, commentCharIdx).trim()
         }
 
