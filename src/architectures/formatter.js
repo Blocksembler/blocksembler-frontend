@@ -6,7 +6,7 @@ export class BaseFormatter {
         this.commentChar = commentChar;
     }
 
-    formatCode = (code) => {
+    formatCode(code) {
         const lines = code.split("\n");
         return lines.map(line => this.formatLine(line)).join('\n');
     };
