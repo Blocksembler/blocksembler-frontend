@@ -65,7 +65,7 @@ export const toolbox = {
                         },
                         label: {
                             shadow: {
-                                type: "labeldescriptor"
+                                type: "label"
                             }
                         }
                     }
@@ -81,7 +81,7 @@ export const toolbox = {
                         },
                         label: {
                             shadow: {
-                                type: "labeldescriptor"
+                                type: "label"
                             }
                         }
                     }
@@ -97,30 +97,18 @@ export const toolbox = {
                         },
                         label: {
                             shadow: {
-                                type: "labeldescriptor"
+                                type: "label"
                             }
                         }
                     }
                 },
                 {
                     kind: "block",
-                    type: "labelsection",
-                    inputs: {
-                        label: {
-                            shadow: {
-                                type: "labeldescriptor"
-                            }
-                        },
-                        statements: {
-                            shadow: {
-                                type: "halt"
-                            }
-                        }
-                    },
+                    type: "labelDef",
                 },
                 {
                     kind: "block",
-                    type: "labeldescriptor",
+                    type: "label",
                 },
             ],
         },
