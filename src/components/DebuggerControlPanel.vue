@@ -57,7 +57,7 @@ const executeNext = () => {
   logEvent('executeSingleStep');
 };
 
-const reset = (buttonKey, event) => {
+const reset = (event, buttonKey) => {
   event.preventDefault();
 
   let emulator = codingWorkspaceState.archPlugin.emulator;
