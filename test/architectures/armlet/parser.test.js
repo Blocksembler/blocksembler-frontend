@@ -77,9 +77,9 @@ test('test new parser', () => {
 
     let expectedProgram = [
         new MovImmediateInstruction(["$2", "2"], [{"name": "@inlinelabel", "lineNumber": 1}]),
-        new MultilineComment("this is a comment\nabc"),
-        new MultilineComment("test 2\nabc"),
-        new MovInstruction(["$1", "$2"], [{"name": "@test", "lineNumber": 7}], "in-line comment"),
+        new MultilineComment(" this is a comment\n abc"),
+        new MultilineComment(" test 2\n abc"),
+        new MovInstruction(["$1", "$2"], [{"name": "@test", "lineNumber": 7}], " in-line comment"),
         new NopInstruction()
     ]
 
