@@ -167,14 +167,12 @@ export class AnnaBlocklyGenerator extends BaseBlocklyGenerator {
         this.generator.forBlock["r6"] = generateRegister;
         this.generator.forBlock["r7"] = generateRegister;
 
-        this.generator.forBlock["labelsection"] = (block) => {
-            let label = this.generator.valueToCode(block, "label", Order.ATOMIC);
-            let statements = this.generator.statementToCode(block, "statements");
-
-            return `${label.slice(1)}: ${statements} \n`;
+        this.generator.forBlock["labelDef"] = (block) => {
+            let label = block.getFieldValue("labelName");
+            return `${label}:`;
         };
 
-        this.generator.forBlock["labeldescriptor"] = (block, _generator) => {
+        this.generator.forBlock["label"] = (block, _generator) => {
             const labelName = block.getFieldValue("label_name");
 
             return [`&${labelName}`, Order.ATOMIC];
