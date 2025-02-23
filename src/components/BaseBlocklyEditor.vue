@@ -29,10 +29,8 @@ onMounted(() => {
   const runCode = () => {
     try {
       let generator = codingWorkspaceState.archPlugin.blocklyGenerator;
-      codingWorkspaceState.sourceCode = codingWorkspaceState.archPlugin.formatter.formatCode(
-          generator.workspaceToCode(workspace.value)
-      );
-
+      let code = generator.workspaceToCode(workspace.value);
+      codingWorkspaceState.sourceCode = codingWorkspaceState.archPlugin.formatter.formatCode(code);
     } catch (error) {
 
       console.log(error);
