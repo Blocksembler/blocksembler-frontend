@@ -109,6 +109,13 @@ const loadWorkspaceFromAssemblyCode = (ws, assemblyCode) => {
     prevBlock.nextConnection.connect(instructionBlocks[0].previousConnection);
     prevBlock = instructionBlocks[instructionBlocks.length - 1];
   }
+
+  const data = {
+    archName: codingWorkspaceState.archPlugin.name,
+    blocklyWorkspace: Blockly.serialization.workspaces.save(workspace.value),
+  }
+
+  save(data);
 }
 
 codingWorkspaceState.addOnInitWorkspaceListener(onInitWorkspaceHandler)
