@@ -2,6 +2,7 @@ import {reactive} from "vue";
 import {BlocksemblerSettings} from "@/settings.js";
 import {pluginRegistry} from "@/architectures/pluginRegistry.js";
 import {setupDefaultBlocks} from "@/architectures/blocks.js";
+import {logEvent} from "@/logging.js";
 
 const defaultArchitecture = "armlet";
 
@@ -22,6 +23,7 @@ class BlocksemblerState {
             this.sourceCode = this.archPlugin.formatter.formatCode(sourceCode);
             this.onInitWorkspaceListener.forEach(callback => callback(this.sourceCode))
         } catch (e) {
+            logEvent("failedToImportSourceCode", e);
             alert("Failed to import source file.")
         }
     }
