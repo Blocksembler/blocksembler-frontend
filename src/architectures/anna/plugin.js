@@ -3,7 +3,7 @@ import {setupBlocklyBlocks} from "@/architectures/anna/blocks.js";
 import {toolbox} from "@/architectures/anna/toolbox.js";
 import {AnnaBlocklyGenerator} from "@/architectures/anna/generator.js";
 import {AnnaAssemblyParser} from "@/architectures/anna/parser.js";
-import {BaseFormatter} from "@/architectures/formatter.js";
+import {AnnaCodeFormatter} from "@/architectures/anna/formatter.js";
 
 export default {
     name: "anna",
@@ -12,5 +12,5 @@ export default {
     setupBlockBlocks: setupBlocklyBlocks,
     blocklyToolbox: toolbox,
     blocklyGenerator: new AnnaBlocklyGenerator().generator,
-    formatter: new BaseFormatter(5, 20, ':', '#')
+    formatter: new AnnaCodeFormatter(5, 20, ':', '#')
 }
