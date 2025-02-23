@@ -50,6 +50,12 @@ export class ArmletBlocklyGenerator extends BaseBlocklyGenerator {
             return [`${immediate}`, Order.ATOMIC];
         };
 
+        this.generator.forBlock["signedDecImmediate"] = (block, _generator) => {
+            const immediate = block.getFieldValue("value");
+
+            return [`${immediate}`, Order.ATOMIC];
+        };
+
         this.generator.forBlock["hexImmediate"] = (block, _generator) => {
             const immediate = block.getFieldValue("value");
 

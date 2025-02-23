@@ -46,6 +46,19 @@ export const setupBlocklyBlocks = () => {
         }
     };
 
+    Blockly.Blocks['signedDecImmediate'] = {
+        init: function () {
+            this.appendDummyInput()
+                .appendField("signed decimal value: ")
+                .appendField(new Blockly.FieldNumber(-1, -32768, 32767), "value");
+            this.setInputsInline(true);
+            this.setOutput(true, "immediate");
+            this.setColour(atomicValueColor);
+            this.setTooltip("This block represents an immediate integer value.");
+            this.setHelpUrl("");
+        }
+    };
+
     const validateHex = (val) => {
         if (val.startsWith("0x")) {
             val = val.slice(2);
@@ -223,7 +236,7 @@ export const setupBlocklyBlocks = () => {
                 .setCheck('register')
                 .appendField('=');
             this.appendValueInput('B')
-                .setCheck(['register', 'immediate'])
+                .setCheck(['register', 'immediate', 'label'])
                 .appendField(' AND ');
             this.setInputsInline(true)
             this.setPreviousStatement(true, null);
@@ -241,7 +254,7 @@ export const setupBlocklyBlocks = () => {
                 .setCheck('register')
                 .appendField('=');
             this.appendValueInput('B')
-                .setCheck(['register', 'immediate'])
+                .setCheck(['register', 'immediate', 'label'])
                 .appendField(' OR ');
             this.setInputsInline(true)
             this.setPreviousStatement(true, null);
@@ -259,7 +272,7 @@ export const setupBlocklyBlocks = () => {
                 .setCheck('register')
                 .appendField('=');
             this.appendValueInput('B')
-                .setCheck(['register', 'immediate'])
+                .setCheck(['register', 'immediate', 'label'])
                 .appendField(' XOR ');
             this.setInputsInline(true)
             this.setPreviousStatement(true, null);
@@ -269,10 +282,7 @@ export const setupBlocklyBlocks = () => {
         }
     };
 
-    const arithmeticOps = [
-        ['+', 'add'],
-        ['-', 'sub'],
-    ];
+    const arithmeticOps = [['+', 'add'], ['-', 'sub'],];
 
     Blockly.Blocks['ainst'] = {
         init: function () {
@@ -286,7 +296,7 @@ export const setupBlocklyBlocks = () => {
                 .appendField(new Blockly.FieldDropdown(() => arithmeticOps), 'operation')
                 .appendField(" ")
             this.appendValueInput('B')
-                .setCheck(['register', 'immediate'])
+                .setCheck(['register', 'immediate', 'label'])
             this.setInputsInline(true)
             this.setPreviousStatement(true, null);
             this.setNextStatement(true, null);
@@ -295,11 +305,7 @@ export const setupBlocklyBlocks = () => {
         }
     };
 
-    const logicOps = [
-        ['OR', 'ior'],
-        ['XOR', 'eor'],
-        ['AND', 'and'],
-    ];
+    const logicOps = [['OR', 'ior'], ['XOR', 'eor'], ['AND', 'and'],];
 
     Blockly.Blocks['linst'] = {
         init: function () {
@@ -313,7 +319,7 @@ export const setupBlocklyBlocks = () => {
                 .appendField(new Blockly.FieldDropdown(() => logicOps), 'operation')
                 .appendField(" ")
             this.appendValueInput('B')
-                .setCheck(['register', 'immediate'])
+                .setCheck(['register', 'immediate', 'label'])
             this.setInputsInline(true)
             this.setPreviousStatement(true, null);
             this.setNextStatement(true, null);
@@ -328,7 +334,7 @@ export const setupBlocklyBlocks = () => {
                 .setCheck('register')
                 .appendField('do a logical shift left (<<) of');
             this.appendValueInput('B')
-                .setCheck(['register', 'immediate'])
+                .setCheck(['register', 'immediate', 'label'])
                 .appendField(' by ');
             this.appendValueInput('L')
                 .setCheck('register')
@@ -347,7 +353,7 @@ export const setupBlocklyBlocks = () => {
                 .setCheck('register')
                 .appendField('do a logical shift right (>>) of');
             this.appendValueInput('B')
-                .setCheck(['register', 'immediate'])
+                .setCheck(['register', 'immediate', 'label'])
                 .appendField(' by ');
             this.appendValueInput('L')
                 .setCheck('register')
@@ -366,7 +372,7 @@ export const setupBlocklyBlocks = () => {
                 .setCheck('register')
                 .appendField('do an arithmetic shift right (>>) of');
             this.appendValueInput('B')
-                .setCheck(['register', 'immediate'])
+                .setCheck(['register', 'immediate', 'label'])
                 .appendField(' by ');
             this.appendValueInput('L')
                 .setCheck('register')
@@ -385,7 +391,7 @@ export const setupBlocklyBlocks = () => {
                 .setCheck('register')
                 .appendField('compare');
             this.appendValueInput('B')
-                .setCheck(['register', 'immediate'])
+                .setCheck(['register', 'immediate', 'label'])
                 .appendField(' and ');
             this.appendDummyInput()
                 .appendField('and update status register');
@@ -410,18 +416,7 @@ export const setupBlocklyBlocks = () => {
         }
     };
 
-    const branchingConditions = [
-        ['equal', 'beq'],
-        ['not equal', 'bne'],
-        ['greater than', 'bgt'],
-        ['greater or equal', 'bge'],
-        ['less than', 'blt'],
-        ['less or equal', 'ble'],
-        ['above', 'bab'],
-        ['below', 'bbw'],
-        ['above or equal', 'bae'],
-        ['below or equal', 'bbe'],
-    ];
+    const branchingConditions = [['equal', 'beq'], ['not equal', 'bne'], ['greater than', 'bgt'], ['greater or equal', 'bge'], ['less than', 'blt'], ['less or equal', 'ble'], ['above', 'bab'], ['below', 'bbw'], ['above or equal', 'bae'], ['below or equal', 'bbe'],];
 
     Blockly.Blocks['cjmp'] = {
         init: function () {
@@ -468,6 +463,7 @@ export const setupBlocklyBlocks = () => {
             this.setOutput(false, "dataWord");
         }
     };
+
 
     Blockly.Blocks['randPerm'] = {
         init: function () {

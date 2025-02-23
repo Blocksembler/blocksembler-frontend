@@ -436,6 +436,10 @@ export class AbstractArmletInstruction extends BaseInstruction {
                 iBlock = ws.newBlock('hexImmediate');
                 iBlock.initSvg();
                 iBlock.getField('value').setValue(this.immediate);
+            } else if (this.immediate.startsWith('-')) {
+                iBlock = ws.newBlock('signedDecImmediate');
+                iBlock.initSvg();
+                iBlock.getField('value').setValue(this.immediate);
             } else {
                 iBlock = ws.newBlock('decImmediate');
                 iBlock.initSvg();
@@ -458,9 +462,15 @@ export class AbstractArmletInstruction extends BaseInstruction {
 }
 
 export class AbstractImmediateArmletInstruction extends AbstractArmletInstruction {
+    get immediateBitString() {
+        let immediateValue = Number(this.immediate);
+        return Word.fromSignedIntValue(immediateValue, 16).toBitString()
+    }
+
     static fromMachineCode(instWord, immediateWord) {
         let l = this.extractL(instWord)
         let a = this.extractA(instWord)
+
         let immediate = `${parseInt(immediateWord, 2)}`
 
         return new this([l, a, immediate])
@@ -470,9 +480,9 @@ export class AbstractImmediateArmletInstruction extends AbstractArmletInstructio
         let l = regToBinary(this.lArgument)
         let a = regToBinary(this.aArgument)
         let b = "000"
-        let binaryImmediate = Number(this.immediate).toString(2).padStart(16, '0')
 
-        return "0" + b + a + l + this.constructor.opCode + binaryImmediate
+
+        return "0" + b + a + l + this.constructor.opCode + this.immediateBitString
     }
 
     executeOn(system) {
@@ -535,9 +545,8 @@ export class AbstractArmletImmediateControlInstruction extends AbstractImmediate
         let l = "000"
         let a = "000"
         let b = "000"
-        let binaryImmediate = Number(this.immediate).toString(2).padStart(16, '0')
 
-        return "0" + b + a + l + this.constructor.opCode + binaryImmediate
+        return "0" + b + a + l + this.constructor.opCode + this.immediateBitString
     }
 
     getJmpTarget(system) {
@@ -1314,9 +1323,8 @@ export class CmpImmediateInstruction extends AbstractImmediateArmletInstruction 
         let l = "000"
         let a = regToBinary(this.aArgument)
         let b = "000"
-        let binaryImmediate = Number(this.immediate).toString(2).padStart(16, '0')
 
-        return "0" + b + a + l + this.constructor.opCode + binaryImmediate
+        return "0" + b + a + l + this.constructor.opCode + this.immediateBitString
     }
 
     executeOn(system) {
