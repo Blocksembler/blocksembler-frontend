@@ -416,7 +416,18 @@ export const setupBlocklyBlocks = () => {
         }
     };
 
-    const branchingConditions = [['equal', 'beq'], ['not equal', 'bne'], ['greater than', 'bgt'], ['greater or equal', 'bge'], ['less than', 'blt'], ['less or equal', 'ble'], ['above', 'bab'], ['below', 'bbw'], ['above or equal', 'bae'], ['below or equal', 'bbe'],];
+    const branchingConditions = [
+        ['equal', 'beq'],
+        ['not equal', 'bne'],
+        ['greater than (signed)', 'bgt'],
+        ['greater or equal (signed)', 'bge'],
+        ['less than (signed)', 'blt'],
+        ['less or equal (signed)', 'ble'],
+        ['above (unsigned)', 'bab'],
+        ['above or equal (unsigned)', 'bae'],
+        ['below (unsigned)', 'bbw'],
+        ['below or equal (unsigned)', 'bbe'],
+    ];
 
     Blockly.Blocks['cjmp'] = {
         init: function () {
