@@ -1,5 +1,5 @@
 <script setup>
-import {onMounted, ref, shallowRef, watch} from "vue";
+import {onMounted, onUnmounted, ref, shallowRef, watch} from "vue";
 import * as Blockly from "blockly";
 import {codingWorkspaceState} from "@/state.js";
 import {logEvent} from "@/logging.js";
@@ -13,6 +13,10 @@ const props = defineProps(["options"]);
 const blocklyToolbox = ref();
 const blocklyDiv = ref();
 const workspace = shallowRef();
+
+onUnmounted(() => {
+  workspace.value.dispose();
+})
 
 onMounted(() => {
   const options = props.options || {};
