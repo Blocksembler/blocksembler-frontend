@@ -17,8 +17,13 @@ class BlocksemblerState {
     initWorkspace(sourceCode, architecture = defaultArchitecture) {
         this.loadPlugin(architecture);
 
-        this.sourceCode = this.archPlugin.formatter.formatCode(sourceCode);
-        this.onInitWorkspaceListener.forEach(callback => callback(this.sourceCode))
+        try {
+            this.archPlugin.parser.parseCode(sourceCode);
+            this.sourceCode = this.archPlugin.formatter.formatCode(sourceCode);
+            this.onInitWorkspaceListener.forEach(callback => callback(this.sourceCode))
+        } catch (e) {
+            alert("Failed to import source file.")
+        }
     }
 
     addOnInitWorkspaceListener(listener) {
