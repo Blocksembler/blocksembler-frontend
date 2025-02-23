@@ -30,6 +30,7 @@ export const toolbox = {
             name: "Primitives",
             contents: [
                 {kind: "block", type: "decImmediate"},
+                {kind: "block", type: "signedDecImmediate"},
                 {kind: "block", type: "hexImmediate"},
                 {kind: "block", type: "register"},
                 {kind: "block", type: "label"},
