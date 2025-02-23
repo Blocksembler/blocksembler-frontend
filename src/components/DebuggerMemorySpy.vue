@@ -3,27 +3,33 @@ import {computed, ref} from "vue";
 import {codingWorkspaceState} from "@/state.js";
 
 const startAddress = ref("0");
-const size = ref("9");
+const sliceSize = ref("9");
+
+const MAX = 30;
 
 const memory = computed(() => {
   const emulator = codingWorkspaceState.archPlugin.emulator;
 
-  const sliceStart = Number(startAddress.value)
-  const sliceSize = Number(size.value)
-  const sliceEnd = sliceStart + sliceSize;
+  let start = Math.trunc(Number(startAddress.value)) ? Math.trunc(Number(startAddress.value)) : 0;
+  const size = Math.trunc(Number(sliceSize.value)) ? Number(sliceSize.value) : 10;
 
-  console.log(sliceStart, sliceSize, sliceEnd);
-
-  if (!sliceStart || !sliceEnd) {
-    return emulator.getMemoryFragment(0, 9);
+  if (sliceSize.value > MAX) {
+    sliceSize.value = MAX;
   }
 
-  return emulator.getMemoryFragment(
-      sliceStart,
-      sliceEnd,
-  );
+  let end = start + size;
 
-});
+  if (start > 2 ** emulator.addressSize) {
+    start = 0;
+    end = 10;
+  } else if (end > 2 ** emulator.addressSize) {
+    end = 2 ** emulator.addressSize - 1;
+  }
+
+  console.log(start, end);
+
+  return emulator.getMemoryFragment(start, end);
+})
 
 </script>
 <template>
@@ -37,7 +43,7 @@ const memory = computed(() => {
         </div>
         <div class="mb-3">
           <label class="form-label" for="size">Size (in Bytes)</label>
-          <input id="size" v-model="size" class="form-control" type="number">
+          <input id="size" v-model="sliceSize" class="form-control">
         </div>
       </form>
       <table class="table">

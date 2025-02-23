@@ -69,7 +69,7 @@ const instructions = computed(() => {
           <th scope="col" style="width: 20%">Binary</th>
           <th scope="col" style="width: 15%">Decimal</th>
           <th scope="col" style="width: 15%">Hex</th>
-          <th scope="col" style="width: 20%">Assembly</th>
+          <th scope="col" style="width: 20%">Assembly Instruction</th>
         </tr>
         </thead>
         <tbody>
