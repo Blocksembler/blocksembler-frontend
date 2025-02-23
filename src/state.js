@@ -26,8 +26,12 @@ class BlocksemblerState {
     }
 
     loadPlugin(pluginName) {
-        this.archPlugin = pluginRegistry[pluginName];
-        this.archPlugin.setupBlockBlocks();
+        if (pluginName in pluginRegistry) {
+            this.archPlugin = pluginRegistry[pluginName];
+            this.archPlugin.setupBlockBlocks();
+        } else {
+            throw new Error(`architecture plugin "${pluginName}" not found`);
+        }
     }
 }
 

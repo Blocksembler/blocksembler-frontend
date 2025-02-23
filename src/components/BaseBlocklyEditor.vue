@@ -46,8 +46,14 @@ onMounted(() => {
       let archName = jsonWorkspace.archName;
       let blocklyWorkspace = jsonWorkspace.blocklyWorkspace;
 
-      codingWorkspaceState.loadPlugin(archName);
-      Blockly.serialization.workspaces.load(blocklyWorkspace, workspace.value, false);
+      if (archName && blocklyWorkspace) {
+        codingWorkspaceState.loadPlugin(archName);
+        Blockly.serialization.workspaces.load(blocklyWorkspace, workspace.value, false);
+      } else {
+        logEvent("failedToLoadBlocklyWorkspaceFromLS",
+            "Local storage did not provide a archName and blocklyWorkspace value");
+      }
+
     } catch (error) {
       logEvent('failedToLoadBlocklyWorkspaceFromLS', error.toString());
     } finally {
