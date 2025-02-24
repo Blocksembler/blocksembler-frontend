@@ -15,8 +15,8 @@ const blocklyDiv = ref();
 const workspace = shallowRef();
 
 onUnmounted(() => {
-  workspace.value.dispose();
-})
+  workspace.value.render();
+});
 
 onMounted(() => {
   const options = props.options || {};
