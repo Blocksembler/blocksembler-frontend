@@ -1,4 +1,4 @@
-import { AddwInstruction } from "@/architectures/insperHack/instructions";
+import { AddwInstruction, InsperHackInstructionFactory } from "@/architectures/insperHack/instructions";
 import {expect, test, vi} from "vitest";
 import {Word} from "../../../src/architectures/system";
 
@@ -26,7 +26,7 @@ test("create addw instruction from machine code", () => {
     let expectedInstruction = new AddwInstruction(['(%A)', '%D', '%D']);
 
     let factory = new InsperHackInstructionFactory();
-    let instruction = factory.createFromOpCode([Word.fromString(maschineCode)], 0);
+    let instruction = factory.createFromOpCode([Word.fromString(machineCode)], 0);
 
     expect(instruction).toMatchObject(expectedInstruction);
 });
