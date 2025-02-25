@@ -28,16 +28,14 @@ export class InsperHackInstructionFactory {
 
 export class InsperHackInstruction extends BaseInstruction {
 
-    get pcWord() {
+    get op1() {
         return this.args[0];
     }
-
-    get rs1() {
+    get op2() {
         return this.args[1];
     }
-
-    get rs2() {
-        return this.args[2];
+    get dest() {
+        return this.args.slice(2);
     }
 
     // extract destination bits d1, d2, d3
@@ -95,13 +93,38 @@ export class AddwInstruction extends InsperHackInstruction {
     }
 
     executeOn(system) {
-        let target = system.registers[this.pcWord];
-        let firstOperand = system.registers[this.rs1].toSignedIntValue();
-        let secondOperand = system.registers[this.rs2].toSignedIntValue();
-        console.log(firstOperand);
-        console.log(secondOperand);
-        let result = firstOperand + secondOperand;
-        target.set(result);
+        let op1Word;
+        if (this.op1.startsWith('(')) {
+            // get value of Memory
+            let address = system.registers['%A'].toUnsignedIntValue();
+            // set value
+            op1Word = system.memory[address];
+        } else {
+            op1Word = system.registers[this.op1];
+        }
+        let op2Word;
+        if (this.op2.startsWith('(')) { // memory
+            // get value of Memory
+            let address = system.registers['%A'].toUnsignedIntValue();
+            // set value
+            op2Word = system.memory[address];
+        } else if (this.op2.startsWith('%'))  { // register
+            op2Word = system.registers[this.op2];
+        } else { // immediate
+            op2Word = Word.fromSignedIntValue(Number(this.op2));
+        }
+
+        this.dest.forEach((dest) => { 
+            let destWord;
+            if (dest.startsWith('(')) { // memory
+                let address = system.register['%A'].toUnsignedIntValue();
+                destWord = system.memory[address];
+            } else {
+                destWord = system.registers[dest]; // register
+            }
+            // set result word
+            destWord.set(op1Word.add(op2Word));
+        });
     }
 
     toMachineCode() {
