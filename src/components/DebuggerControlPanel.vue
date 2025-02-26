@@ -57,32 +57,36 @@ const executeNext = () => {
   logEvent('executeSingleStep');
 };
 
-const reset = (event, buttonKey) => {
-  event.preventDefault();
-
-  let emulator = codingWorkspaceState.archPlugin.emulator;
-
-  emulator.isTerminated = false;
-  emulator.isPaused = true;
-
-  if (buttonKey === 'reg-only' || buttonKey === '__default__') {
-    emulator.resetRegisters();
-  }
-
-  if (buttonKey === 'memory-only' || buttonKey === '__default__') {
-    emulator.resetMemory();
-  }
-
-  while (emulator.output.length > 0) {
-    emulator.output.pop();
-  }
-
-  logEvent('resetEmulator');
-};
-
 const resetButtonItems = [
-  {key: 'memory-only', label: 'Reset Memory only'},
-  {key: 'reg-only', label: 'Reset Registers only'},
+  {
+    key: '__default__',
+    label: 'Reset All',
+    clickEvent: event => {
+      event.preventDefault();
+
+      let emulator = codingWorkspaceState.archPlugin.emulator;
+
+      emulator.halt();
+      emulator.resetMemory();
+      emulator.resetRegisters();
+
+      emulator.isTerminated = false;
+      emulator.isPaused = true;
+    }
+  },
+  {
+    key: 'reg-only', label: 'Reset Registers only', clickEvent: event => {
+      event.preventDefault();
+
+      let emulator = codingWorkspaceState.archPlugin.emulator;
+
+      emulator.halt();
+      emulator.resetRegisters();
+
+      emulator.isTerminated = false;
+      emulator.isPaused = true;
+    }
+  },
 ];
 </script>
 
