@@ -1,5 +1,5 @@
 export class BaseFormatter {
-    constructor(labelIndent, instructionIndent, labelChar = ":", commentChar = "#") {
+    constructor(labelIndent = 10, instructionIndent = 20, labelChar = ":", commentChar = "#") {
         this.labelIndent = labelIndent;
         this.instructionIndent = instructionIndent;
         this.labelChar = labelChar;

@@ -5,7 +5,7 @@ import {setupDefaultBlocks} from "@/architectures/blocks.js";
 import {logEvent} from "@/logging.js";
 
 const architecturePluginKey = import.meta.env.VITE_BLOCKSEMBLER_DEFAULT_ARCHITECTURE !== undefined ?
-    import.meta.env.VITE_BLOCKSEMBLER_DEFAULT_ARCHITECTURE : 'anna';
+    import.meta.env.VITE_BLOCKSEMBLER_DEFAULT_ARCHITECTURE : 'simpleRISC';
 
 class BlocksemblerState {
     constructor() {
