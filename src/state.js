@@ -4,7 +4,7 @@ import {pluginRegistry} from "@/architectures/pluginRegistry.js";
 import {setupDefaultBlocks} from "@/architectures/blocks.js";
 import {logEvent} from "@/logging.js";
 
-const defaultArchitecture = "armlet";
+const defaultArchitecture = "simpleMIPS";
 
 class BlocksemblerState {
     constructor() {
