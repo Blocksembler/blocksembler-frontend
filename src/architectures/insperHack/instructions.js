@@ -89,7 +89,7 @@ export class AddwInstruction extends InsperHackInstruction {
         let args = params.concat(dest);
         
         //console.log(args);
-        return new AddwInstruction(args);
+        return new SubwInstruction(args);
     }
 
     executeOn(system) {
@@ -163,7 +163,105 @@ export class AddwInstruction extends InsperHackInstruction {
     }
 }
 
+export class SubwInstruction extends InsperHackInstruction {
+    static get mnemonic() {
+        return 'subw';
+    }
+    static get opCode() {
+        return '000111';
+    }
+
+    // generates assembly-text array args from code
+    static fromMachineCode(code) {
+        // set params
+        let params = [];
+        if (this.extractA(code) == '1') {
+            params.push('(%A)', '%D');
+        }
+        else {
+            params.push('%A', '%D');
+        }
+        // set destinations
+        let dest = this.findDestinationsFrom(code);
+        let args = params.concat(dest);
+        
+        //console.log(args);
+        return new SubwInstruction(args);
+    }
+
+    executeOn(system) {
+        let op1Word;
+        if (this.op1.startsWith('(')) {
+            // get value of Memory
+            let address = system.registers['%A'].toUnsignedIntValue();
+            // set value
+            op1Word = system.memory[address];
+        } else {
+            op1Word = system.registers[this.op1];
+        }
+        let op2Word;
+        if (this.op2.startsWith('(')) { // memory
+            // get value of Memory
+            let address = system.registers['%A'].toUnsignedIntValue();
+            // set value
+            op2Word = system.memory[address];
+        } else if (this.op2.startsWith('%'))  { // register
+            op2Word = system.registers[this.op2];
+        } else { // immediate
+            op2Word = Word.fromSignedIntValue(Number(this.op2));
+        }
+
+        this.dest.forEach((dest) => { 
+            let destWord;
+            if (dest.startsWith('(')) { // memory
+                let address = system.register['%A'].toUnsignedIntValue();
+                destWord = system.memory[address];
+            } else {
+                destWord = system.registers[dest]; // register
+            }
+            // set result word
+            destWord.set(op1Word.subtract(op2Word));
+        });
+    }
+
+    toMachineCode() {
+        let code = '111';
+        if (this.args[0].startsWith('(') || this.args[1].startsWith('(')) {
+            code += '1';
+        } else {
+            code += '0';
+        }
+        // get opCode and append
+        let prototype = Object.getPrototypeOf(this);
+        code += prototype.constructor.opCode;
+
+        // params and destinations
+        // %A %D (%A) 
+        if (this.args.slice(2).includes('%A')) { // %A
+            code += '1';
+        } else {
+            code += '0';
+        }
+        if (this.args.slice(2).includes('%D')) { // %D
+            code += '1';
+        } else {
+            code += '0';
+        }
+        if (this.args.slice(2).includes('(%A)')) { // (%A)
+            code += '1';
+        } else {
+            code += '0';
+        }
+
+        // no jump
+        code += '000';
+
+        return code;
+    }
+}
+
 const instructionClasses = [
     AddwInstruction,
+    SubwInstruction,
 ];
 

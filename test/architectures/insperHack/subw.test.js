@@ -83,7 +83,7 @@ test("Test 4.2: substract two registers and store to different register", () => 
         memory: [Word.fromSignedIntValue(10)],
     };
 
-    let instruction = new AddwInstruction(['(%A)', '%D', '%D']);
+    let instruction = new SubwInstruction(['(%A)', '%D', '%D']);
 
     instruction.executeOn(emulator);
 
