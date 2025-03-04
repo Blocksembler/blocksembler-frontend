@@ -116,6 +116,25 @@ export class InsperHackInstruction extends BaseInstruction {
         }
         return code;
     }
+
+    getRegValue(system, operand) {
+        return system.registers[operand];
+    }
+
+    getMemoryValue(system) {
+        // get value of Memory
+        let address = system.registers['%A'].toUnsignedIntValue();
+        // set value
+        return system.memory[address];
+    }
+
+    getImmetiateValue(operand) {
+        return Word.fromSignedIntValue(Number(operand));
+    }
+
+    isMemoryAccess(param) {
+        return param.startsWith('(');
+    }
 }
 
 export class AddwInstruction extends InsperHackInstruction {
@@ -136,34 +155,30 @@ export class AddwInstruction extends InsperHackInstruction {
     }
 
     executeOn(system) {
+        // operand 1 reg/mem
         let op1Word;
-        if (this.op1.startsWith('(')) {
-            // get value of Memory
-            let address = system.registers['%A'].toUnsignedIntValue();
-            // set value
-            op1Word = system.memory[address];
+        if (this.isMemoryAccess(this.op1)) {
+            op1Word = this.getMemoryValue(system);
         } else {
-            op1Word = system.registers[this.op1];
-        }
+            op1Word = this.getRegValue(system, this.op1);
+        };
+        // operand 2 (op2) reg/mem/im
         let op2Word;
-        if (this.op2.startsWith('(')) { // memory
-            // get value of Memory
-            let address = system.registers['%A'].toUnsignedIntValue();
-            // set value
-            op2Word = system.memory[address];
-        } else if (this.op2.startsWith('%'))  { // register
-            op2Word = system.registers[this.op2];
-        } else { // immediate
-            op2Word = Word.fromSignedIntValue(Number(this.op2));
+        if (this.isMemoryAccess(this.op2)) {
+            op2Word = this.getMemoryValue(system);
+        } else if (this.op2.startsWith('%'))  { 
+            op2Word = this.getRegValue(system, this.op2);
+        } else { 
+            op2Word = this.getImmetiateValue(this.op2);
         }
 
         this.dest.forEach((dest) => { 
+            // destinations one of mem/reg
             let destWord;
-            if (dest.startsWith('(')) { // memory
-                let address = system.register['%A'].toUnsignedIntValue();
-                destWord = system.memory[address];
+            if (this.isMemoryAccess(dest)) {
+                destWord = this.getMemoryValue(system);
             } else {
-                destWord = system.registers[dest]; // register
+                destWord = this.getRegValue(system, dest);
             }
             // set result word
             destWord.set(op1Word.add(op2Word));
@@ -203,34 +218,29 @@ export class SubwInstruction extends InsperHackInstruction {
     }
 
     executeOn(system) {
+        // operand 1 reg/mem
         let op1Word;
-        if (this.op1.startsWith('(')) {
-            // get value of Memory
-            let address = system.registers['%A'].toUnsignedIntValue();
-            // set value
-            op1Word = system.memory[address];
+        if (this.isMemoryAccess(this.op1)) {
+            op1Word = this.getMemoryValue(system);
         } else {
-            op1Word = system.registers[this.op1];
-        }
+            op1Word = this.getRegValue(system, this.op1);
+        };
+        // operand 2 (op2) reg/mem/im
         let op2Word;
-        if (this.op2.startsWith('(')) { // memory
-            // get value of Memory
-            let address = system.registers['%A'].toUnsignedIntValue();
-            // set value
-            op2Word = system.memory[address];
-        } else if (this.op2.startsWith('%'))  { // register
-            op2Word = system.registers[this.op2];
-        } else { // immediate
-            op2Word = Word.fromSignedIntValue(Number(this.op2));
+        if (this.isMemoryAccess(this.op2)) {
+            op2Word = this.getMemoryValue(system);
+        } else if (this.op2.startsWith('%'))  { 
+            op2Word = this.getRegValue(system, this.op2);
+        } else { 
+            op2Word = this.getImmetiateValue(this.op2);
         }
 
         this.dest.forEach((dest) => { 
             let destWord;
-            if (dest.startsWith('(')) { // memory
-                let address = system.register['%A'].toUnsignedIntValue();
-                destWord = system.memory[address];
+            if (this.isMemoryAccess(dest)) {
+                destWord = this.getRegValue(system, dest);
             } else {
-                destWord = system.registers[dest]; // register
+                destWord = this.getRegValue(system, dest);
             }
             // set result word
             destWord.set(op1Word.subtract(op2Word));
