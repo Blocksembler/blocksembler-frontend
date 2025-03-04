@@ -128,13 +128,21 @@ export class InsperHackInstruction extends BaseInstruction {
         return system.memory[address];
     }
 
-    getImmetiateValue(operand) {
+    getImmediateValue(operand) {
         return Word.fromSignedIntValue(Number(operand));
     }
 
     isMemoryAccess(param) {
         return param.startsWith('(');
     }
+}
+
+export class LeawInstruction extends InsperHackInstruction {
+
+}
+
+export class MovwInstruction extends InsperHackInstruction {
+
 }
 
 export class AddwInstruction extends InsperHackInstruction {
@@ -169,7 +177,7 @@ export class AddwInstruction extends InsperHackInstruction {
         } else if (this.op2.startsWith('%'))  { 
             op2Word = this.getRegValue(system, this.op2);
         } else { 
-            op2Word = this.getImmetiateValue(this.op2);
+            op2Word = this.getImmediateValue(this.op2);
         }
 
         this.dest.forEach((dest) => { 
@@ -232,7 +240,7 @@ export class SubwInstruction extends InsperHackInstruction {
         } else if (this.op2.startsWith('%'))  { 
             op2Word = this.getRegValue(system, this.op2);
         } else { 
-            op2Word = this.getImmetiateValue(this.op2);
+            op2Word = this.getImmediateValue(this.op2);
         }
 
         this.dest.forEach((dest) => { 
@@ -260,8 +268,97 @@ export class SubwInstruction extends InsperHackInstruction {
     }
 }
 
+export class RsubwInstruction extends InsperHackInstruction {
+
+}
+
+export class IncwInstruction extends InsperHackInstruction {
+
+}
+
+export class DecwInstruction extends InsperHackInstruction {
+
+}
+
+export class NotwInstruction extends InsperHackInstruction {
+
+}
+
+export class NegwInstruction extends InsperHackInstruction {
+
+}
+
+export class AndwInstruction extends InsperHackInstruction {
+
+}
+
+export class OrwInstruction extends InsperHackInstruction {
+
+}
+
+export class JmpInstruction extends InsperHackInstruction {
+
+}
+
+export class JeInstruction extends InsperHackInstruction {
+
+}
+export class JneInstruction extends InsperHackInstruction {
+
+}
+
+export class JlInstruction extends InsperHackInstruction {
+
+}
+
+export class JleInstruction extends InsperHackInstruction {
+
+}
+
+export class JgInstruction extends InsperHackInstruction {
+
+}
+
+export class JgeInstruction extends InsperHackInstruction {
+
+}
+
+export class NopInstruction extends InsperHackInstruction {
+
+}
+
+export class LabelInstruction extends InsperHackInstruction {
+
+}
+
 const instructionClasses = [
+    LeawInstruction,
+    MovwInstruction,
+
+
     AddwInstruction,
     SubwInstruction,
+    RsubwInstruction,
+
+    IncwInstruction,
+    DecwInstruction,
+
+    NotwInstruction,
+    NegwInstruction,
+    AndwInstruction,
+    OrwInstruction,
+
+    JmpInstruction,
+    JeInstruction,
+    JneInstruction,
+
+    JlInstruction,
+    JleInstruction,
+
+    JgInstruction,
+    JgeInstruction,
+
+    NopInstruction,
+    LabelInstruction
 ];
 
