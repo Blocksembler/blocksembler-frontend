@@ -38,31 +38,83 @@ export class InsperHackInstruction extends BaseInstruction {
         return this.args.slice(2);
     }
 
-    // extract destination bits d1, d2, d3
-    static extractD123(code) {
-        return code.slice(10, 13);
-    }
-
-    // create destination array args from bits (d1, d2, d3) in code
-    static findDestinationsFrom(code) {
-        let args = [];
-        if (this.extractD123(code)[0] == '1') { // d1
-            args.push('%A');
-        }
-        if (this.extractD123(code)[1] == '1') { // d2
-            args.push('%D');
-        } 
-        if (this.extractD123(code)[2] == '1') { // d3
-            args.push('(%A)');
-        }
-    
-        return args;
-    }
-
     // extract bit (a) which defines the instruction type
     static extractA(code) {
         let a = code.slice(2, 4)[0];
         return a;
+    }
+
+    // extract destination bits d1, d2, d3
+    static extractD(code) {
+        return code.slice(10, 13);
+    }
+
+    // extract jump bits jq, j2,j3
+    static extractJ(code) {
+        let j = code.slice(13, 17)[0];
+        return j;
+    }
+
+    // create destination array args from bits (d1, d2, d3) in code
+    static setDestinations(code) {
+        let args = [];
+        if (this.extractD(code)[0] == '1') { // d1
+            args.push('%A');
+        }
+        if (this.extractD(code)[1] == '1') { // d2
+            args.push('%D');
+        } 
+        if (this.extractD(code)[2] == '1') { // d3
+            args.push('(%A)');
+        }
+        return args;
+    }
+
+    // create param array params from code (decision by bit a) in code
+    static setParams(code) {
+        let params = [];
+        if (this.extractA(code) == '1') {
+            params.push('(%A)', '%D');
+        }
+        else {
+            params.push('%A', '%D');
+        }
+        return params;
+    }
+
+    // append 000 for no jump operations
+    noJump(code) {
+        code += "000";
+        return code;
+    }
+
+    createCodeFromArgs(args, code) {
+        if (args.slice(2).includes('%A')) { // %A
+            code += '1';
+        } else {
+            code += '0';
+        }
+        if (args.slice(2).includes('%D')) { // %D
+            code += '1';
+        } else {
+            code += '0';
+        }
+        if (args.slice(2).includes('(%A)')) { // (%A)
+            code += '1';
+        } else {
+            code += '0';
+        }   
+        return code;     
+    }
+
+    startInstructionTypeC(args) {
+        let code = '111';
+        if (args[0].startsWith('(') || args[1].startsWith('(')) {
+            code += '1';
+        } else {
+            code += '0';
+        }
+        return code;
     }
 }
 
@@ -76,20 +128,11 @@ export class AddwInstruction extends InsperHackInstruction {
 
     // generates assembly-text array args from code
     static fromMachineCode(code) {
-        // set params
-        let params = [];
-        if (this.extractA(code) == '1') {
-            params.push('(%A)', '%D');
-        }
-        else {
-            params.push('%A', '%D');
-        }
-        // set destinations
-        let dest = this.findDestinationsFrom(code);
+        let params = this.setParams(code);
+        let dest = this.setDestinations(code);
         let args = params.concat(dest);
-        
-        //console.log(args);
-        return new SubwInstruction(args);
+
+        return new AddwInstruction(args);
     }
 
     executeOn(system) {
@@ -128,64 +171,34 @@ export class AddwInstruction extends InsperHackInstruction {
     }
 
     toMachineCode() {
-        let code = '111';
-        if (this.args[0].startsWith('(') || this.args[1].startsWith('(')) {
-            code += '1';
-        } else {
-            code += '0';
-        }
+        let code = this.startInstructionTypeC(this.args);
         // get opCode and append
         let prototype = Object.getPrototypeOf(this);
         code += prototype.constructor.opCode;
-
-        // params and destinations
-        // %A %D (%A) 
-        if (this.args.slice(2).includes('%A')) { // %A
-            code += '1';
-        } else {
-            code += '0';
-        }
-        if (this.args.slice(2).includes('%D')) { // %D
-            code += '1';
-        } else {
-            code += '0';
-        }
-        if (this.args.slice(2).includes('(%A)')) { // (%A)
-            code += '1';
-        } else {
-            code += '0';
-        }
-
-        // no jump
-        code += '000';
+        // append params and destinations
+        code = this.noJump(this.createCodeFromArgs(this.args, code));
 
         return code;
+
     }
 }
 
+// A-D and M-D
+// TO-DO: D-A and D-M with opcode 010011
 export class SubwInstruction extends InsperHackInstruction {
     static get mnemonic() {
         return 'subw';
     }
     static get opCode() {
-        return '000111';
+        return '000111'; // A-D and M-D
     }
 
     // generates assembly-text array args from code
     static fromMachineCode(code) {
-        // set params
-        let params = [];
-        if (this.extractA(code) == '1') {
-            params.push('(%A)', '%D');
-        }
-        else {
-            params.push('%A', '%D');
-        }
-        // set destinations
-        let dest = this.findDestinationsFrom(code);
+        let params = this.setParams(code);
+        let dest = this.setDestinations(code);
         let args = params.concat(dest);
-        
-        //console.log(args);
+
         return new SubwInstruction(args);
     }
 
@@ -225,36 +238,13 @@ export class SubwInstruction extends InsperHackInstruction {
     }
 
     toMachineCode() {
-        let code = '111';
-        if (this.args[0].startsWith('(') || this.args[1].startsWith('(')) {
-            code += '1';
-        } else {
-            code += '0';
-        }
+        // setup instruction code
+        let code = this.startInstructionTypeC(this.args);
         // get opCode and append
         let prototype = Object.getPrototypeOf(this);
         code += prototype.constructor.opCode;
-
-        // params and destinations
-        // %A %D (%A) 
-        if (this.args.slice(2).includes('%A')) { // %A
-            code += '1';
-        } else {
-            code += '0';
-        }
-        if (this.args.slice(2).includes('%D')) { // %D
-            code += '1';
-        } else {
-            code += '0';
-        }
-        if (this.args.slice(2).includes('(%A)')) { // (%A)
-            code += '1';
-        } else {
-            code += '0';
-        }
-
-        // no jump
-        code += '000';
+        // append params and destinations
+        code = this.noJump(this.createCodeFromArgs(this.args, code));
 
         return code;
     }
