@@ -307,10 +307,7 @@ export class RsubwInstruction extends InsperHackInstruction {
 
 }
 
-export class IncwInstruction extends InsperHackInstruction {
-    static get mnemonic() {
-        return 'incw';
-    }
+class OverwriteInstruction extends InsperHackInstruction {
     toMachineCode() {
         // setup instruction code
         let code = this.startInstructionTypeC(this.args);
@@ -321,6 +318,12 @@ export class IncwInstruction extends InsperHackInstruction {
         code = this.noJump(this.createCodeFromArgs(this.args, code));
 
         return code;
+    }
+}
+
+class IncwInstruction extends OverwriteInstruction {
+    static get mnemonic() {
+        return 'incw';
     }
     executeOn(system) {
         // operand 1 reg
@@ -358,20 +361,9 @@ export class IncDInstruction extends IncwInstruction {
     }
 }
 
-export class DecwInstruction extends InsperHackInstruction {
+class DecwInstruction extends OverwriteInstruction {
     static get mnemonic() {
         return 'decw';
-    }
-    toMachineCode() {
-        // setup instruction code
-        let code = this.startInstructionTypeC(this.args);
-        // get opCode and append
-        let prototype = Object.getPrototypeOf(this);
-        code += prototype.constructor.opCode;
-        // append params and destinations
-        code = this.noJump(this.createCodeFromArgs(this.args, code));
-
-        return code;
     }
     executeOn(system) {
         // operand 1 reg
