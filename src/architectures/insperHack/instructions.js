@@ -329,10 +329,9 @@ export class IncwInstruction extends InsperHackInstruction {
             console.log("Error: Cannot read and write at the same time.");
         } else {
             op1Word = this.getRegValue(system, this.op1);
-            console.log(op1Word.toUnsignedIntValue());
             let destWord = op1Word; // same destination as given register
-            destWord.set(op1Word.addImmediate(1));
-            console.log(destWord.toUnsignedIntValue());
+            //destWord.set(op1Word.addImmediate(1));
+            destWord.set(op1Word.inc());
             return destWord;
         }
     }    
@@ -344,7 +343,7 @@ export class IncAInstruction extends IncwInstruction {
     }
     static fromMachineCode(code) {
         let arg = ['%A'];
-        return new IncDInstruction(arg);
+        return new IncAInstruction(arg);
     }
 }
 
@@ -360,7 +359,53 @@ export class IncDInstruction extends IncwInstruction {
 }
 
 export class DecwInstruction extends InsperHackInstruction {
+    static get mnemonic() {
+        return 'decw';
+    }
+    toMachineCode() {
+        // setup instruction code
+        let code = this.startInstructionTypeC(this.args);
+        // get opCode and append
+        let prototype = Object.getPrototypeOf(this);
+        code += prototype.constructor.opCode;
+        // append params and destinations
+        code = this.noJump(this.createCodeFromArgs(this.args, code));
 
+        return code;
+    }
+    executeOn(system) {
+        // operand 1 reg
+        let op1Word;
+        if (this.isMemoryAccess(this.op1)) {
+            console.log("Error: Cannot read and write at the same time.");
+        } else {
+            op1Word = this.getRegValue(system, this.op1);
+            let destWord = op1Word; // same destination as given register
+            destWord.set(op1Word.dec());
+            return destWord;
+        }
+    }    
+}
+
+export class DecAInstruction extends DecwInstruction {
+    static get opCode() {
+        return '110010'; // %A
+    }
+    static fromMachineCode(code) {
+        let arg = ['%A'];
+        return new DecAInstruction(arg);
+    }
+}
+
+export class DecDInstruction extends DecwInstruction {
+    static get opCode() {
+        return '001110'; // %D
+    }
+
+    static fromMachineCode(code) {
+        let arg = ['%D'];
+        return new DecDInstruction(arg);
+    }
 }
 
 export class NotwInstruction extends InsperHackInstruction {
@@ -425,7 +470,8 @@ const instructionClasses = [
 
     IncAInstruction,
     IncDInstruction,
-    DecwInstruction,
+    DecAInstruction,
+    DecDInstruction,
 
     NotwInstruction,
     NegwInstruction,
