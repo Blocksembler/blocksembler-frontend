@@ -49,7 +49,26 @@ test("Test 4: increment register A", () => {
     expect(regDWord.toSignedIntValue()).toBe(5);
 });
 // Test for Expected Errors 
+test("Test 4: increment register A", () => {
+    let pcWord = Word.fromSignedIntValue(0);
+    let regAWord = Word.fromSignedIntValue(12);
+    let regDWord = Word.fromSignedIntValue(5);
 
+    let emulator = {
+        registers: {
+            'pc': pcWord,
+            '%A': regAWord,
+            '%D': regDWord,
+        },
+    };
+
+    let instruction = new IncAInstruction(['(%A)']);
+
+    instruction.executeOn(emulator);
+
+    expect(regAWord.toSignedIntValue()).toBe(12);
+    expect(regDWord.toSignedIntValue()).toBe(5);
+});
 
 
 
@@ -100,6 +119,25 @@ test("Test 4: increment register D", () => {
     expect(regDWord.toSignedIntValue()).toBe(6);
 });
 // Test for Expected Errors 
+test("Test 4: increment register D", () => {
+    let pcWord = Word.fromSignedIntValue(0);
+    let regAWord = Word.fromSignedIntValue(12);
+    let regDWord = Word.fromSignedIntValue(5);
 
+    let emulator = {
+        registers: {
+            'pc': pcWord,
+            '%A': regAWord,
+            '%D': regDWord,
+        },
+    };
+
+    let instruction = new IncDInstruction(['(%D)']);
+
+    instruction.executeOn(emulator);
+
+    expect(regAWord.toSignedIntValue()).toBe(12);
+    expect(regDWord.toSignedIntValue()).toBe(5);
+});
 
 

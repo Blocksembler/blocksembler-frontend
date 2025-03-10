@@ -370,6 +370,7 @@ class DecwInstruction extends OverwriteInstruction {
         let op1Word;
         if (this.isMemoryAccess(this.op1)) {
             console.log("Error: Cannot read and write at the same time.");
+            //throw new Error('Cannot read and write at the same time.');
         } else {
             op1Word = this.getRegValue(system, this.op1);
             let destWord = op1Word; // same destination as given register
