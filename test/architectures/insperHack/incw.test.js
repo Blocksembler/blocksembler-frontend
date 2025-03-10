@@ -49,7 +49,7 @@ test("Test 4: increment register A", () => {
     expect(regDWord.toSignedIntValue()).toBe(5);
 });
 // Test for Expected Errors 
-test("Test 4: increment register A", () => {
+test("Test 5: increment register A", () => {
     let pcWord = Word.fromSignedIntValue(0);
     let regAWord = Word.fromSignedIntValue(12);
     let regDWord = Word.fromSignedIntValue(5);
@@ -119,7 +119,7 @@ test("Test 4: increment register D", () => {
     expect(regDWord.toSignedIntValue()).toBe(6);
 });
 // Test for Expected Errors 
-test("Test 4: increment register D", () => {
+test("Test 5: increment register D", () => {
     let pcWord = Word.fromSignedIntValue(0);
     let regAWord = Word.fromSignedIntValue(12);
     let regDWord = Word.fromSignedIntValue(5);
