@@ -2,6 +2,16 @@ const logDbName = "BlocksemblerLogDB"
 const logDbVersion = 1
 
 export const logEvent = (type, payload = {}) => {
+    const data = window.localStorage?.getItem("blocksembler-data-usage-consent");
+
+    if (data && data === "false") {
+        return;
+    }
+
+    if (!data || data !== "true") {
+        return;
+    }
+
     let ts = new Date().toUTCString();
     let event = {type, ts, payload};
 
@@ -25,6 +35,16 @@ export const logEvent = (type, payload = {}) => {
             console.log(e);
         };
     }
+}
+
+export const deleteLogData = () => {
+    let request = indexedDB.open(logDbName, logDbVersion);
+
+    request.onsuccess = (e) => {
+        let db = e.target.result;
+        db.transaction('messages', 'readwrite').objectStore('messages').clear();
+    }
+
 }
 
 export const downloadLogData = () => {
