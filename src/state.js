@@ -4,19 +4,21 @@ import {pluginRegistry} from "@/architectures/pluginRegistry.js";
 import {setupDefaultBlocks} from "@/architectures/blocks.js";
 import {logEvent} from "@/logging.js";
 
-const defaultArchitecture = "armlet";
+const architecturePluginKey = import.meta.env.VITE_BLOCKSEMBLER_DEFAULT_ARCHITECTURE !== undefined ?
+    import.meta.env.VITE_BLOCKSEMBLER_DEFAULT_ARCHITECTURE : 'anna';
 
 class BlocksemblerState {
     constructor() {
-        this.loadPlugin(defaultArchitecture);
+        console.log(architecturePluginKey);
         setupDefaultBlocks();
 
+        this.archPlugin = this.loadPlugin(architecturePluginKey);
         this.sourceCode = "";
         this.onInitWorkspaceListener = [];
     }
 
-    initWorkspace(sourceCode, architecture = defaultArchitecture) {
-        this.loadPlugin(architecture);
+    initWorkspace(sourceCode) {
+        this.archPlugin = this.loadPlugin(architecturePluginKey);
 
         try {
             this.archPlugin.parser.parseCode(sourceCode);
@@ -33,12 +35,13 @@ class BlocksemblerState {
     }
 
     loadPlugin(pluginName) {
-        if (pluginName in pluginRegistry) {
-            this.archPlugin = pluginRegistry[pluginName];
-            this.archPlugin.setupBlockBlocks();
-        } else {
+        if (!(pluginName in pluginRegistry)) {
             throw new Error(`architecture plugin "${pluginName}" not found`);
         }
+
+        const archPlugin = pluginRegistry[pluginName];
+        archPlugin.setupBlockBlocks();
+        return archPlugin;
     }
 }
 
