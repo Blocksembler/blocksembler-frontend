@@ -73,7 +73,7 @@ test("compare two numbers where a == b", () => {
     expect(mockSystem.registers).toStrictEqual(expectedSystemState.registers);
 });
 
-test("compare two numbers where a > b (a and b are sigend values)", () => {
+test("compare two numbers where a > b (a and b are signed values)", () => {
     let instruction = new CmpInstruction(['$0', '$1']);
     let mockSystem = generateMockSystem([0, 2, -1, 0, 0, 0, 0, 0, 0], instruction)
     let expectedSystemState = generateMockSystem([0, 2, -1, 0, 0, 0, 0, 0, 0], instruction)
@@ -84,7 +84,7 @@ test("compare two numbers where a > b (a and b are sigend values)", () => {
     expect(mockSystem.registers).toStrictEqual(expectedSystemState.registers);
 });
 
-test("compare two numbers where a > b (a and b are unsigend values)", () => {
+test("compare two numbers where a > b (a and b are unsigned values)", () => {
     let instruction = new CmpInstruction(['$0', '$1']);
     let mockSystem = generateMockSystem([0, 2, 1, 0, 0, 0, 0, 0, 0], instruction)
     let expectedSystemState = generateMockSystem([0, 2, 1, 0, 0, 0, 0, 0, 0], instruction)

@@ -1,6 +1,6 @@
 import { AddwInstruction, InsperHackInstructionFactory } from "@/architectures/insperHack/instructions";
 import {expect, test, vi} from "vitest";
-import {Word} from "../../../src/architectures/system";
+import {Word} from "@/architectures/system.js";
 
 //addw (%A), %D, %D
 test("test addw instruction to machine code", () => {
