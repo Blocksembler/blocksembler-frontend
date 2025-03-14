@@ -165,21 +165,21 @@ export class AddInstruction extends AnnaRTypeInstruction {
     }
 }
 
-export class AddImmedateInstruction extends AnnaI6TypeInstruction {
+export class AddImmediateInstruction extends AnnaI6TypeInstruction {
     static mnemonic = "addi";
     static opCode = "1100";
 
     static fromMachineCode(code) {
         let args = AnnaI6TypeInstruction.extractArgs(code);
-        return new AddImmedateInstruction(args);
+        return new AddImmediateInstruction(args);
     }
 
     executeOn(system) {
         let target = system.registers[`r${this.rd}`];
         let firstOperand = system.registers[`r${this.rs}`];
-        let immedate = Number(this.imm);
+        let immediate = Number(this.imm);
 
-        let result = firstOperand.addImmedate(immedate);
+        let result = firstOperand.addImmediate(immediate);
         target.set(result);
     }
 }
@@ -277,19 +277,19 @@ export class ShiftInstruction extends AnnaI6TypeInstruction {
     executeOn(system) {
         let target = system.registers[`r${this.rd}`];
         let operand = system.registers[`r${this.rs}`];
-        let immedate = Number(this.imm);
+        let immediate = Number(this.imm);
 
-        target.set(operand.shift(immedate));
+        target.set(operand.shift(immediate));
     }
 }
 
-export class LoadLowerImmedateInstruction extends AnnaI8TypeInstruction {
+export class LoadLowerImmediateInstruction extends AnnaI8TypeInstruction {
     static mnemonic = "lli";
     static opCode = "0110";
 
     static fromMachineCode(code) {
         let args = this.extractArgs(code);
-        return new LoadLowerImmedateInstruction(args);
+        return new LoadLowerImmediateInstruction(args);
     }
 
     executeOn(system) {
@@ -303,23 +303,23 @@ export class LoadLowerImmedateInstruction extends AnnaI8TypeInstruction {
     }
 }
 
-export class LoadUpperImmedateInstruction extends AnnaI8TypeInstruction {
+export class LoadUpperImmediateInstruction extends AnnaI8TypeInstruction {
     static mnemonic = "lui";
     static opCode = "0111";
 
     static fromMachineCode(code) {
         let args = this.extractArgs(code);
-        return new LoadUpperImmedateInstruction(args);
+        return new LoadUpperImmediateInstruction(args);
     }
 
     executeOn(system) {
         let target = system.registers[`r${this.rd}`];
-        let immedate = Number(this.imm);
+        let immediate = Number(this.imm);
 
         let mask = Word.fromString("0000000011111111");
-        let immedateWord = Word.fromSignedIntValue(immedate).and(mask).shift(8);
+        let immediateWord = Word.fromSignedIntValue(immediate).and(mask).shift(8);
 
-        target.set(target.and(mask).or(immedateWord));
+        target.set(target.and(mask).or(immediateWord));
     }
 }
 
@@ -500,14 +500,14 @@ const instructionClasses = [
     BranchGreaterZeroInstruction,
     JumpAndLinkRegisterInstruction,
     AddInstruction,
-    AddImmedateInstruction,
+    AddImmediateInstruction,
     SubtractInstruction,
     AndInstruction,
     OrInstruction,
     NotInstruction,
     ShiftInstruction,
-    LoadLowerImmedateInstruction,
-    LoadUpperImmedateInstruction,
+    LoadLowerImmediateInstruction,
+    LoadUpperImmediateInstruction,
     InputInstruction,
     OutputInstruction,
     LoadWordInstruction,
