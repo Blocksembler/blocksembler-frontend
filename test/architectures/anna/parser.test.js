@@ -1,7 +1,7 @@
 import {expect, test} from "vitest";
 import {AnnaAssemblyParser} from "@/architectures/anna/parser.js";
 import {
-    AddImmedateInstruction,
+    AddImmediateInstruction,
     AddInstruction,
     BranchEqualZeroInstruction,
     OrInstruction
@@ -35,7 +35,7 @@ test("parse addi instruction", () => {
     let result = parser.parseCode(assemblerCode.join('\n'));
 
     expect(result).toEqual([
-        new AddImmedateInstruction(["r1", "r2", "-1"]),
+        new AddImmediateInstruction(["r1", "r2", "-1"]),
     ]);
 });
 

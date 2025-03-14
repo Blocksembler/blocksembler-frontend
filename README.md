@@ -21,7 +21,7 @@ To get started with the Assembler Programming Learning Environment, follow these
 
 Blocksembler is also available on [Docker Hub](https://hub.docker.com/r/blocksembler/blocksembler-frontend/tags). To get started, follow these steps:
 
-1. **Pull Docker Image**: Pull the blocksembler/blocksembler-frontned image `docker pull blocksembler/blocksembler-frontend:latest`
+1. **Pull Docker Image**: Pull the blocksembler/blocksembler-frontend image `docker pull blocksembler/blocksembler-frontend:latest`
 
 2. **Run the Container**: Startup a new container instance that runs the blocksembler application `docker run blocksembler/blocksembler-frontend:latest -p 80:80 -d`. This will launch the application locally, and you can access it in your web browser at [http://localhost](http://localhost:5173).
 

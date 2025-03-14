@@ -9,7 +9,7 @@ test("hlt instruction to string", () => {
     expect(instruction.toString()).toBe("hlt");
 });
 
-test("test hlt instruction to machien code", () => {
+test("test hlt instruction to machine code", () => {
     let instruction = new HltInstruction([]);
     let expectedCode = "0000000000" + opCode;
 

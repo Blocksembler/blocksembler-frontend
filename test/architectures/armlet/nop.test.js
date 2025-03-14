@@ -7,7 +7,7 @@ test("nop instruction to string", () => {
     expect(instruction.toString()).toBe("nop");
 });
 
-test("test nop instruction to machien code", () => {
+test("test nop instruction to machine code", () => {
     let instruction = new NopInstruction([]);
     let expectedCode = "0000000000000000";
 

@@ -2,7 +2,7 @@ import {expect, test} from "vitest";
 import {AddInstruction, AnnaInstructionFactory} from "@/architectures/anna/instructions.js";
 import {Word} from "@/architectures/system.js";
 
-test("test add instruction to machien code", () => {
+test("test add instruction to machine code", () => {
     let instruction = new AddInstruction(["r1", "r2", "r3"]);
     let expectedCode = "0000001010011000";
 
