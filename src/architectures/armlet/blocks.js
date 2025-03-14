@@ -479,14 +479,14 @@ export const setupBlocklyBlocks = () => {
     Blockly.Blocks['randPerm'] = {
         init: function () {
             this.appendDummyInput()
-                .appendField("Generate a random permutation of datawords from 1 to")
+                .appendField("Generate a random permutation of data words from 1 to")
                 .appendField(new Blockly.FieldNumber(1, 1), "n")
                 .appendField("using seed")
                 .appendField(new Blockly.FieldNumber(0, 0, (2 ** 16 - 1)), "seed");
             this.setInputsInline(true);
             this.setPreviousStatement(true, null);
             this.setNextStatement(true, null);
-            this.setTooltip('Declares a shuffled list of datawords from 1 to n');
+            this.setTooltip('Declares a shuffled list of data words from 1 to n');
             this.setColour(dataWordColor);
             this.setOutput(false, "dataWord");
         }
@@ -502,7 +502,7 @@ export const setupBlocklyBlocks = () => {
             this.setInputsInline(true);
             this.setPreviousStatement(true, null);
             this.setNextStatement(true, null);
-            this.setTooltip('Declares a list of random datawords');
+            this.setTooltip('Declares a list of random data words');
             this.setColour(dataWordColor);
             this.setOutput(false, "dataWord");
         }

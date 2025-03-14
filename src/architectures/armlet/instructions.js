@@ -486,7 +486,7 @@ export class AbstractImmediateArmletInstruction extends AbstractArmletInstructio
     }
 
     executeOn(system) {
-        system.registers.pc = system.registers.pc.addImmedate(1)
+        system.registers.pc = system.registers.pc.addImmediate(1)
     }
 }
 
@@ -519,7 +519,7 @@ export class AbstractArmletControlInstruction extends AbstractArmletInstruction 
     }
 
     getJmpTarget(system) {
-        return system.registers[this.aArgument].addImmedate(-1)
+        return system.registers[this.aArgument].addImmediate(-1)
     }
 }
 
@@ -552,7 +552,7 @@ export class AbstractArmletImmediateControlInstruction extends AbstractImmediate
     getJmpTarget(system) {
         let immediateAddress = system.registers.pc.toUnsignedIntValue() + 1
         let immediate = system.memory[immediateAddress]
-        return immediate.addImmedate(-2)
+        return immediate.addImmediate(-2)
     }
 }
 
@@ -640,7 +640,7 @@ export class MovImmediateInstruction extends AbstractImmediateArmletInstruction 
     executeOn(system) {
         let targetReg = system.registers[this.lArgument];
         let immediate = system.memory[system.registers['pc'].toUnsignedIntValue() + 1]
-        system.registers['pc'].addImmedate(1)
+        system.registers['pc'].addImmediate(1)
 
         targetReg.set(immediate);
     }
@@ -971,7 +971,7 @@ export class SubInstruction extends AbstractArmletInstruction {
         let firstOpReg = system.registers[this.aArgument];
         let secondOpReg = system.registers[this.bArgument];
 
-        let twoCompliment = secondOpReg.invert().addImmedate(1)
+        let twoCompliment = secondOpReg.invert().addImmediate(1)
 
         let result = firstOpReg.add(twoCompliment);
         destReg.set(result);
@@ -1006,7 +1006,7 @@ export class SubImmediateInstruction extends AbstractImmediateArmletInstruction 
         let firstOpReg = system.registers[this.aArgument];
         let secondOpReg = system.memory[system.registers['pc'].toUnsignedIntValue() + 1];
 
-        let twoCompliment = secondOpReg.invert().addImmedate(1)
+        let twoCompliment = secondOpReg.invert().addImmediate(1)
 
         let result = firstOpReg.add(twoCompliment);
         destReg.set(result);
@@ -1038,7 +1038,7 @@ export class NegInstruction extends AbstractArmletInstruction {
         let destReg = system.registers[this.lArgument];
         let firstOpReg = system.registers[this.aArgument];
 
-        let negVal = firstOpReg.invert().addImmedate(1);
+        let negVal = firstOpReg.invert().addImmediate(1);
         destReg.set(negVal);
     }
 }

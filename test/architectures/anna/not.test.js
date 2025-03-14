@@ -22,7 +22,7 @@ test("test create not instruction from machine code", () => {
     expect(instruction).toMatchObject(expectedInstruction);
 });
 
-test("test not instruction to machien code", () => {
+test("test not instruction to machine code", () => {
     let instruction = new NotInstruction(["r1", "r2"]);
     let expectedCode = "0100001010000000";
 

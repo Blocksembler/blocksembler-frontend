@@ -101,7 +101,7 @@ export class BaseEmulator {
         let nextInstruction = this.loadInstructionAt(this.registers.pc.toUnsignedIntValue());
         let instructionLength = Math.floor(nextInstruction.toMachineCode().length / this.addressSize);
         nextInstruction.executeOn(this);
-        this.registers.pc.set(this.registers.pc.addImmedate(instructionLength));
+        this.registers.pc.set(this.registers.pc.addImmediate(instructionLength));
     }
 
     loadInstructionAt(address) {
@@ -244,9 +244,9 @@ export class Word {
         return Word.fromSignedIntValue(result, this.length);
     }
 
-    addImmedate(immediate) {
-        let immedateWord = Word.fromSignedIntValue(immediate, this.bits.length);
-        return this.add(immedateWord);
+    addImmediate(immediate) {
+        let immediateWord = Word.fromSignedIntValue(immediate, this.bits.length);
+        return this.add(immediateWord);
     }
 
     subtract(word) {

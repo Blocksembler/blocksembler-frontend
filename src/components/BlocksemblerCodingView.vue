@@ -32,7 +32,7 @@ let options = ref({
   multiSelectKeys: ['Shift'],
 
   multiselectCopyPaste: {
-    // Enable the copy/paste accross tabs feature (true by default).
+    // Enable the copy/paste across tabs feature (true by default).
     crossTab: true,
     // Show the copy/paste menu entries (true by default).
     menu: true,
