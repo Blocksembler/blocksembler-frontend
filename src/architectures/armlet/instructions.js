@@ -135,6 +135,10 @@ export class DataDirective extends PseudoInstruction {
             dataWord.initSvg()
             dataWord.setFieldValue(this.args[0], 'data')
 
+            if (this.comment) {
+                dataWord.setCommentText(this.comment)
+            }
+
             if (blocks.length > 0) {
                 const prevBlock = blocks[blocks.length - 1];
                 prevBlock.nextConnection.connect(dataWord.previousConnection);
@@ -150,6 +154,11 @@ export class DataDirective extends PseudoInstruction {
         let wordData = ws.newBlock('decimalWord')
         wordData.initSvg();
         wordData.getField('data').setValue(this.args[0]);
+
+        if (this.comment) {
+            dataWordsBlock.setCommentText(this.comment)
+        }
+
         dataWordsBlock.getInput('dataWords').connection.connect(wordData.previousConnection);
 
         for (let arg of this.args.slice(1)) {
@@ -217,8 +226,13 @@ export class RandPermDirective extends PseudoInstruction {
 
         let randPermBlock = ws.newBlock('randPerm')
         randPermBlock.initSvg()
+
         randPermBlock.setFieldValue(parseInt(this.args[0]), 'seed')
         randPermBlock.setFieldValue(parseInt(this.args[1]), 'n')
+
+        if (this.comment) {
+            randPermBlock.setCommentText(this.comment)
+        }
 
         if (blocks.length > 0) {
             const prevBlock = blocks[blocks.length - 1];
@@ -273,6 +287,10 @@ export class RandDirective extends PseudoInstruction {
         randPermBlock.initSvg()
 
         randPermBlock.setFieldValue(parseInt(this.args[0]), 'n')
+
+        if (this.comment) {
+            randPermBlock.setCommentText(this.comment)
+        }
 
         if (this.args.length === 1) {
             randPermBlock.setFieldValue(2 ** 16 - 1, 'seed')

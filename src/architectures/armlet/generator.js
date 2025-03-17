@@ -177,6 +177,7 @@ export class ArmletBlocklyGenerator extends BaseBlocklyGenerator {
 
         this.generator.forBlock['data'] = (block, _generator) => {
             let code = "%data ";
+            let comment = handleComments(block)
 
             let child = block.getChildren(true);
 
@@ -189,30 +190,41 @@ export class ArmletBlocklyGenerator extends BaseBlocklyGenerator {
             while (child) {
                 let val = child.getFieldValue('data')
                 code += `${val}, `;
+
+                if (child.getCommentText()) {
+                    if (comment === "") {
+                        comment = "# " + child.getCommentText()
+                    } else {
+                        comment = comment + ", " + child.getCommentText()
+                    }
+                }
+
+                console.log(child.getCommentText());
+
                 child = child.getNextBlock();
             }
 
-            return code.slice(0, code.length - 2);
+            return code.slice(0, code.length - 2) + comment;
         }
 
         this.generator.forBlock['decimalWord'] = (block, _generator) => {
             const dataVal = block.getFieldValue("data");
 
-            return `%data ${dataVal}`;
+            return `%data ${dataVal}` + handleComments(block);
         }
 
         this.generator.forBlock['randPerm'] = (block, _generator) => {
             const n = block.getFieldValue("n");
             const seed = block.getFieldValue("seed");
 
-            return `%randperm ${seed}, ${n}`;
+            return `%randperm ${seed}, ${n}` + handleComments(block);
         }
 
         this.generator.forBlock['rand'] = (block, _generator) => {
             const n = block.getFieldValue("n");
             const seed = block.getFieldValue("seed");
 
-            return `%rand ${n}, ${seed}`;
+            return `%rand ${n}, ${seed}` + handleComments(block);
         }
     }
 }

@@ -18,13 +18,13 @@ export class BaseFormatter {
         let label = "", instruction, comment = "";
 
         if (commentStart !== -1) {
-            comment = line.slice(commentStart).trim();
+            comment = `# ${line.slice(commentStart + 1).trim()}`;
             line = line.slice(0, commentStart);
         }
 
         if (labelEnd !== -1) {
             label = line.slice(0, labelEnd + 1).trim();
-            line = line.slice(labelEnd + 1)
+            line = line.slice(labelEnd + 1).trim();
         }
 
         label = label.padEnd(this.labelIndent, " ")
