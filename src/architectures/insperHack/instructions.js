@@ -55,7 +55,7 @@ export class InsperHackInstruction extends BaseInstruction {
         return code.slice(10, 13);
     }
 
-    // extract jump bits j1, j2,j3
+    // extract jump bits j1, j2, j3
     static extractJ(code) {
         let j = code.slice(13, 17)[0];
         return j;
