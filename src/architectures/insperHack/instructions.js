@@ -44,12 +44,18 @@ export class InsperHackInstruction extends BaseInstruction {
         return a;
     }
 
+    // extract opCode bits (c)
+    static extractC(code) {
+        let c = code.slice(4, 10)[0];
+        return c;
+    }
+
     // extract destination bits d1, d2, d3
     static extractD(code) {
         return code.slice(10, 13);
     }
 
-    // extract jump bits jq, j2,j3
+    // extract jump bits j1, j2, j3
     static extractJ(code) {
         let j = code.slice(13, 17)[0];
         return j;
@@ -89,31 +95,60 @@ export class InsperHackInstruction extends BaseInstruction {
     }
 
     createCodeFromArgs(args, code) {
-        if (args.slice(2).includes('%A')) { // %A
-            code += '1';
-        } else {
-            code += '0';
+        // Instruction with only one param
+        if (args.length == 1) {
+            if (args[0].includes('(%A)') || args[0].includes('(%D)')) { // Memory Access
+                console.log("Error: Cannot read and write at the same time.");
+            }
+            else if (args[0].includes('%A')) { // %A  set destination
+                code += '100';
+            }
+            else if (args[0].includes('%D')) { // %D set destination
+                code += '010';
+            }
+            else {
+                console.log("Error: Type in param correctly.");
+            }
         }
-        if (args.slice(2).includes('%D')) { // %D
-            code += '1';
-        } else {
-            code += '0';
+        // Instruction with two params
+        else {
+            if (args.slice(2).includes('%A')) { // %A
+                code += '1';
+            } else { 
+                code += '0';
+            }
+            if (args.slice(2).includes('%D')) { // %D
+                code += '1';
+            } else {
+                code += '0';
+            }
+            if (args.slice(2).includes('(%A)')) { // (%A)
+                code += '1';
+            } else {
+                code += '0';
+            }       
         }
-        if (args.slice(2).includes('(%A)')) { // (%A)
-            code += '1';
-        } else {
-            code += '0';
-        }   
-        return code;     
+        // Instruction without param
+        // TO-DO
+        return code; 
     }
 
     startInstructionTypeC(args) {
         let code = '111';
-        if (args[0].startsWith('(') || args[1].startsWith('(')) {
-            code += '1';
-        } else {
-            code += '0';
+        // Instruction with only one param
+        if (args.length == 1) {
+            code += 0; // for incw
         }
+        // Instruction with two params
+        else {
+            if (args[0].startsWith('(') || args[1].startsWith('(')) {
+                code += '1';
+            } else {
+                code += '0';
+            }
+        }
+        // Instruction without param
+        // TO-DO
         return code;
     }
 
@@ -272,12 +307,98 @@ export class RsubwInstruction extends InsperHackInstruction {
 
 }
 
-export class IncwInstruction extends InsperHackInstruction {
+class OverwriteInstruction extends InsperHackInstruction {
+    toMachineCode() {
+        // setup instruction code
+        let code = this.startInstructionTypeC(this.args);
+        // get opCode and append
+        let prototype = Object.getPrototypeOf(this);
+        code += prototype.constructor.opCode;
+        // append params and destinations
+        code = this.noJump(this.createCodeFromArgs(this.args, code));
 
+        return code;
+    }
 }
 
-export class DecwInstruction extends InsperHackInstruction {
+class IncwInstruction extends OverwriteInstruction {
+    static get mnemonic() {
+        return 'incw';
+    }
+    executeOn(system) {
+        // operand 1 reg
+        let op1Word;
+        if (this.isMemoryAccess(this.op1)) {
+            console.log("Error: Cannot read and write at the same time.");
+        } else {
+            op1Word = this.getRegValue(system, this.op1);
+            let destWord = op1Word; // same destination as given register
+            //destWord.set(op1Word.addImmediate(1));
+            destWord.set(op1Word.inc());
+            return destWord;
+        }
+    }    
+}
 
+export class IncAInstruction extends IncwInstruction {
+    static get opCode() {
+        return '110111'; // %A
+    }
+    static fromMachineCode(code) {
+        let arg = ['%A'];
+        return new IncAInstruction(arg);
+    }
+}
+
+export class IncDInstruction extends IncwInstruction {
+    static get opCode() {
+        return '011111'; // %D
+    }
+
+    static fromMachineCode(code) {
+        let arg = ['%D'];
+        return new IncDInstruction(arg);
+    }
+}
+
+class DecwInstruction extends OverwriteInstruction {
+    static get mnemonic() {
+        return 'decw';
+    }
+    executeOn(system) {
+        // operand 1 reg
+        let op1Word;
+        if (this.isMemoryAccess(this.op1)) {
+            console.log("Error: Cannot read and write at the same time.");
+            //throw new Error('Cannot read and write at the same time.');
+        } else {
+            op1Word = this.getRegValue(system, this.op1);
+            let destWord = op1Word; // same destination as given register
+            destWord.set(op1Word.dec());
+            return destWord;
+        }
+    }    
+}
+
+export class DecAInstruction extends DecwInstruction {
+    static get opCode() {
+        return '110010'; // %A
+    }
+    static fromMachineCode(code) {
+        let arg = ['%A'];
+        return new DecAInstruction(arg);
+    }
+}
+
+export class DecDInstruction extends DecwInstruction {
+    static get opCode() {
+        return '001110'; // %D
+    }
+
+    static fromMachineCode(code) {
+        let arg = ['%D'];
+        return new DecDInstruction(arg);
+    }
 }
 
 export class NotwInstruction extends InsperHackInstruction {
@@ -340,8 +461,10 @@ const instructionClasses = [
     SubwInstruction,
     RsubwInstruction,
 
-    IncwInstruction,
-    DecwInstruction,
+    IncAInstruction,
+    IncDInstruction,
+    DecAInstruction,
+    DecDInstruction,
 
     NotwInstruction,
     NegwInstruction,
