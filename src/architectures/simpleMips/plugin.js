@@ -9,7 +9,7 @@ import {SimpleMipsInstructionFactory} from "@/architectures/simpleMips/instructi
 const factory = new SimpleMipsInstructionFactory()
 
 export default {
-    name: "simpleMIPS",
+    name: "simpleMips",
     parser: new BaseParser(factory, '#', ',', ':'),
     emulator: new SimpleMipsEmulator(),
     setupBlockBlocks: setupBlocklyBlocks,

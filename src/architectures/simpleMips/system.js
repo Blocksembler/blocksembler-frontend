@@ -4,11 +4,13 @@ import {SimpleMipsInstructionFactory} from "@/architectures/simpleMips/instructi
 const factory = new SimpleMipsInstructionFactory();
 
 const registers = {
-    "ACC": Word.fromSignedIntValue(0),
+    "STATUS_EQ": Word.fromSignedIntValue(0, 1),
+    "STATUS_GT": Word.fromSignedIntValue(0, 1),
+    "$ACC": Word.fromSignedIntValue(0),
 }
 
 for (let i = 0; i < 16; i++) {
-    registers[`R${i}`] = Word.fromSignedIntValue(0);
+    registers[`$${i}`] = Word.fromSignedIntValue(0);
 }
 
 
