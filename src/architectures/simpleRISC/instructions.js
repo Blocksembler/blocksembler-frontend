@@ -55,7 +55,7 @@ export class AbstractSimpleMipsInstruction extends BaseInstruction {
             const reg = `$${this.operandArg.slice(1)}`;
             return system.registers[reg];
         } else {
-            return Word.fromSignedIntValue(parseInt(this.operandArg), system.addressSize);
+            return Word.fromSignedIntValue(parseInt(this.operandArg), 16);
         }
     }
 
@@ -146,7 +146,7 @@ export class LoadInstruction extends AbstractSimpleMipsInstruction {
 
     executeOn(system) {
         let operandWord = this.resolvedOperand(system);
-        system.registers.$ACC.set(Word.fromString("00000000" + operandWord.toBitString()));
+        system.registers.$ACC.set(Word.fromString(operandWord.toBitString().slice(8)));
     }
 }
 
