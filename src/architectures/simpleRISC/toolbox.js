@@ -5,7 +5,10 @@ export const toolbox = {
             kind: "block",
             type: "start",
         },
-
+        {
+            kind: "block",
+            type: "halt",
+        },
         {
             kind: "block",
             type: "label",
@@ -166,9 +169,6 @@ export const toolbox = {
             type: "bgt",
 
         },
-        {
-            kind: "block",
-            type: "halt",
-        },
+
     ],
 }
