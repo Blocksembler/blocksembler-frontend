@@ -146,7 +146,7 @@ export class LoadInstruction extends AbstractSimpleMipsInstruction {
 
     executeOn(system) {
         let operandWord = this.resolvedOperand(system);
-        system.registers.$ACC.set(operandWord);
+        system.registers.$ACC.set(Word.fromString("00000000" + operandWord.toBitString()));
     }
 }
 
