@@ -1,4 +1,4 @@
-# SimpleMIPS
+# SimpleRISC
 
 Word Length: 16-bit
 
