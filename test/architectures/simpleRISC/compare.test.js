@@ -76,7 +76,7 @@ test(`test setting STATUS_EQ flag with ${mnemonic} instruction`, () => {
 
     instruction.executeOn(emulator);
 
-    expect(emulator.registers.STATUS_EQ.toSignedIntValue()).toBe(1);
+    expect(emulator.registers.STATUS_EQ.toBitString()).toBe("1");
 })
 
 test(`test setting STATUS_GT flag with ${mnemonic} instruction`, () => {
@@ -89,5 +89,5 @@ test(`test setting STATUS_GT flag with ${mnemonic} instruction`, () => {
 
     instruction.executeOn(emulator);
 
-    expect(emulator.registers.STATUS_GT.toSignedIntValue()).toBe(1);
+    expect(emulator.registers.STATUS_GT.toBitString()).toBe("1");
 })
