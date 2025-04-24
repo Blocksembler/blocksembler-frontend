@@ -15,7 +15,6 @@ export class SimpleRISCParser extends BaseParser {
     }
 
     labelToVal(labelAddress, instructionAddress) {
-        alert(labelAddress - instructionAddress - 1);
         return labelAddress - instructionAddress - 1;
     }
 }

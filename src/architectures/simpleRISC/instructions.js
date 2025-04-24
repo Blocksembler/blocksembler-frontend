@@ -305,15 +305,15 @@ export class CompareInstruction extends AbstractSimpleMipsInstruction {
     executeOn(system) {
         const argWord = this.resolvedOperand(system);
 
-        system.registers.STATUS_EQ.set(Word.fromString("0"))
-        system.registers.STATUS_GT.set(Word.fromString("0"))
+        system.registers.STATUS_EQ.set(Word.fromString("0", 1))
+        system.registers.STATUS_GT.set(Word.fromString("0", 1))
 
         if (argWord.toSignedIntValue() === system.registers.$ACC.toSignedIntValue()) {
-            system.registers.STATUS_EQ.set(Word.fromString("1"))
+            system.registers.STATUS_EQ.set(Word.fromString("1", 1))
         }
 
         if (system.registers.$ACC > argWord.toSignedIntValue()) {
-            system.registers.STATUS_GT.set(Word.fromString("1"))
+            system.registers.STATUS_GT.set(Word.fromString("1", 1))
         }
     }
 }
