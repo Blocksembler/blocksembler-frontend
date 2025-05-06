@@ -43,7 +43,7 @@ export class AbstractSimpleMipsInstruction extends BaseInstruction {
         }
 
         const immediateWord = Word.fromString(bitString.slice(8), 8);
-        return [immediateWord.toSignedIntValue().toString()]
+        return [immediateWord.toUnsignedIntValue().toString()]
     }
 
     static fromMachineCode(word) {
@@ -55,7 +55,8 @@ export class AbstractSimpleMipsInstruction extends BaseInstruction {
             const reg = `$${this.operandArg.slice(1)}`;
             return system.registers[reg];
         } else {
-            return Word.fromSignedIntValue(parseInt(this.operandArg), 16);
+            let immediate = parseInt(this.operandArg) > 255 ? 255 : parseInt(this.operandArg);
+            return Word.fromSignedIntValue(immediate, 8);
         }
     }
 
@@ -169,7 +170,7 @@ export class LoadInstruction extends AbstractSimpleMipsInstruction {
 
     executeOn(system) {
         let operandWord = this.resolvedOperand(system);
-        system.registers.$ACC.set(Word.fromString(operandWord.toBitString().slice(8)));
+        system.registers.$ACC.set(Word.fromString(operandWord.toBitString()));
     }
 }
 
@@ -371,8 +372,8 @@ export class BranchIfEqualInstruction extends AbstractSimpleMipsInstruction {
         const operandWord = this.resolvedOperand(system);
 
         if (system.registers.STATUS_EQ.toBitString() === "1") {
-            system.registers.pc.set(system.registers.pc
-                .add(operandWord));
+            const nextPC = system.registers.pc.toUnsignedIntValue() + operandWord.toSignedIntValue()
+            system.registers.pc.set(Word.fromSignedIntValue(nextPC, 16));
         }
     }
 }
