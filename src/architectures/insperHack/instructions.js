@@ -27,14 +27,17 @@ export class InsperHackInstructionFactory {
 
         // c-bits instructions (ALU-code -> a and c bits)
         let aluCode = code.slice(3,10);
-
+        
         switch (aluCode) {
-            case '0101010':
+            case '0110000':
               return new MovInstruction;
+            case '1110000':
+            return new MovInstruction;
             // …
             default:
               break;
           }
+    
     }
     
     getInstructionClassByOpCode(opCode) {
@@ -85,6 +88,7 @@ export class InsperHackInstruction extends BaseInstruction {
     }
 
     isMemoryAccess(param) {
+        console.log('param:' + param);
         return param.startsWith('(');
     }
 }
@@ -144,6 +148,7 @@ export class MovInstruction extends InsperHackInstruction {
         let cCode = memoryBit + opCode;
 
         let params = cCodeToArgs[cCode];
+        console.log(params);
 
         let dests = this.cCodeToDests[this.extractDestCode(code)];
         let args = /*this.cCodeToArgs[memoryBit + opCode]*/params.concat(dests);
@@ -166,6 +171,7 @@ export class MovInstruction extends InsperHackInstruction {
     executeOn(system) { // IN-PROGRESS
         // operand 1 reg/mem/im
         let op1Word;
+        console.log(this.op1);
         if (this.isMemoryAccess(this.op1)) {
             op1Word = this.getMemoryValue(system);
         } else if (this.op1.startsWith('%'))  { 
