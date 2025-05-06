@@ -47,6 +47,16 @@ export class InsperHackInstructionFactory {
 }
 
 export class InsperHackInstruction extends BaseInstruction {
+    get op1() {
+        return this.args[0];
+    }
+    get op2() {
+        return this.args[1];
+    }
+    get dest() {
+        return this.args.slice(2);
+    }
+
     static extractMemoryBit(code) {
         return code.slice(3, 4);
     }
@@ -88,7 +98,6 @@ export class InsperHackInstruction extends BaseInstruction {
     }
 
     isMemoryAccess(param) {
-        console.log('param:' + param);
         return param.startsWith('(');
     }
 }
@@ -148,7 +157,6 @@ export class MovInstruction extends InsperHackInstruction {
         let cCode = memoryBit + opCode;
 
         let params = cCodeToArgs[cCode];
-        console.log(params);
 
         let dests = this.cCodeToDests[this.extractDestCode(code)];
         let args = /*this.cCodeToArgs[memoryBit + opCode]*/params.concat(dests);
@@ -181,21 +189,23 @@ export class MovInstruction extends InsperHackInstruction {
         }
         // operand 2 reg/mem
         let op2Word;
+        console.log(this.op2);
         if (this.isMemoryAccess(this.op2)) {
             op2Word = this.getMemoryValue(system);
         } else {
             op2Word = this.getRegValue(system, this.op2);
         };
-
+        console.log(this.dest);
         this.dest.forEach((dest) => { 
             let destWord;
-            if (this.isMemoryAccess(dest)) {
+            /*if (this.isMemoryAccess(dest)) {
                 destWord = this.getRegValue(system, dest);
             } else {
                 destWord = this.getRegValue(system, dest);
-            }
-            // set result word
-            destWord.set(op1Word);
+            }*/
+            // set result word 
+            destWord.set(Word.fromString(op1Word));
+            console.log(this.dest);
         });
     }
 }
