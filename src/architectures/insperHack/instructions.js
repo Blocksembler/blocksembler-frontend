@@ -30,9 +30,9 @@ export class InsperHackInstructionFactory {
         
         switch (aluCode) {
             case '0110000':
-              return new MovInstruction;
+              return MovInstruction.fromMachineCode(code);
             case '1110000':
-            return new MovInstruction;
+            return MovInstruction.fromMachineCode(code);
             // …
             default:
               break;
@@ -156,10 +156,10 @@ export class MovInstruction extends InsperHackInstruction {
         let opCode = this.extractOpCode(code);
         let cCode = memoryBit + opCode;
 
-        let params = cCodeToArgs[cCode];
+        let params = this.cCodeToArgs[cCode];
 
         let dests = this.cCodeToDests[this.extractDestCode(code)];
-        let args = /*this.cCodeToArgs[memoryBit + opCode]*/params.concat(dests);
+        let args = params.concat(dests);
 
         return new MovInstruction(args);
     }
