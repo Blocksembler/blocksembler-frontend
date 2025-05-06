@@ -106,10 +106,10 @@ export const setupBlocklyBlocks = () => {
 
     Blockly.Blocks['add'] = {
         init: function () {
-            this.appendDummyInput()
-                .appendField('add value of ')
             this.appendValueInput('operand')
                 .setCheck(['register', 'immediate'])
+                .appendField('add value of ')
+            this.appendDummyInput()
                 .appendField("to ACC register")
             this.setInputsInline(true);
             this.setPreviousStatement(true);
@@ -121,10 +121,10 @@ export const setupBlocklyBlocks = () => {
 
     Blockly.Blocks['sub'] = {
         init: function () {
-            this.appendDummyInput()
-                .appendField('subtract value of ')
             this.appendValueInput('operand')
                 .setCheck(['register', 'immediate'])
+                .appendField('subtract value of ')
+            this.appendDummyInput()
                 .appendField("from ACC register")
             this.setInputsInline(true);
             this.setPreviousStatement(true);
