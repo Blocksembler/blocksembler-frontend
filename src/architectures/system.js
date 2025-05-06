@@ -269,7 +269,7 @@ export class Word {
     }
 
     and(word) {
-        let result = this.toSignedIntValue() & word.toSignedIntValue();
+        let result = this.toUnsignedIntValue() & word.toUnsignedIntValue();
         return Word.fromSignedIntValue(result, this.bits.length);
     }
 

@@ -59,7 +59,7 @@ test(`create ${mnemonic} instruction from machine code`, () => {
 
 test(`create ${mnemonic} instruction with immediate from machine code`, () => {
     const factory = new SimpleRISCInstructionFactory();
-    const expectedInstruction = new OrInstruction(['-1']);
+    const expectedInstruction = new OrInstruction(['255']);
 
     const memory = [Word.fromString("000" + opCode + "0" + "11111111")];
 
@@ -75,5 +75,5 @@ test(`test execution of ${mnemonic} instruction`, () => {
 
     instruction.executeOn(emulator);
 
-    expect(emulator.registers.$ACC.toSignedIntValue()).toBe(-1);
+    expect(emulator.registers.$ACC.toUnsignedIntValue()).toBe(2 ** 16 - 1);
 })

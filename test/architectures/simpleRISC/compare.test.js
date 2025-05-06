@@ -59,7 +59,7 @@ test(`create ${mnemonic} instruction from machine code`, () => {
 
 test(`create ${mnemonic} instruction with immediate from machine code`, () => {
     const factory = new SimpleRISCInstructionFactory();
-    const expectedInstruction = new CompareInstruction(['-1']);
+    const expectedInstruction = new CompareInstruction(['255']);
 
     const memory = [Word.fromString("000" + opCode + "0" + "11111111")];
 
