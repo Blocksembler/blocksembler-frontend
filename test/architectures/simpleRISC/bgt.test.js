@@ -31,7 +31,7 @@ test(`convert ${mnemonic} instruction with immediate to machine code`, () => {
 });
 
 test(`convert ${mnemonic} instruction with negative immediate to machine code`, () => {
-    const instruction = new BranchIfGreaterThanInstruction(['-1']);
+    const instruction = new BranchIfGreaterThanInstruction(['255']);
     const expectedMachineCode = "000" + opCode + "0" + "11111111";
 
     expect(instruction.toMachineCode()).toBe(expectedMachineCode);
@@ -66,7 +66,7 @@ test(`create ${mnemonic} instruction from machine code`, () => {
 
 test(`create ${mnemonic} instruction with immediate from machine code`, () => {
     const factory = new SimpleRISCInstructionFactory();
-    const expectedInstruction = new BranchIfGreaterThanInstruction(['-1']);
+    const expectedInstruction = new BranchIfGreaterThanInstruction(['255']);
 
     const memory = [Word.fromString("000" + opCode + "0" + "11111111")];
 
@@ -74,7 +74,7 @@ test(`create ${mnemonic} instruction with immediate from machine code`, () => {
 });
 
 test(`test execute ${mnemonic} instruction`, () => {
-    const instruction = new BranchIfGreaterThanInstruction(['-1'])
+    const instruction = new BranchIfGreaterThanInstruction(['255'])
 
     const emulator = new SimpleRISCEmulator();
     emulator.registers.STATUS_GT = Word.fromString("1", 1);
