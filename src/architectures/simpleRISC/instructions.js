@@ -103,6 +103,16 @@ export class AbstractSimpleMipsInstruction extends BaseInstruction {
             registerBlock.setFieldValue(Number(this.operandArg.slice(1)), "value");
             newBlock.getInput('operand').connection.connect(registerBlock.outputConnection);
 
+        } else if (this.operandArg.startsWith(">")) {
+            try {
+                let labelBlock = ws.newBlock('label');
+                labelBlock.initSvg();
+
+                labelBlock.setFieldValue(this.operandArg.slice(1), "value");
+                newBlock.getInput('operand').connection.connect(labelBlock.outputConnection);
+            } catch (e) {
+                console.log(e);
+            }
         } else if (this.operandArg !== "") {
             let immediateBlock = ws.newBlock('immediate');
             immediateBlock.initSvg();
@@ -112,7 +122,20 @@ export class AbstractSimpleMipsInstruction extends BaseInstruction {
             newBlock.getInput('operand').connection.connect(immediateBlock.outputConnection);
         }
 
-        return [newBlock];
+        const blocks = this.labels.map(label => {
+            const labelBlock = ws.newBlock('labelDef');
+            labelBlock.initSvg();
+            labelBlock.setFieldValue(label.name.slice(1), "label");
+            return labelBlock;
+        })
+
+        blocks.push(newBlock);
+
+        for (let i = 0; i < blocks.length - 1; i++) {
+            blocks[i].nextConnection.connect(blocks[i + 1].previousConnection);
+        }
+
+        return blocks;
     }
 
 }
