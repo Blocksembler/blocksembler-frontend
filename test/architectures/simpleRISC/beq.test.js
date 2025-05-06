@@ -32,7 +32,7 @@ test(`convert ${mnemonic} instruction with immediate to machine code`, () => {
 });
 
 test(`convert ${mnemonic} instruction with negative immediate to machine code`, () => {
-    const instruction = new BranchIfEqualInstruction(['-1']);
+    const instruction = new BranchIfEqualInstruction(['255']);
     const expectedMachineCode = "000" + opCode + "0" + "11111111";
 
     expect(instruction.toMachineCode()).toBe(expectedMachineCode);
@@ -67,7 +67,7 @@ test(`create ${mnemonic} instruction from machine code`, () => {
 
 test(`create ${mnemonic} instruction with immediate from machine code`, () => {
     const factory = new SimpleRISCInstructionFactory();
-    const expectedInstruction = new BranchIfEqualInstruction(['-1']);
+    const expectedInstruction = new BranchIfEqualInstruction(['255']);
 
     const memory = [Word.fromString("000" + opCode + "0" + "11111111")];
 
@@ -75,15 +75,15 @@ test(`create ${mnemonic} instruction with immediate from machine code`, () => {
 });
 
 test(`test execute ${mnemonic} instruction`, () => {
-    const instruction = new BranchIfEqualInstruction(['-1'])
+    const instruction = new BranchIfEqualInstruction(['255'])
 
     const emulator = new SimpleRISCEmulator();
     emulator.registers.STATUS_EQ = Word.fromString("1", 1);
-    emulator.registers.pc = Word.fromSignedIntValue(10);
+    emulator.registers.pc = Word.fromSignedIntValue(10, 16);
 
     const expectedEmulatorState = new SimpleRISCEmulator()
     expectedEmulatorState.registers.STATUS_EQ = Word.fromString("1", 1);
-    expectedEmulatorState.registers.pc = Word.fromSignedIntValue(9);
+    expectedEmulatorState.registers.pc = Word.fromSignedIntValue(9, 16);
 
     instruction.executeOn(emulator);
 
