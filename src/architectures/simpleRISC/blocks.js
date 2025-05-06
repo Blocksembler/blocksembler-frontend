@@ -236,7 +236,7 @@ export const setupBlocklyBlocks = () => {
         init: function () {
             this.appendDummyInput()
                 .appendField('jump to label')
-            this.appendValueInput('label')
+            this.appendValueInput('operand')
                 .setCheck('label')
             this.setInputsInline(true);
             this.setPreviousStatement(true);
@@ -249,7 +249,7 @@ export const setupBlocklyBlocks = () => {
         init: function () {
             this.appendDummyInput()
                 .appendField('jump to label')
-            this.appendValueInput('label')
+            this.appendValueInput('operand')
                 .setCheck('label')
             this.appendDummyInput()
                 .appendField('if STATUS_EQ flag is set.')
@@ -264,7 +264,7 @@ export const setupBlocklyBlocks = () => {
         init: function () {
             this.appendDummyInput()
                 .appendField('jump to label')
-            this.appendValueInput('label')
+            this.appendValueInput('operand')
                 .setCheck('label')
             this.appendDummyInput()
                 .appendField('if STATUS_GT flag is set.')

@@ -57,17 +57,17 @@ export class SimpleRISCGenerator extends BaseBlocklyGenerator {
         };
 
         this.generator.forBlock["jump"] = (block, generator) => {
-            const label = generator.valueToCode(block, "label", Order.ATOMIC);
+            const label = generator.valueToCode(block, "operand", Order.ATOMIC);
             return `JUMP ${label}`;
         }
 
         this.generator.forBlock["beq"] = (block, generator) => {
-            const label = generator.valueToCode(block, "label", Order.ATOMIC);
+            const label = generator.valueToCode(block, "operand", Order.ATOMIC);
             return `BEQ ${label}`;
         }
 
         this.generator.forBlock["bgt"] = (block, generator) => {
-            const label = generator.valueToCode(block, "label", Order.ATOMIC);
+            const label = generator.valueToCode(block, "operand", Order.ATOMIC);
             return `BGT ${label}`;
         }
 
