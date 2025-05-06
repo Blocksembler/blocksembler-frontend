@@ -195,17 +195,13 @@ export class MovInstruction extends InsperHackInstruction {
         } else {
             op2Word = this.getRegValue(system, this.op2);
         };
-        console.log(this.dest);
+
+        //add second operand to destinations list
+        this.args.push(this.op1);
+
         this.dest.forEach((dest) => { 
-            let destWord;
-            /*if (this.isMemoryAccess(dest)) {
-                destWord = this.getRegValue(system, dest);
-            } else {
-                destWord = this.getRegValue(system, dest);
-            }*/
-            // set result word 
-            destWord.set(Word.fromString(op1Word));
-            console.log(this.dest);
+            let destWord = Word.fromString(dest);
+            destWord.add(op1Word);
         });
     }
 }

@@ -49,6 +49,6 @@ test("mov instruction: copy value to destinations", () => {
 
     instruction.executeOn(emulator);
 
-    expect(regAWord.toSignedIntValue()).toBe(1);
+    expect(regAWord.toSignedIntValue()).toBe(1); console.log(regAWord.toSignedIntValue());
     expect(regDWord.toSignedIntValue()).toBe(1);
 });
