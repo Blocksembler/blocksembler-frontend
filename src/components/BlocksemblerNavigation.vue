@@ -8,7 +8,13 @@ import CloudDownloadIcon from "@/components/icons/CloudDownloadIcon.vue";
 let emit = defineEmits(['importProject', 'exportProject']);
 
 let exportProject = () => {
-  saveAs(new Blob([codingWorkspaceState.sourceCode]), `project-${Date.now()}.s`);
+  let fileExtension = "asm";
+
+  if ("fileExtension" in codingWorkspaceState.archPlugin) {
+    fileExtension = codingWorkspaceState.archPlugin.fileExtension;
+  }
+
+  saveAs(new Blob([codingWorkspaceState.sourceCode]), `project-${Date.now()}.${fileExtension}`);
   logEvent('buttonClick', {'source': 'exportProjectButton'})
 }
 
