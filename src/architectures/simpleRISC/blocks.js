@@ -1,9 +1,10 @@
 import * as Blockly from "blockly";
 
 const instructionColor = 50;
-const primitiveColor = 200;
+const primitiveColor = 20;
 const startStopColor = 0;
 const labelColor = 255;
+const jumpColor = 180;
 
 export const setupBlocklyBlocks = () => {
     Blockly.Blocks['start'] = {
@@ -47,7 +48,7 @@ export const setupBlocklyBlocks = () => {
     Blockly.Blocks['immediate'] = {
         init: function () {
             this.appendDummyInput()
-                .appendField("decimal value: ")
+                .appendField("Decimal Value: ")
                 .appendField(new Blockly.FieldNumber(0, 0, 255), "value");
             this.setInputsInline(true);
             this.setOutput(true, "immediate");
@@ -58,7 +59,7 @@ export const setupBlocklyBlocks = () => {
     Blockly.Blocks['register'] = {
         init: function () {
             this.appendDummyInput()
-                .appendField("Register")
+                .appendField("Register $")
                 .appendField(new Blockly.FieldNumber(0, 0, 15), "value");
             this.setInputsInline(true);
             this.setOutput(true, "register");
@@ -83,7 +84,7 @@ export const setupBlocklyBlocks = () => {
                 .setCheck(['register', 'immediate'])
                 .appendField('load value from ')
             this.appendDummyInput()
-                .appendField("to ACC register")
+                .appendField("to $ACC register")
             this.setInputsInline(true);
             this.setPreviousStatement(true);
             this.setNextStatement(true);
@@ -94,7 +95,7 @@ export const setupBlocklyBlocks = () => {
     Blockly.Blocks['move'] = {
         init: function () {
             this.appendDummyInput()
-                .appendField('move value of ACC to ')
+                .appendField('move value of $ACC to ')
             this.appendValueInput('operand')
                 .setCheck(['register'])
             this.setInputsInline(true);
@@ -110,7 +111,7 @@ export const setupBlocklyBlocks = () => {
                 .setCheck(['register', 'immediate'])
                 .appendField('add value of ')
             this.appendDummyInput()
-                .appendField("to ACC register")
+                .appendField("to $ACC register")
             this.setInputsInline(true);
             this.setPreviousStatement(true);
             this.setNextStatement(true);
@@ -125,7 +126,7 @@ export const setupBlocklyBlocks = () => {
                 .setCheck(['register', 'immediate'])
                 .appendField('subtract value of ')
             this.appendDummyInput()
-                .appendField("from ACC register")
+                .appendField("from $ACC register")
             this.setInputsInline(true);
             this.setPreviousStatement(true);
             this.setNextStatement(true);
@@ -241,7 +242,7 @@ export const setupBlocklyBlocks = () => {
             this.setInputsInline(true);
             this.setPreviousStatement(true);
             this.setNextStatement(true);
-            this.setColour(instructionColor);
+            this.setColour(jumpColor);
         }
     }
 
@@ -256,7 +257,7 @@ export const setupBlocklyBlocks = () => {
             this.setInputsInline(true);
             this.setPreviousStatement(true);
             this.setNextStatement(true);
-            this.setColour(instructionColor);
+            this.setColour(jumpColor);
         }
     }
 
@@ -271,7 +272,7 @@ export const setupBlocklyBlocks = () => {
             this.setInputsInline(true);
             this.setPreviousStatement(true);
             this.setNextStatement(true);
-            this.setColour(instructionColor);
+            this.setColour(jumpColor);
         }
     }
 
