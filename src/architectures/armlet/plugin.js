@@ -10,6 +10,7 @@ const instructionFactory = new ArmletInstructionFactory();
 
 export default {
     name: "armlet",
+    fileExtension: "s",
     parser: new ArmletAssemblyParser(instructionFactory),
     emulator: new ArmletEmulator(),
     setupBlockBlocks: setupBlocklyBlocks,

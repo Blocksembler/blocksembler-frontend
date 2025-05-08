@@ -7,6 +7,7 @@ import {toolbox} from "@/architectures/scott/toolbox.js";
 
 export default {
     name: "scott",
+    fileExtension: "asm",
     parser: new ScottAssemblyParser(),
     emulator: new ScottEmulator(),
     setupBlockBlocks: setupBlocklyBlocks,

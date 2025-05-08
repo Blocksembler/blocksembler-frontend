@@ -7,6 +7,7 @@ import {SimpleRISCParser} from "@/architectures/simpleRISC/parser.js";
 
 export default {
     name: "simpleRISC",
+    fileExtension: "asm",
     parser: new SimpleRISCParser(),
     emulator: new SimpleRISCEmulator(),
     setupBlockBlocks: setupBlocklyBlocks,
