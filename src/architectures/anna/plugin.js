@@ -7,6 +7,7 @@ import {AnnaCodeFormatter} from "@/architectures/anna/formatter.js";
 
 export default {
     name: "anna",
+    fileExtension: "asm",
     parser: new AnnaAssemblyParser(),
     emulator: new AnnaEmulator(),
     setupBlockBlocks: setupBlocklyBlocks,
