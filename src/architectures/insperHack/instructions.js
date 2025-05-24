@@ -94,7 +94,9 @@ export class InsperHackInstruction extends BaseInstruction {
     }
 
     getImmediateValue(operand) {
-        return Word.fromSignedIntValue(Number(operand));
+        //turns immediate into a number - then a Word
+        let imm = parseInt(operand.slice(1));
+        return Word.fromSignedIntValue(imm);
     }
 
     isMemoryAccess(param) {
@@ -179,9 +181,8 @@ export class MovInstruction extends InsperHackInstruction {
     executeOn(system) { // IN-PROGRESS
         // operand 1 reg/mem/im
         let op1Word;
-        console.log(this.op1);
         if (this.isMemoryAccess(this.op1)) {
-            op1Word = this.getMemoryValue(system);
+            op1Word = this.getMemoryAddress(system);
         } else if (this.op1.startsWith('%'))  { 
             op1Word = this.getRegValue(system, this.op1);
         } else { 
@@ -189,19 +190,20 @@ export class MovInstruction extends InsperHackInstruction {
         }
         // operand 2 reg/mem
         let op2Word;
-        console.log(this.op2);
         if (this.isMemoryAccess(this.op2)) {
-            op2Word = this.getMemoryValue(system);
+            op2Word = this.getMemoryAddress(system);
         } else {
             op2Word = this.getRegValue(system, this.op2);
         };
 
-        //add second operand to destinations list
-        this.args.push(this.op1);
+        // add second operand to destinations
+        let dest = this.args.slice(1);   
 
-        this.dest.forEach((dest) => { 
-            let destWord = Word.fromString(dest);
-            destWord.add(op1Word);
+        // overwirte each destination with op1Word
+        dest.forEach((dest) => { 
+            let destWord = this.getRegValue(system, dest);
+            // set result word
+            destWord.set(op1Word);
         });
     }
 }
