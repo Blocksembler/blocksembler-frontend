@@ -1,3 +1,4 @@
+import { MovInstruction } from "../insperHack/instructions";
 import { BaseInstruction } from "../instructions";
 import {Word} from "../system";
 
@@ -8,26 +9,44 @@ export class InsperHackInstructionFactory {
     }
 
     getInstructionClassByMnemonic(mnemonic) {
-        return instructionClasses.filter((c) => c.mnemonic === mnemonic)[0];
+        return mnemonicToClass[mnemonic];
     }
 
     createFromOpCode(memory, address) {
-        // get Opcode
-        let code = memory[address].toBitString()
-        let opCode = code.slice(4, 10);
-        let instructionClass = this.getInstructionClassByOpCode(opCode);
+        const code = memory[address].toBitString();
 
-        return instructionClass.fromMachineCode(code);
+        // is lea ?
+        // true then return lea class
+
+        // is jump-instruction ?
+        // true then find jump-instruction
+
+        // is nop ? (no dest, no jump -> dest=000, jmp=000)
+        
+        // is inc or dec
+
+        // c-bits instructions (ALU-code -> a and c bits)
+        let aluCode = code.slice(3,10);
+        
+        switch (aluCode) {
+            case '0110000':
+              return MovInstruction.fromMachineCode(code);
+            case '1110000':
+            return MovInstruction.fromMachineCode(code);
+            // …
+            default:
+              break;
+          }
+    
     }
     
     getInstructionClassByOpCode(opCode) {
         // find class c with identical opCode
-        return instructionClasses.filter((c) => c.opCode === opCode)[0];
+        return mnemonicToClass.filter((c) => c.opCode === opCode)[0];
     }
 }
 
 export class InsperHackInstruction extends BaseInstruction {
-
     get op1() {
         return this.args[0];
     }
@@ -38,132 +57,167 @@ export class InsperHackInstruction extends BaseInstruction {
         return this.args.slice(2);
     }
 
-    // extract destination bits d1, d2, d3
-    static extractD123(code) {
+    static extractMemoryBit(code) {
+        return code.slice(3, 4);
+    }
+    static extractOpCode(code) {
+        return code.slice(4, 10);
+    }
+    static extractDestCode(code){
         return code.slice(10, 13);
     }
-
-    // create destination array args from bits (d1, d2, d3) in code
-    static findDestinationsFrom(code) {
-        let args = [];
-        if (this.extractD123(code)[0] == '1') { // d1
-            args.push('%A');
-        }
-        if (this.extractD123(code)[1] == '1') { // d2
-            args.push('%D');
-        } 
-        if (this.extractD123(code)[2] == '1') { // d3
-            args.push('(%A)');
-        }
-    
-        return args;
+    static extractJumpCode(code){
+        return code.slice(13, 16);
     }
 
-    // extract bit (a) which defines the instruction type
-    static extractA(code) {
-        let a = code.slice(2, 4)[0];
-        return a;
+    static extractDestArgs(code) {
+        pass
+    }
+
+    createDestCode(args) {
+        pass
+    }
+    // append 000 for no jump operations
+    noJump(code) {
+        code += "000";
+        return code;
+    }
+    getRegValue(system, operand) {
+        return system.registers[operand];
+    }
+
+    getMemoryAddress(system) {
+        // get value of Memory
+        let address = system.registers['%A'].toUnsignedIntValue();
+        // set value
+        return system.memory[address];
+    }
+
+    getImmediateValue(operand) {
+        //turns immediate into a number - then a Word
+        let imm = parseInt(operand.slice(1));
+        return Word.fromSignedIntValue(imm);
+    }
+
+    isMemoryAccess(param) {
+        return param.startsWith('(');
     }
 }
 
-export class AddwInstruction extends InsperHackInstruction {
-    static get mnemonic() {
-        return 'addw';
-    }
-    static get opCode() {
-        return '000010';
-    }
-
-    // generates assembly-text array args from code
-    static fromMachineCode(code) {
-        // set params
-        let params = [];
-        if (this.extractA(code) == '1') {
-            params.push('(%A)', '%D');
-        }
-        else {
-            params.push('%A', '%D');
-        }
-        // set destinations
-        let dest = this.findDestinationsFrom(code);
-        let args = params.concat(dest);
-        
-        //console.log(args);
-        return new AddwInstruction(args);
-    }
-
-    executeOn(system) {
-        let op1Word;
-        if (this.op1.startsWith('(')) {
-            // get value of Memory
-            let address = system.registers['%A'].toUnsignedIntValue();
-            // set value
-            op1Word = system.memory[address];
-        } else {
-            op1Word = system.registers[this.op1];
-        }
-        let op2Word;
-        if (this.op2.startsWith('(')) { // memory
-            // get value of Memory
-            let address = system.registers['%A'].toUnsignedIntValue();
-            // set value
-            op2Word = system.memory[address];
-        } else if (this.op2.startsWith('%'))  { // register
-            op2Word = system.registers[this.op2];
-        } else { // immediate
-            op2Word = Word.fromSignedIntValue(Number(this.op2));
-        }
-
-        this.dest.forEach((dest) => { 
-            let destWord;
-            if (dest.startsWith('(')) { // memory
-                let address = system.register['%A'].toUnsignedIntValue();
-                destWord = system.memory[address];
-            } else {
-                destWord = system.registers[dest]; // register
+export class MovInstruction extends InsperHackInstruction {
+    static cCodeToArgs = {
+        '0101010': ['$0'],
+        '0111111': ['$1'],
+        '0111010': ['$-1'],
+        '0001100': ['%D'],
+        '0110000': ['%A'],
+        '1110000': ['(%A)']
+    };
+    argsToCcode = {
+        '$0': '0101010', //a+c Code
+        '$1': '0111111',
+        '$-1': '0111010',
+        '%D': '0001100',
+        '%A': '0110000',
+        '(%A)':'1110000'
+    };
+    static cCodeToDests = {
+        '000': [''],
+        '100': ['%A'],
+        '010': ['%D'],
+        '001': ['(%A)'],
+        '110': ['%A', '%D'],
+        '101': ['%A', '(%A)'],
+        '011': ['%D', '(%A)'],
+        '111': ['%A', '%D', '(%A)'],
+    };
+    createDestCodeFrom(args) {
+        let destCode = [0, 0, 0];
+        args = args.slice(1);
+        args.forEach(arg => {
+            if (arg === '%A') {
+                destCode[0] = 1;
             }
-            // set result word
-            destWord.set(op1Word.add(op2Word));
+            if (arg === '%D') {
+                destCode[1] = 1;
+            }
+            if (arg === '(%A)') {
+                destCode[2] = 1;
+            }
         });
+        return destCode.join('');
+    }
+    static matchesCode(code) {
+        let memoryBit = this.extractMemoryBit(code);
+        let opCode = this.extractOpCode(code);
+
+        return (memoryBit + opCode) in this.cCodeToArgs;
+    }
+    static fromMachineCode(code) { // IN-PROGRESS
+        let memoryBit = this.extractMemoryBit(code);
+        let opCode = this.extractOpCode(code);
+        let cCode = memoryBit + opCode;
+
+        let params = this.cCodeToArgs[cCode];
+
+        let dests = this.cCodeToDests[this.extractDestCode(code)];
+        let args = params.concat(dests);
+
+        return new MovInstruction(args);
     }
 
     toMachineCode() {
+        // setup instruction code
         let code = '111';
-        if (this.args[0].startsWith('(') || this.args[1].startsWith('(')) {
-            code += '1';
-        } else {
-            code += '0';
-        }
         // get opCode and append
-        let prototype = Object.getPrototypeOf(this);
-        code += prototype.constructor.opCode;
-
-        // params and destinations
-        // %A %D (%A) 
-        if (this.args.slice(2).includes('%A')) { // %A
-            code += '1';
-        } else {
-            code += '0';
-        }
-        if (this.args.slice(2).includes('%D')) { // %D
-            code += '1';
-        } else {
-            code += '0';
-        }
-        if (this.args.slice(2).includes('(%A)')) { // (%A)
-            code += '1';
-        } else {
-            code += '0';
-        }
-
-        // no jump
-        code += '000';
+        let opCode = this.argsToCcode[this.args[0]];
+        code += opCode;
+        // append params and destinations
+        code += this.noJump(this.createDestCodeFrom(this.args));
 
         return code;
     }
+
+    executeOn(system) { // IN-PROGRESS
+        // operand 1 reg/mem/im
+        let op1Word;
+        if (this.isMemoryAccess(this.op1)) {
+            op1Word = this.getMemoryAddress(system);
+        } else if (this.op1.startsWith('%'))  { 
+            op1Word = this.getRegValue(system, this.op1);
+        } else { 
+            op1Word = this.getImmediateValue(this.op1);
+        }
+        // operand 2 reg/mem
+        let op2Word;
+        if (this.isMemoryAccess(this.op2)) {
+            op2Word = this.getMemoryAddress(system);
+        } else {
+            op2Word = this.getRegValue(system, this.op2);
+        };
+
+        // add second operand to destinations
+        let dest = this.args.slice(1);   
+
+        // overwirte each destination with op1Word
+        dest.forEach((dest) => { 
+            let destWord = this.getRegValue(system, dest);
+            // set result word
+            destWord.set(op1Word);
+        });
+    }
+}
+export class NopInstruction extends InsperHackInstruction {
+    static matchesCode(code) {
+        let destCode = InsperHackInstruction.extractDestCode(code);
+        let jumpCode = InsperHackInstruction.extractJumpCode(code);
+
+        return (destCode === "000" && jumpCode === "000");
+    }
 }
 
-const instructionClasses = [
-    AddwInstruction,
-];
+const mnemonicToClass = {
+    'mov': MovInstruction,
+    'nop': NopInstruction,
+};
 
