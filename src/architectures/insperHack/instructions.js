@@ -32,7 +32,11 @@ export class InsperHackInstructionFactory {
             case '0110000':
               return MovInstruction.fromMachineCode(code);
             case '1110000':
-            return MovInstruction.fromMachineCode(code);
+                return MovInstruction.fromMachineCode(code);
+            case '0000010': // D+A
+                return AddInstruction.fromMachineCode(code);
+            case '1000010': // D+M
+                return AddInstruction.fromMachineCode(code);
             // …
             default:
               break;
@@ -70,13 +74,6 @@ export class InsperHackInstruction extends BaseInstruction {
         return code.slice(13, 16);
     }
 
-    static extractDestArgs(code) {
-        pass
-    }
-
-    createDestCode(args) {
-        pass
-    }
     // append 000 for no jump operations
     noJump(code) {
         code += "000";
@@ -178,7 +175,7 @@ export class MovInstruction extends InsperHackInstruction {
         return code;
     }
 
-    executeOn(system) { // IN-PROGRESS
+    executeOn(system) {
         // operand 1 reg/mem/im
         let op1Word;
         if (this.isMemoryAccess(this.op1)) {
@@ -207,6 +204,7 @@ export class MovInstruction extends InsperHackInstruction {
         });
     }
 }
+
 export class NopInstruction extends InsperHackInstruction {
     static matchesCode(code) {
         let destCode = InsperHackInstruction.extractDestCode(code);
@@ -216,8 +214,111 @@ export class NopInstruction extends InsperHackInstruction {
     }
 }
 
+export class AddInstruction extends InsperHackInstruction {
+    static cCodeToArgs = {
+        '0101010': ['$0'],
+        '0111111': ['$1'],
+        '0111010': ['$-1'],
+        '0000010': ['%D'],
+        '0000010': ['%A'],
+        '1000010': ['(%A)']
+    };
+    argsToCcode = {
+        '$0': '0101010', //a+c Code
+        '$1': '0111111',
+        '$-1': '0111010',
+        '%D': '0000010',
+        '%A': '0000010',
+        '(%A)':'1000010'
+    };
+    static cCodeToDests = {
+        '000': [''],
+        '100': ['%A'],
+        '010': ['%D'],
+        '001': ['(%A)'],
+        '110': ['%A', '%D'],
+        '101': ['%A', '(%A)'],
+        '011': ['%D', '(%A)'],
+        '111': ['%A', '%D', '(%A)'],
+    };
+    createDestCodeFrom(args) {
+        let destCode = [0, 0, 0];
+        args = args.slice(1);
+        args.forEach(arg => {
+            if (arg === '%A') {
+                destCode[0] = 1;
+            }
+            if (arg === '%D') {
+                destCode[1] = 1;
+            }
+            if (arg === '(%A)') {
+                destCode[2] = 1;
+            }
+        });
+        return destCode.join('');
+    }
+    static matchesCode(code) {
+        let memoryBit = this.extractMemoryBit(code);
+        let opCode = this.extractOpCode(code);
+
+        return (memoryBit + opCode) in this.cCodeToArgs, cCode;
+    }
+    static fromMachineCode(code) { 
+        let memoryBit = this.extractMemoryBit(code);
+        let opCode = this.extractOpCode(code);
+        let cCode = memoryBit + opCode;
+
+        let params = this.cCodeToArgs[cCode];
+
+        let dests = this.cCodeToDests[this.extractDestCode(code)];
+
+        let args = params.concat(dests);
+
+        return new AddInstruction(args);
+    }
+
+    toMachineCode() {
+        // setup instruction code
+        let code = '111';
+        // get opCode and append
+        let opCode = this.argsToCcode[this.args[0]];
+        code += opCode;
+        // append params and destinations
+        code += this.noJump(this.createDestCodeFrom(this.args));
+        return code;
+    }
+
+    executeOn(system) {
+        // operand 1 reg/mem
+        let op1Word;
+        if (this.isMemoryAccess(this.op1)) {
+            op1Word = this.getMemoryAddress(system);
+        } else {
+            op1Word = this.getRegValue(system, this.op1);
+        };
+
+        // operand 2 reg/mem/im
+        let op2Word;
+        if (this.isMemoryAccess(this.op2)) {
+            op2Word = this.getMemoryAddress(system);
+        } else if (this.op2.startsWith('%'))  { 
+            op2Word = this.getRegValue(system, this.op2);
+        } else { 
+            op2Word = this.getImmediateValue(this.op2);
+        }
+
+        // overwirte each destination with sum of op1Word and op2Word
+        this.dest.forEach((dest) => { 
+            let destWord = this.getRegValue(system, dest);
+            // set result word
+            destWord.set(op1Word.add(op2Word));
+        });
+    }
+}
+
 const mnemonicToClass = {
     'mov': MovInstruction,
     'nop': NopInstruction,
+    'add': AddInstruction,
 };
 
