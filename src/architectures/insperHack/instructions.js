@@ -15,6 +15,8 @@ export class InsperHackInstructionFactory {
     createFromOpCode(memory, address) {
         const code = memory[address].toBitString();
 
+        let aluCode = code.slice(3,10);
+
         // is lea ?
         // true then return lea class
 
@@ -24,10 +26,20 @@ export class InsperHackInstructionFactory {
         // is nop ? (no dest, no jump -> dest=000, jmp=000)
         
         // is inc or dec
+        switch (aluCode) {
+            case '0011111': // %D+1
+              return IncInstruction.fromMachineCode(code);
+            case '0110111': // %A+1
+                return IncInstruction.fromMachineCode(code);
+            case '0001110': // %D-1
+              return DecInstruction.fromMachineCode(code);
+            case '0110010': // %A-1
+                return DecInstruction.fromMachineCode(code);
+            default:
+              break;
+          }
 
-        // c-bits instructions (ALU-code -> a and c bits)
-        let aluCode = code.slice(3,10);
-        
+        // c-bits instructions (ALU-code -> a and c bits)        
         switch (aluCode) {
             case '0110000':
               return MovInstruction.fromMachineCode(code);
@@ -316,9 +328,113 @@ export class AddInstruction extends InsperHackInstruction {
     }
 }
 
+export class IncInstruction extends InsperHackInstruction {
+    static cCodeToArgs = {
+        '0011111': ['%D'],
+        '0110111': ['%A']
+    };
+    argsToCcode = {
+        '%D': '0011111', //a+c Code
+        '%A': '0110111'
+    };
+    argToDest = {
+        '%D': '010', // d Code
+        '%A': '100'
+    }
+    static matchesCode(code) {
+        let memoryBit = this.extractMemoryBit(code);
+        let opCode = this.extractOpCode(code);
+
+        return (memoryBit + opCode) in this.cCodeToArgs, cCode;
+    }
+    static fromMachineCode(code) { 
+        let memoryBit = this.extractMemoryBit(code);
+        let opCode = this.extractOpCode(code);
+        let cCode = memoryBit + opCode;
+
+        let params = this.cCodeToArgs[cCode];
+        let args = params;
+
+        return new IncInstruction(args);
+    }
+
+    toMachineCode() {
+        // setup instruction code
+        let code = '111';
+        // get opCode and append
+        let opCode = this.argsToCcode[this.args[0]];
+        code += opCode;
+        // append param and destination
+        code += this.noJump(this.argToDest[this.args[0]]);
+        return code;
+    }
+
+    executeOn(system) {
+        // operand 1 reg
+        let op1Word = this.getRegValue(system, this.op1);
+
+        // overwirte reg with increment of op1Word
+        // set result word
+        op1Word.set(op1Word.inc());
+    }
+}
+
+export class DecInstruction extends InsperHackInstruction {
+    static cCodeToArgs = {
+        '0001110': ['%D'],
+        '0110010': ['%A']
+    };
+    argsToCcode = {
+        '%D': '0001110', //a+c Code
+        '%A': '0110010'
+    };
+    argToDest = {
+        '%D': '010', // d Code
+        '%A': '100'
+    }
+    static matchesCode(code) {
+        let memoryBit = this.extractMemoryBit(code);
+        let opCode = this.extractOpCode(code);
+
+        return (memoryBit + opCode) in this.cCodeToArgs, cCode;
+    }
+    static fromMachineCode(code) { 
+        let memoryBit = this.extractMemoryBit(code);
+        let opCode = this.extractOpCode(code);
+        let cCode = memoryBit + opCode;
+
+        let params = this.cCodeToArgs[cCode];
+        let args = params;
+
+        return new DecInstruction(args);
+    }
+
+    toMachineCode() {
+        // setup instruction code
+        let code = '111';
+        // get opCode and append
+        let opCode = this.argsToCcode[this.args[0]];
+        code += opCode;
+        // append param and destination
+        code += this.noJump(this.argToDest[this.args[0]]);
+        return code;
+    }
+
+    executeOn(system) {
+        // operand 1 reg
+        let op1Word = this.getRegValue(system, this.op1);
+
+        // overwirte reg with decrement of op1Word
+        // set result word
+        op1Word.set(op1Word.dec());
+    }
+}
+
 const mnemonicToClass = {
     'mov': MovInstruction,
     'nop': NopInstruction,
     'add': AddInstruction,
+    'inc': IncInstruction,
+    'dec': DecInstruction
 };
 
