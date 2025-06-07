@@ -30,7 +30,7 @@ test("Test 3: creating not-instruction from mnemonic", () => {
 });
 test("Test 4: negate register A", () => {
     let pcWord = Word.fromSignedIntValue(0);
-    let regAWord = Word.fromString("101010101010");
+    let regAWord = Word.fromString("1010101010101010");
 
     let emulator = {
         registers: {
@@ -43,7 +43,9 @@ test("Test 4: negate register A", () => {
 
     instruction.executeOn(emulator);
 
-    expect(regAWord.toString()).toBe("010101010101");
+    expect(regAWord.toSignedIntValue()).toBe(
+        Word.fromString("0101010101010101").toSignedIntValue()
+    );
 });
 
 
@@ -75,7 +77,7 @@ test("Test 3: creating not-instruction from mnemonic", () => {
 });
 test("Test 4: negate register D", () => {
     let pcWord = Word.fromSignedIntValue(0);
-    let regDWord = Word.fromString("101010101010");
+    let regDWord = Word.fromString("1010101010101010");
 
     let emulator = {
         registers: {
@@ -88,6 +90,8 @@ test("Test 4: negate register D", () => {
 
     instruction.executeOn(emulator);
 
-    expect(regDWord.toString()).toBe("010101010101");
+    expect(regDWord.toSignedIntValue()).toBe(
+        Word.fromString("0101010101010101").toSignedIntValue()
+    );
 });
 
