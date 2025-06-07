@@ -359,13 +359,7 @@ export class NotInstruction extends InsperHackInstruction {
 
         let params = this.cCodeToArgs[cCode];
 
-        console.log('params: ' + params);
-
-        let dests = this.cCodeToArgs[cCode];
-
-        console.log('dests: ' + dests);
-
-        let args = params.concat(dests);
+        let args = params;
 
         return new NotInstruction(args);
     }
