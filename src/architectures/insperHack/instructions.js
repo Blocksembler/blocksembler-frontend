@@ -50,7 +50,6 @@ export class InsperHackInstruction extends BaseInstruction {
     get dest() {
         return this.args.slice(2);
     }
-
     static extractMemoryBit(code) {
         return code.slice(3, 4);
     }
