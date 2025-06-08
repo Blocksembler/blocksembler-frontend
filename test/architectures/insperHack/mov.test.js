@@ -3,7 +3,7 @@ import {expect, test, vi} from "vitest";
 import {Word} from "@/architectures/system.js";
 
 
-test("test mov instruction to machine code", () => {
+test("Test 1: mov-instruction to machine code (mov %A %D)", () => {
     let instruction = new MovInstruction(['%A', '%D']);
     // 111 a cccccc ddd jjj
     let expectedCode = "111" + "0" + "110000" + "010" + "000";
@@ -11,7 +11,7 @@ test("test mov instruction to machine code", () => {
     expect(instruction.toMachineCode()).toBe(expectedCode);
 });
 
-test("test creating mov instruction from mnemonic", () => {
+test("Test 2: creating mov-instruction from mnemonic (mov %A %D)", () => {
     let factory = new InsperHackInstructionFactory();
 
     let inst = factory.createFromMnemonic("mov", ['%A', '%D']);
@@ -20,7 +20,7 @@ test("test creating mov instruction from mnemonic", () => {
     expect(inst).toMatchObject(expected);
 });
 
-test("create mov instruction from machine code", () => {
+test("test 3: create mov-instruction from machine code (mov %A %D)", () => {
     let machineCode = "111" + "0" + "110000" + "010" + "000";
 
     let expectedInstruction = new MovInstruction(['%A', '%D']);
@@ -31,7 +31,7 @@ test("create mov instruction from machine code", () => {
     expect(instruction).toMatchObject(expectedInstruction);
 });
 
-test("mov instruction: copy value to destinations", () => {
+test("Test 4: copy value to destinations", () => {
     let pcWord = Word.fromSignedIntValue(0);
     let regAWord = Word.fromSignedIntValue(1);
     let regDWord = Word.fromSignedIntValue(5);
@@ -52,8 +52,7 @@ test("mov instruction: copy value to destinations", () => {
     expect(regAWord.toSignedIntValue()).toBe(1); 
     expect(regDWord.toSignedIntValue()).toBe(1);
 });
-
-test("mov instruction: copy value from memory to destinations", () => {
+test("Test 5: copy value from memory to destinations", () => {
     let pcWord = Word.fromSignedIntValue(0);
     let regAWord = Word.fromSignedIntValue(0);
     let regDWord = Word.fromSignedIntValue(4);
@@ -75,7 +74,7 @@ test("mov instruction: copy value from memory to destinations", () => {
     expect(regDWord.toSignedIntValue()).toBe(10);
 });
 
-test("mov instruction: copy immediate to destinations", () => {
+test("Test 6: copy immediate to destinations", () => {
     let pcWord = Word.fromSignedIntValue(0);
     let regAWord = Word.fromSignedIntValue(5);
     let regDWord = Word.fromSignedIntValue(4);
