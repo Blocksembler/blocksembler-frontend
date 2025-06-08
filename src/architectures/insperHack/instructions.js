@@ -1,4 +1,3 @@
-import { MovInstruction } from "../insperHack/instructions";
 import { BaseInstruction } from "../instructions";
 import {Word} from "../system";
 
@@ -116,6 +115,7 @@ export class InsperHackInstruction extends BaseInstruction {
 }
 
 export class OverwriteInstruction extends InsperHackInstruction {
+    // checks if argument is valid and returns its code
     static matchCode(code) {
         let memoryBit = this.extractMemoryBit(code);
         let opCode = this.extractOpCode(code);
@@ -131,38 +131,39 @@ export class OverwriteInstruction extends InsperHackInstruction {
         '%D': '010', // d Code
         '%A': '100'
     }
-    setDestCode(arg) {
-        let destCode = [0, 0, 0];
-        if (arg === '%A') {
-            destCode[0] = 1;
-        } else if (arg === '%D') {
-            destCode[1] = 1;
+    // checks if destination(arg) is valid and returns its code
+    matchDest(arg) {
+        if (arg in this.argToDest) {
+            return this.argToDest[arg];
         } else {
             throw new Error('Destination is not valid.');
         }
-        return destCode.join('');
     }
-    convertToMachineCode() {
+    //converts instruction to maschine code
+    toMachineCode() {
         // setup instruction code
         let code = '111';
         // get opCode and append
         let opCode = this.argsToCcode[this.args[0]];
         code += opCode;
-        // append params and destinations
-        code += this.noJump(this.setDestCode(this.args[0]));
+        // append param and destination
+        code += this.noJump(this.matchDest(this.args[0]));
         return code;
     }
+    //gets the word of the operand
     getOpWord(system, operand) {
         // reg
         let opWord = this.getRegValue(system, operand);
         return opWord;
-    }
+    } 
+    // gets the destination of the instruction with argument arg
     getDestWord(system, arg) {
         // reg
         let destWord = this.getRegValue(system, arg);
         return destWord;
     }
 }
+
 
 export class IncInstruction extends OverwriteInstruction {
     static cCodeToArgs = {
@@ -176,9 +177,6 @@ export class IncInstruction extends OverwriteInstruction {
     static fromMachineCode(code) { 
         let arg = this.matchCode(code);
         return new IncInstruction(arg);
-    }
-    toMachineCode() {
-        return this.convertToMachineCode();
     }
     executeOn(system) {
         // operand 1 reg
@@ -201,11 +199,6 @@ export class DecInstruction extends OverwriteInstruction {
         let arg = this.matchCode(code);
         return new DecInstruction(arg);
     }
-
-    toMachineCode() {
-        return this.convertToMachineCode();
-    }
-
     executeOn(system) {
         // operand 1 reg
         let resultWord = this.getOpWord(system, this.op1).dec();
@@ -227,9 +220,6 @@ export class NotInstruction extends OverwriteInstruction {
         let arg = this.matchCode(code);
         return new NotInstruction(arg);
     }
-    toMachineCode() {
-        return this.convertToMachineCode();
-    }
     executeOn(system) {
         // operand 1 reg
         let resultWord = this.getOpWord(system, this.op1).invert();
@@ -250,9 +240,6 @@ export class NegInstruction extends OverwriteInstruction {
     static fromMachineCode(code) { 
         let arg = this.matchCode(code);
         return new NegInstruction(arg);
-    }
-    toMachineCode() {
-        return this.convertToMachineCode();
     }
     executeOn(system) {
         // operand 1 reg
