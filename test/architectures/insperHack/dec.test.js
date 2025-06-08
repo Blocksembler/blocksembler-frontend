@@ -3,7 +3,7 @@ import {expect, test, vi} from "vitest";
 import {Word} from "@/architectures/system.js";
 
 //dec %A
-test("Test 1: dec instruction to maschine code (a=0)", () => {
+test("Test 1: dec instruction to maschine code (dec %A)", () => {
     let instruction = new DecInstruction(['%A']);
     // 111 a cccccc ddd jjj
     let expectedCode = "111" + "0" + "110010" + "100" + "000";
@@ -20,7 +20,7 @@ test("Test 2: create dec instruction from machine code", () => {
 
     expect(instruction).toMatchObject(expectedInstruction);
 });
-test("Test 3: creating dec instruction from mnemonic", () => {
+test("Test 3: creating dec instruction from mnemonic (dec %A)", () => {
     let factory = new InsperHackInstructionFactory();
 
     let inst = factory.createFromMnemonic("dec", ['%A']);
@@ -53,7 +53,7 @@ test("Test 4: increment register A", () => {
 
 
 //dec %D
-test("Test 1: dec instruction to maschine code (a=0)", () => {
+test("Test 1: dec instruction to maschine code (dec %D)", () => {
     let instruction = new DecInstruction(['%D']);
     // 111 a cccccc ddd jjj
     let expectedCode = "111" + "0" + "001110" + "010" + "000";
@@ -70,7 +70,7 @@ test("Test 2: create dec instruction from machine code", () => {
 
     expect(instruction).toMatchObject(expectedInstruction);
 });
-test("Test 3: creating dec instruction from mnemonic", () => {
+test("Test 3: creating dec instruction from mnemonic (dec %D)", () => {
     let factory = new InsperHackInstructionFactory();
 
     let inst = factory.createFromMnemonic("dec", ['%A']);

@@ -3,7 +3,7 @@ import {expect, test, vi} from "vitest";
 import {Word} from "@/architectures/system.js";
 
 //not %A
-test("Test 1: not-instruction to maschine code (a=0)", () => {
+test("Test 1: not-instruction to maschine code (not %A)", () => {
     let instruction = new NotInstruction(['%A']);
     // 111 a cccccc ddd jjj
     let expectedCode = "111" + "0" + "110001" + "100" + "000";
@@ -20,7 +20,7 @@ test("Test 2: create not-instruction from machine code", () => {
 
     expect(instruction).toMatchObject(expectedInstruction);
 });
-test("Test 3: creating not-instruction from mnemonic", () => {
+test("Test 3: creating not-instruction from mnemonic (not %A)", () => {
     let factory = new InsperHackInstructionFactory();
 
     let inst = factory.createFromMnemonic("not", ['%A']);
@@ -50,7 +50,7 @@ test("Test 4: negate register A", () => {
 
 
 //not %D
-test("Test 1: not-instruction to maschine code (a=0)", () => {
+test("Test 1: not-instruction to maschine code (not %D)", () => {
     let instruction = new NotInstruction(['%D']);
     // 111 a cccccc ddd jjj
     let expectedCode = "111" + "0" + "001101" + "010" + "000";
@@ -67,7 +67,7 @@ test("Test 2: create not-instruction from machine code", () => {
 
     expect(instruction).toMatchObject(expectedInstruction);
 });
-test("Test 3: creating not-instruction from mnemonic", () => {
+test("Test 3: creating not-instruction from mnemonic (not %D)", () => {
     let factory = new InsperHackInstructionFactory();
 
     let inst = factory.createFromMnemonic("not", ['%A']);

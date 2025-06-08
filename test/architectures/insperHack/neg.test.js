@@ -3,7 +3,7 @@ import {expect, test, vi} from "vitest";
 import {Word} from "@/architectures/system.js";
 
 //neg %A
-test("Test 1: neg-instruction to maschine code (a=0)", () => {
+test("Test 1: neg-instruction to maschine code (neg %A)", () => {
     let instruction = new NegInstruction(['%A']);
     // 111 a cccccc ddd jjj
     let expectedCode = "111" + "0" + "110011" + "100" + "000";
@@ -20,7 +20,7 @@ test("Test 2: create neg-instruction from machine code", () => {
 
     expect(instruction).toMatchObject(expectedInstruction);
 });
-test("Test 3: creating neg-instruction from mnemonic", () => {
+test("Test 3: creating neg-instruction from mnemonic (neg %A)", () => {
     let factory = new InsperHackInstructionFactory();
 
     let inst = factory.createFromMnemonic("neg", ['%A']);
@@ -49,7 +49,7 @@ test("Test 4: negate register A", () => {
 
 
 //neg %D
-test("Test 1: neg-instruction to maschine code (a=0)", () => {
+test("Test 1: neg-instruction to maschine code (neg %D)", () => {
     let instruction = new NegInstruction(['%D']);
     // 111 a cccccc ddd jjj
     let expectedCode = "111" + "0" + "001111" + "010" + "000";
@@ -66,7 +66,7 @@ test("Test 2: create neg-instruction from machine code", () => {
 
     expect(instruction).toMatchObject(expectedInstruction);
 });
-test("Test 3: creating neg-instruction from mnemonic", () => {
+test("Test 3: creating neg-instruction from mnemonic (neg %D)", () => {
     let factory = new InsperHackInstructionFactory();
 
     let inst = factory.createFromMnemonic("neg", ['%D']);
