@@ -25,8 +25,8 @@ export class InsperHackInstructionFactory {
 
         // is nop ? (no dest, no jump -> dest=000, jmp=000)
         
-        // is inc or dec
         switch (aluCode) {
+            // is inc or dec
             case '0011111': // %D+1
               return IncInstruction.fromMachineCode(code);
             case '0110111': // %A+1
@@ -35,19 +35,11 @@ export class InsperHackInstructionFactory {
               return DecInstruction.fromMachineCode(code);
             case '0110010': // %A-1
                 return DecInstruction.fromMachineCode(code);
-            default:
-              break;
-          }
-
-        // c-bits instructions (ALU-code -> a and c bits)        
-        switch (aluCode) {
+            // c-bits instructions (ALU-code -> a and c bits)        
             case '0001101': // !%D
                 return NotInstruction.fromMachineCode(code);
             case '0110001': // !%A
                 return NotInstruction.fromMachineCode(code);
-            case '1110011': // !%(A)
-                // throw error -> not read and write at the same time
-                break;
             case '0001111': // -%D
                 return NegInstruction.fromMachineCode(code);
             case '0110011': // -%A
@@ -60,7 +52,6 @@ export class InsperHackInstructionFactory {
                 return AddInstruction.fromMachineCode(code);
             case '1000010': // D+M
                 return AddInstruction.fromMachineCode(code);
-            // …
             default:
               break;
           }
@@ -125,11 +116,51 @@ export class InsperHackInstruction extends BaseInstruction {
 }
 
 export class OverwriteInstruction extends InsperHackInstruction {
-    matchesCode(code) {
+    static matchCode(code) {
         let memoryBit = this.extractMemoryBit(code);
         let opCode = this.extractOpCode(code);
+        let cCode = memoryBit + opCode;
 
-        return (memoryBit + opCode) in this.cCodeToArgs, cCode;
+        if (cCode in this.cCodeToArgs) {
+            return this.cCodeToArgs[cCode];
+        } else {
+            throw new Error('Argument is not valid.');
+        }
+    }
+    argToDest = {
+        '%D': '010', // d Code
+        '%A': '100'
+    }
+    setDestCode(arg) {
+        let destCode = [0, 0, 0];
+        if (arg === '%A') {
+            destCode[0] = 1;
+        } else if (arg === '%D') {
+            destCode[1] = 1;
+        } else {
+            throw new Error('Destination is not valid.');
+        }
+        return destCode.join('');
+    }
+    convertToMachineCode() {
+        // setup instruction code
+        let code = '111';
+        // get opCode and append
+        let opCode = this.argsToCcode[this.args[0]];
+        code += opCode;
+        // append params and destinations
+        code += this.noJump(this.setDestCode(this.args[0]));
+        return code;
+    }
+    getOpWord(system, operand) {
+        // reg
+        let opWord = this.getRegValue(system, operand);
+        return opWord;
+    }
+    getDestWord(system, arg) {
+        // reg
+        let destWord = this.getRegValue(system, arg);
+        return destWord;
     }
 }
 
@@ -142,39 +173,18 @@ export class IncInstruction extends OverwriteInstruction {
         '%D': '0011111', //a+c Code
         '%A': '0110111'
     };
-    argToDest = {
-        '%D': '010', // d Code
-        '%A': '100'
-    }
     static fromMachineCode(code) { 
-        let memoryBit = this.extractMemoryBit(code);
-        let opCode = this.extractOpCode(code);
-        let cCode = memoryBit + opCode;
-
-        let params = this.cCodeToArgs[cCode];
-        let args = params;
-
-        return new IncInstruction(args);
+        let arg = this.matchCode(code);
+        return new IncInstruction(arg);
     }
-
     toMachineCode() {
-        // setup instruction code
-        let code = '111';
-        // get opCode and append
-        let opCode = this.argsToCcode[this.args[0]];
-        code += opCode;
-        // append param and destination
-        code += this.noJump(this.argToDest[this.args[0]]);
-        return code;
+        return this.convertToMachineCode();
     }
-
     executeOn(system) {
         // operand 1 reg
-        let op1Word = this.getRegValue(system, this.op1);
-
-        // overwirte reg with increment of op1Word
-        // set result word
-        op1Word.set(op1Word.inc());
+        let resultWord = this.getOpWord(system, this.op1).inc();
+        // overwrite with its negation
+        this.getDestWord(system, this.args[0]).set(resultWord);
     }
 }
 
@@ -187,39 +197,20 @@ export class DecInstruction extends OverwriteInstruction {
         '%D': '0001110', //a+c Code
         '%A': '0110010'
     };
-    argToDest = {
-        '%D': '010', // d Code
-        '%A': '100'
-    }
     static fromMachineCode(code) { 
-        let memoryBit = this.extractMemoryBit(code);
-        let opCode = this.extractOpCode(code);
-        let cCode = memoryBit + opCode;
-
-        let params = this.cCodeToArgs[cCode];
-        let args = params;
-
-        return new DecInstruction(args);
+        let arg = this.matchCode(code);
+        return new DecInstruction(arg);
     }
 
     toMachineCode() {
-        // setup instruction code
-        let code = '111';
-        // get opCode and append
-        let opCode = this.argsToCcode[this.args[0]];
-        code += opCode;
-        // append param and destination
-        code += this.noJump(this.argToDest[this.args[0]]);
-        return code;
+        return this.convertToMachineCode();
     }
 
     executeOn(system) {
         // operand 1 reg
-        let op1Word = this.getRegValue(system, this.op1);
-
-        // overwrite reg with decrement of op1Word
-        // set result word
-        op1Word.set(op1Word.dec());
+        let resultWord = this.getOpWord(system, this.op1).dec();
+        // overwrite with its negation
+        this.getDestWord(system, this.args[0]).set(resultWord);
     }
 }
 
@@ -232,51 +223,18 @@ export class NotInstruction extends OverwriteInstruction {
         '%D': '0001101', //a+c Code
         '%A': '0110001',
     };
-    static cCodeToDests = {
-        '100': ['%A'],
-        '010': ['%D'],
-    };
-    createDestCodeFrom(args) {
-        let destCode = [0, 0, 0];
-        if (args === '%A') {
-            destCode[0] = 1;
-        }
-        if (args === '%D') {
-            destCode[1] = 1;
-        }
-        return destCode.join('');
-    }
     static fromMachineCode(code) { 
-        let memoryBit = this.extractMemoryBit(code);
-        let opCode = this.extractOpCode(code);
-        let cCode = memoryBit + opCode;
-
-        let params = this.cCodeToArgs[cCode];
-
-        let args = params;
-
-        return new NotInstruction(args);
+        let arg = this.matchCode(code);
+        return new NotInstruction(arg);
     }
-
     toMachineCode() {
-        // setup instruction code
-        let code = '111';
-        // get opCode and append
-        let opCode = this.argsToCcode[this.args[0]];
-        code += opCode;
-        // append params and destinations
-        code += this.noJump(this.createDestCodeFrom(this.args[0]));
-        return code;
+        return this.convertToMachineCode();
     }
-
     executeOn(system) {
         // operand 1 reg
-        let op1Word = this.getRegValue(system, this.op1);
-
-        // overwirte each register with its negation
-        let destWord = this.getRegValue(system, this.args[0]);
-        // set result word
-        destWord.set(op1Word.invert());
+        let resultWord = this.getOpWord(system, this.op1).invert();
+        // overwrite with its negation
+        this.getDestWord(system, this.args[0]).set(resultWord);
     }
 }
 
@@ -289,51 +247,18 @@ export class NegInstruction extends OverwriteInstruction {
         '%D': '0001111', //a+c Code
         '%A': '0110011',
     };
-    static cCodeToDests = {
-        '100': ['%A'],
-        '010': ['%D'],
-    };
-    createDestCodeFrom(args) {
-        let destCode = [0, 0, 0];
-        if (args === '%A') {
-            destCode[0] = 1;
-        }
-        if (args === '%D') {
-            destCode[1] = 1;
-        }
-        return destCode.join('');
-    }
     static fromMachineCode(code) { 
-        let memoryBit = this.extractMemoryBit(code);
-        let opCode = this.extractOpCode(code);
-        let cCode = memoryBit + opCode;
-
-        let params = this.cCodeToArgs[cCode];
-
-        let args = params;
-
-        return new NegInstruction(args);
+        let arg = this.matchCode(code);
+        return new NegInstruction(arg);
     }
-
     toMachineCode() {
-        // setup instruction code
-        let code = '111';
-        // get opCode and append
-        let opCode = this.argsToCcode[this.args[0]];
-        code += opCode;
-        // append params and destinations
-        code += this.noJump(this.createDestCodeFrom(this.args[0]));
-        return code;
+        return this.convertToMachineCode();
     }
-
     executeOn(system) {
         // operand 1 reg
-        let op1Word = this.getRegValue(system, this.op1);
-
-        // overwrite each register with its negation
-        let destWord = this.getRegValue(system, this.args[0]);
-        // set result word
-        destWord.set(op1Word.invert().addImmediate(1));
+        let resultWord = this.getOpWord(system, this.op1).invert().addImmediate(1);
+        // overwrite with its negation
+        this.getDestWord(system, this.args[0]).set(resultWord);
     }
 }
 
@@ -341,7 +266,7 @@ export class NegInstruction extends OverwriteInstruction {
 
 const mnemonicToClass = {
     'inc': IncInstruction,
-    'dec': DecInstruction
+    'dec': DecInstruction,
     'not': NotInstruction,
     'neg': NegInstruction,
 };

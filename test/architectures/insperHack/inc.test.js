@@ -72,8 +72,8 @@ test("Test 2: create inc-instruction from machine code", () => {
 test("Test 3: creating inc-instruction from mnemonic", () => {
     let factory = new InsperHackInstructionFactory();
 
-    let inst = factory.createFromMnemonic("inc", ['%A']);
-    let expected = new IncInstruction(['%A']);
+    let inst = factory.createFromMnemonic("inc", ['%D']);
+    let expected = new IncInstruction(['%D']);
 
     expect(inst).toMatchObject(expected);
 });
