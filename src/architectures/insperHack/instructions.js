@@ -41,6 +41,13 @@ export class InsperHackInstructionFactory {
 
         // c-bits instructions (ALU-code -> a and c bits)        
         switch (aluCode) {
+            case '0001101': // !%D
+                return NotInstruction.fromMachineCode(code);
+            case '0110001': // !%A
+                return NotInstruction.fromMachineCode(code);
+            case '1110011': // !%(A)
+                // throw error -> not read and write at the same time
+                break;
             case '0110000':
               return MovInstruction.fromMachineCode(code);
             case '1110000':
@@ -430,11 +437,77 @@ export class DecInstruction extends InsperHackInstruction {
     }
 }
 
+export class NotInstruction extends InsperHackInstruction {
+    static cCodeToArgs = {
+        '0001101': ['%D'],
+        '0110001': ['%A'],
+    };
+    argsToCcode = {
+        '%D': '0001101', //a+c Code
+        '%A': '0110001',
+    };
+    static cCodeToDests = {
+        '100': ['%A'],
+        '010': ['%D'],
+    };
+    createDestCodeFrom(args) {
+        let destCode = [0, 0, 0];
+        if (args === '%A') {
+            destCode[0] = 1;
+        }
+        if (args === '%D') {
+            destCode[1] = 1;
+        }
+        return destCode.join('');
+    }
+    static matchesCode(code) {
+        let memoryBit = this.extractMemoryBit(code);
+        let opCode = this.extractOpCode(code);
+
+        return (memoryBit + opCode) in this.cCodeToArgs, cCode;
+    }
+    static fromMachineCode(code) { 
+        let memoryBit = this.extractMemoryBit(code);
+        let opCode = this.extractOpCode(code);
+        let cCode = memoryBit + opCode;
+
+        let params = this.cCodeToArgs[cCode];
+
+        let args = params;
+
+        return new NotInstruction(args);
+    }
+
+    toMachineCode() {
+        // setup instruction code
+        let code = '111';
+        // get opCode and append
+        let opCode = this.argsToCcode[this.args[0]];
+        code += opCode;
+        // append params and destinations
+        code += this.noJump(this.createDestCodeFrom(this.args[0]));
+        return code;
+    }
+
+    executeOn(system) {
+        // operand 1 reg
+        let op1Word = this.getRegValue(system, this.op1);
+
+        // overwirte each register with its negation
+        let destWord = this.getRegValue(system, this.args[0]);
+        // set result word
+        destWord.set(op1Word.invert());
+    }
+}
+
+
+
 const mnemonicToClass = {
     'mov': MovInstruction,
     'nop': NopInstruction,
     'add': AddInstruction,
     'inc': IncInstruction,
     'dec': DecInstruction
+    'not': NotInstruction,
 };
 
