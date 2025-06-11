@@ -244,6 +244,16 @@ export class Word {
         return Word.fromSignedIntValue(result, this.length);
     }
 
+    inc() {
+        let result = this.toSignedIntValue() + 1;
+        return Word.fromSignedIntValue(result, this.length);
+    }
+
+    dec() {
+        let result = this.toSignedIntValue() - 1;
+        return Word.fromSignedIntValue(result, this.length);
+    }
+
     addImmediate(immediate) {
         let immediateWord = Word.fromSignedIntValue(immediate, this.bits.length);
         return this.add(immediateWord);
