@@ -1,5 +1,5 @@
 import { NegInstruction, InsperHackInstructionFactory } from "@/architectures/insperHack/instructions";
-import {expect, test, vi} from "vitest";
+import {expect, test} from "vitest";
 import {Word} from "@/architectures/system.js";
 
 //neg %A
@@ -10,7 +10,7 @@ test("Test 1: neg-instruction to maschine code (neg %A)", () => {
 
     expect(instruction.toMachineCode()).toBe(expectedCode);
 });
-test("Test 2: create neg-instruction from machine code", () => {
+test("Test 2: create neg-instruction from machine code (neg %A)", () => {
     let machineCode = "111" + "0" + "110011" + "100" + "000";
 
     let expectedInstruction = new NegInstruction(['%A']);
@@ -31,7 +31,6 @@ test("Test 3: creating neg-instruction from mnemonic (neg %A)", () => {
 test("Test 4: negate register A", () => {
     let pcWord = Word.fromSignedIntValue(0);
     let regAWord = Word.fromSignedIntValue(10);
-;
 
     let emulator = {
         registers: {
@@ -56,7 +55,7 @@ test("Test 1: neg-instruction to maschine code (neg %D)", () => {
 
     expect(instruction.toMachineCode()).toBe(expectedCode);
 });
-test("Test 2: create neg-instruction from machine code", () => {
+test("Test 2: create neg-instruction from machine code (neg %D)", () => {
     let machineCode = "111" + "0" + "001111" + "010" + "000";
 
     let expectedInstruction = new NegInstruction(['%D']);

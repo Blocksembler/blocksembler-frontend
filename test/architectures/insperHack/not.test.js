@@ -1,5 +1,5 @@
 import { NotInstruction, InsperHackInstructionFactory } from "@/architectures/insperHack/instructions";
-import {expect, test, vi} from "vitest";
+import {expect, test} from "vitest";
 import {Word} from "@/architectures/system.js";
 
 //not %A
@@ -10,7 +10,7 @@ test("Test 1: not-instruction to maschine code (not %A)", () => {
 
     expect(instruction.toMachineCode()).toBe(expectedCode);
 });
-test("Test 2: create not-instruction from machine code", () => {
+test("Test 2: create not-instruction from machine code (not %A)", () => {
     let machineCode = "111" + "0" + "110001" + "100" + "000";
 
     let expectedInstruction = new NotInstruction(['%A']);
@@ -57,7 +57,7 @@ test("Test 1: not-instruction to maschine code (not %D)", () => {
 
     expect(instruction.toMachineCode()).toBe(expectedCode);
 });
-test("Test 2: create not-instruction from machine code", () => {
+test("Test 2: create not-instruction from machine code (not %D)", () => {
     let machineCode = "111" + "0" + "001101" + "010" + "000";
 
     let expectedInstruction = new NotInstruction(['%D']);

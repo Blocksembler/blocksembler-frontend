@@ -1,5 +1,5 @@
 import { DecInstruction, InsperHackInstructionFactory } from "@/architectures/insperHack/instructions";
-import {expect, test, vi} from "vitest";
+import {expect, test} from "vitest";
 import {Word} from "@/architectures/system.js";
 
 //dec %A
@@ -10,7 +10,7 @@ test("Test 1: dec instruction to maschine code (dec %A)", () => {
 
     expect(instruction.toMachineCode()).toBe(expectedCode);
 });
-test("Test 2: create dec instruction from machine code", () => {
+test("Test 2: create dec instruction from machine code (dec %A)", () => {
     let machineCode = "111" + "0" + "110010" + "010" + "000";
 
     let expectedInstruction = new DecInstruction(['%A']);
@@ -60,7 +60,7 @@ test("Test 1: dec instruction to maschine code (dec %D)", () => {
 
     expect(instruction.toMachineCode()).toBe(expectedCode);
 });
-test("Test 2: create dec instruction from machine code", () => {
+test("Test 2: create dec instruction from machine code (dec %D)", () => {
     let machineCode = "111" + "0" + "001110" + "010" + "000";
 
     let expectedInstruction = new DecInstruction(['%D']);
