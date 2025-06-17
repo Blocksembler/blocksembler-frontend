@@ -1,5 +1,5 @@
 import { MovInstruction, InsperHackInstructionFactory } from "@/architectures/insperHack/instructions";
-import {expect, test, vi} from "vitest";
+import {expect, test} from "vitest";
 import {Word} from "@/architectures/system.js";
 
 
@@ -20,7 +20,7 @@ test("Test 2: creating mov-instruction from mnemonic (mov %A %D)", () => {
     expect(inst).toMatchObject(expected);
 });
 
-test("test 3: create mov-instruction from machine code (mov %A %D)", () => {
+test("Test 3: create mov-instruction from machine code (mov %A %D)", () => {
     let machineCode = "111" + "0" + "110000" + "010" + "000";
 
     let expectedInstruction = new MovInstruction(['%A', '%D']);
