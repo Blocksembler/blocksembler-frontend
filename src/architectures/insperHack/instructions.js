@@ -1,5 +1,5 @@
-import { BaseInstruction } from "../instructions";
-import { Word } from "../system";
+import {BaseInstruction} from "../instructions";
+import {Word} from "../system";
 
 export class InsperHackInstructionFactory {
   createFromMnemonic(mnemonic, args) {
@@ -43,22 +43,9 @@ export class InsperHackInstructionFactory {
         return NegInstruction.fromMachineCode(code);
       case "0110011": // -%A
         return NegInstruction.fromMachineCode(code);
-      case "0110000":
-        return MovInstruction.fromMachineCode(code);
-      case "1110000":
-        return MovInstruction.fromMachineCode(code);
-      case "0000010": // D+A
-        return AddInstruction.fromMachineCode(code);
-      case "1000010": // D+M
-        return AddInstruction.fromMachineCode(code);
       default:
         break;
     }
-  }
-
-  getInstructionClassByOpCode(opCode) {
-    // find class c with identical opCode
-    return mnemonicToClass.filter((c) => c.opCode === opCode)[0];
   }
 }
 
@@ -138,7 +125,7 @@ export class OverwriteInstruction extends InsperHackInstruction {
       throw new Error("Destination is not valid.");
     }
   }
-  //converts instruction to maschine code
+  //converts instruction to machine code
   toMachineCode() {
     // setup instruction code
     let code = "111";
@@ -151,15 +138,11 @@ export class OverwriteInstruction extends InsperHackInstruction {
   }
   //gets the word of the operand
   getOpWord(system, operand) {
-    // reg
-    let opWord = this.getRegValue(system, operand);
-    return opWord;
+    return this.getRegValue(system, operand);
   }
   // gets the destination of the instruction with argument arg
   getDestWord(system, arg) {
-    // reg
-    let destWord = this.getRegValue(system, arg);
-    return destWord;
+    return this.getRegValue(system, arg);
   }
 }
 
