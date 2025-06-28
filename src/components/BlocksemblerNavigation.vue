@@ -1,11 +1,11 @@
 <script setup>
-import {codingWorkspaceState, settings} from "@/state.js";
+import {codingWorkspaceState} from "@/state.js";
 import {saveAs} from "file-saver";
-import BaseModal from "@/components/modals/BaseModal.vue";
 import {downloadLogData, logEvent} from "@/logging.js";
 import CloudDownloadIcon from "@/components/icons/CloudDownloadIcon.vue";
 import * as bootstrap from "bootstrap";
 import NewProjectModal from "@/components/modals/NewProjectModal.vue";
+import SettingsModal from "@/components/modals/SettingsModal.vue";
 
 let emit = defineEmits(['importProject', 'exportProject']);
 
@@ -131,16 +131,9 @@ let openSettings = () => logEvent('buttonClick', {'source': 'settingsButton'});
         Download Log Data
       </button>
     </nav>
-    <BaseModal id="settingsModal" savable title="Settings">
-      <label class="form-label" for="customRange1">Milliseconds per Instruction</label>
-      <input id="customRange1"
-             v-model.number="settings.executionSpeed"
-             class="form-range"
-             max="2000"
-             min="1"
-             type="range">
-      <p>{{ settings.executionSpeed }}ms per instruction</p>
-    </BaseModal>
+
+    <!-- Modals -->
+    <SettingsModal id="settingsModal"/>
     <NewProjectModal id="newProjectModal" :onCreateProject="createNewProject"/>
   </header>
 
