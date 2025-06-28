@@ -1,5 +1,5 @@
 <script setup>
-import BaseCodeMirrorEditor from "./BaseCodeMirrorEditor.vue";
+import BaseCodeMirrorEditor from "./base/BaseCodeMirrorEditor.vue";
 import DebuggerPanel from "./DebuggerPanel.vue";
 </script>
 

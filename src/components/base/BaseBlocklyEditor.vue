@@ -3,7 +3,7 @@ import {onMounted, onUnmounted, ref, shallowRef, watch} from "vue";
 import * as Blockly from "blockly";
 import {codingWorkspaceState} from "@/state.js";
 import {logEvent} from "@/logging.js";
-import {load, save} from "../util/serialization";
+import {load, save} from "@/util/serialization.js";
 import {Multiselect} from "@mit-app-inventor/blockly-plugin-workspace-multiselect";
 
 import {shadowBlockConversionChangeListener} from "@blockly/shadow-block-converter";
