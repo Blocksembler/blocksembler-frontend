@@ -1,5 +1,5 @@
 <script setup>
-import BaseModal from "@/components/BaseModal.vue";
+import BaseModal from "@/components/modals/BaseModal.vue";
 import {deleteLogData} from "@/logging.js";
 
 const consentHandler = () => {

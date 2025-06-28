@@ -1,8 +1,8 @@
 <script setup>
 import {ref} from 'vue'
 
-import BaseBlocklyEditor from "./BaseBlocklyEditor.vue";
-import BaseCodeMirrorEditor from "./BaseCodeMirrorEditor.vue";
+import BaseBlocklyEditor from "./base/BaseBlocklyEditor.vue";
+import BaseCodeMirrorEditor from "./base/BaseCodeMirrorEditor.vue";
 import {codingWorkspaceState} from "@/state.js";
 
 
