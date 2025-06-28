@@ -6,7 +6,7 @@ import BlocksemblerNavigation from "./components/BlocksemblerNavigation.vue";
 import BlocksemblerCodingView from "./components/BlocksemblerCodingView.vue";
 import BlocksemblerDebugView from "./components/BlocksemblerDebugView.vue";
 import Blocksembler404 from "./components/Blocksembler404.vue";
-import DataUsageConsentBanner from "@/components/DataUsageConsentBanner.vue";
+import DataUsageConsentBanner from "@/components/modals/DataUsageConsentBanner.vue";
 
 
 const routes = {
