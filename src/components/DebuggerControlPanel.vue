@@ -2,15 +2,15 @@
 import {reactive} from "vue";
 import {codingWorkspaceState, settings} from "../state";
 import {logEvent} from "@/logging.js";
-import BaseButton from "./BaseButton.vue";
-import BaseModal from "./BaseModal.vue";
+import BaseButton from "./base/BaseButton.vue";
+import BaseModal from "./modals/BaseModal.vue";
 import PlayCircleIcon from "@/components/icons/PlayCircleIcon.vue";
 import PlayIcon from "@/components/icons/PlayIcon.vue";
 import PauseIcon from "@/components/icons/PauseIcon.vue";
 import ArrowRightSquareIcon from "@/components/icons/ArrowRightSquareIcon.vue";
 import ReplyIcon from "@/components/icons/ReplyIcon.vue";
 import TerminalIcon from "@/components/icons/TerminalIcon.vue";
-import BaseDropDown from "@/components/BaseDropDown.vue";
+import BaseDropDown from "@/components/base/BaseDropDown.vue";
 
 
 const output = reactive(codingWorkspaceState.archPlugin.emulator.output);

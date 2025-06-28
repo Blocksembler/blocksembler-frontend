@@ -1,9 +1,11 @@
 <script setup>
 import {codingWorkspaceState, settings} from "@/state.js";
 import {saveAs} from "file-saver";
-import BaseModal from "@/components/BaseModal.vue";
+import BaseModal from "@/components/modals/BaseModal.vue";
 import {downloadLogData, logEvent} from "@/logging.js";
 import CloudDownloadIcon from "@/components/icons/CloudDownloadIcon.vue";
+import * as bootstrap from "bootstrap";
+import NewProjectModal from "@/components/modals/NewProjectModal.vue";
 
 let emit = defineEmits(['importProject', 'exportProject']);
 
@@ -41,8 +43,14 @@ let importProject = () => {
   fileReader.readAsText(document.getElementById("file-input").files[0]);
 }
 
-let createNewProject = () => {
+let openNewProjectModal = () => {
   logEvent('buttonClick', {'source': 'createNewProjectButton'})
+  const consentModal = new bootstrap.Modal(document.getElementById('newProjectModal'));
+  consentModal.show();
+}
+
+let createNewProject = () => {
+  logEvent('newProjectCreated', {'source': 'createNewProjectButton'})
   codingWorkspaceState.initWorkspace("");
 }
 
@@ -78,7 +86,7 @@ let openSettings = () => logEvent('buttonClick', {'source': 'settingsButton'});
               </a>
               <ul class="dropdown-menu">
                 <li>
-                  <a class="dropdown-item" href="#" @click=createNewProject>
+                  <a class="dropdown-item" href="#" @click=openNewProjectModal>
                     New Project
                   </a>
                 </li>
@@ -131,11 +139,9 @@ let openSettings = () => logEvent('buttonClick', {'source': 'settingsButton'});
              max="2000"
              min="1"
              type="range">
-      <a>{{ settings.executionSpeed }}ms per instruction</a>
+      <p>{{ settings.executionSpeed }}ms per instruction</p>
     </BaseModal>
-    <BaseModal id="restoreModal" saveable title="Restore Last Session">
-      <a>Do you want to restore your last coding session?</a>
-    </BaseModal>
+    <NewProjectModal id="newProjectModal" :onCreateProject="createNewProject"/>
   </header>
 
 </template>
