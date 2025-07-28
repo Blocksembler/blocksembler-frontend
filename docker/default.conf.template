@@ -2,12 +2,12 @@ server {
         listen 443 ssl default_server;
         listen [::]:443 ssl default_server;
 
-        ssl_certificate ${SSL_CERTIFICATE};
-        ssl_certificate_key ${SSL_CERTIFICATE_KEY};
+        ssl_certificate $SSL_CERT_FILE;
+        ssl_certificate_key $SSL_KEY_FILE;
 
         root /usr/share/nginx/html;
 
-        server_name ${SERVER_NAME};
+        server_name $SERVER_NAME;
 
         location / {
             try_files $uri $uri/ =404;
