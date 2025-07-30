@@ -1,15 +1,15 @@
-<script setup>
+<script lang="ts" setup>
 import * as bootstrap from "bootstrap";
-import {computed, onMounted, ref} from "vue";
+import {Component, computed, onMounted, ref} from "vue";
 
-import BlocksemblerNavigation from "./components/BlocksemblerNavigation.vue";
-import BlocksemblerCodingView from "./components/BlocksemblerCodingView.vue";
-import BlocksemblerDebugView from "./components/BlocksemblerDebugView.vue";
-import Blocksembler404 from "./components/Blocksembler404.vue";
+import BlocksemblerNavigation from "@/components/BlocksemblerNavigation.vue";
+import BlocksemblerCodingView from "@/components/BlocksemblerCodingView.vue";
+import BlocksemblerDebugView from "@/components/BlocksemblerDebugView.vue";
+import Blocksembler404 from "@/components/Blocksembler404.vue";
 import DataUsageConsentBanner from "@/components/modals/DataUsageConsentBanner.vue";
 
 
-const routes = {
+const routes: Record<string, Component> = {
   "/": BlocksemblerCodingView,
   "/editor": BlocksemblerCodingView,
   "/debugger": BlocksemblerDebugView,
@@ -31,7 +31,7 @@ onMounted(() => {
   if (data && data === 'true' || data === 'false') {
     return;
   }
-  const consentModal = new bootstrap.Modal(document.getElementById('cookieConsentBanner'));
+  const consentModal = new bootstrap.Modal('cookieConsentBanner');
   consentModal.show();
 })
 
