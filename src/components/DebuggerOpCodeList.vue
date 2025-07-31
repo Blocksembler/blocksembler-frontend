@@ -1,6 +1,6 @@
 <script setup>
 import {computed} from "vue";
-import {codingWorkspaceState} from "@/state.js";
+import {codingWorkspaceState} from "@/state";
 
 const memoryToInstructionObjects = (progMemory, highlightedLines) => {
   let instructions = [];
@@ -15,9 +15,9 @@ const memoryToInstructionObjects = (progMemory, highlightedLines) => {
       inst = "Invalid Instruction";
     }
 
-    let binVal = progMemory[address].toBitString();
-    let decVal = progMemory[address].toUnsignedIntValue();
-    let hexVal = progMemory[address].toHexValue()
+    let binVal = progMemory[address].value.toBitString();
+    let decVal = progMemory[address].value.toUnsignedIntValue();
+    let hexVal = progMemory[address].value.toHexValue()
 
     let cssClass = highlightedLines.indexOf(address) !== -1 ? "table-active" : "";
 

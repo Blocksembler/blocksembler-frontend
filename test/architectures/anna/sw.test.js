@@ -1,6 +1,6 @@
 import {expect, test, vi} from "vitest";
-import {AnnaInstructionFactory, StoreWordInstruction} from "@/architectures/anna/instructions.js";
-import {Word} from "@/architectures/emulator.ts";
+import {AnnaInstructionFactory, StoreWordInstruction} from "@/architectures/anna/instructions";
+import {Word} from "@/architectures/emulator";
 
 test("test create store word instruction from mnemonic", () => {
     let mnemonic = "sw";
@@ -17,7 +17,9 @@ test("test create store word instruction from machine code", () => {
     let expectedInstruction = new StoreWordInstruction(["r1", "r2", 5]);
 
     let factory = new AnnaInstructionFactory();
-    let instruction = factory.createFromOpCode([Word.fromString(machineCode)], 0);
+    let instruction = factory.createFromOpCode([{
+        address: 0, value: Word.fromString(machineCode)
+    }], 0);
 
     expect(instruction).toMatchObject(expectedInstruction);
 });

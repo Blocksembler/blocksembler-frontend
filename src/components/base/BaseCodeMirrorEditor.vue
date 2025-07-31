@@ -5,7 +5,7 @@ import {EditorState} from "@codemirror/state";
 import {EditorView, lineNumbers} from "@codemirror/view";
 
 import {oneDark} from "@codemirror/theme-one-dark";
-import {codingWorkspaceState} from "@/state.js";
+import {codingWorkspaceState} from "@/state";
 
 let codemirrorTextarea = ref();
 let view = ref();
