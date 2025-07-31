@@ -4,7 +4,7 @@ import {
     LoadLowerImmediateInstruction,
     LoadUpperImmediateInstruction
 } from "@/architectures/anna/instructions.js";
-import {Word} from "@/architectures/system.js";
+import {Word} from "@/architectures/emulator.ts";
 
 test("test load upper immediate instruction to machine code", () => {
     let instruction = new LoadUpperImmediateInstruction(["r1", 11]);

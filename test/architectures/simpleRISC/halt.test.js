@@ -1,5 +1,5 @@
 import {expect, test} from "vitest";
-import {Word} from "@/architectures/system.js";
+import {Word} from "@/architectures/emulator.ts";
 import {HaltInstruction, SimpleRISCInstructionFactory} from "@/architectures/simpleRISC/instructions.js";
 import {SimpleRISCEmulator} from "@/architectures/simpleRISC/system.js";
 
@@ -32,7 +32,9 @@ test(`create ${mnemonic} instruction from machine code`, () => {
     const factory = new SimpleRISCInstructionFactory();
     const expectedInstruction = new HaltInstruction([]);
 
-    const memory = [Word.fromString("000" + opCode + "0" + "00000000")];
+    const memory = [
+        {address: 0, value: Word.fromString("000" + opCode + "0" + "00000000")},
+    ];
 
     expect(factory.createFromOpCode(memory, 0)).toStrictEqual(expectedInstruction);
 });

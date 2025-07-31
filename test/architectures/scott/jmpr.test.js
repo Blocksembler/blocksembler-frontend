@@ -1,6 +1,6 @@
 import {expect, test} from "vitest";
 import {JumpRegisterInstruction, ScottInstructionFactory} from "@/architectures/scott/instructions.js";
-import {Word} from "@/architectures/system.js";
+import {Word} from "@/architectures/emulator.ts";
 import {ScottEmulator} from "@/architectures/scott/system.js";
 
 test("test converting jmpr instruction to machine code", () => {
@@ -12,7 +12,9 @@ test("test converting jmpr instruction to machine code", () => {
 test("test creating jmpr instruction from machine code", () => {
     const machineCode = "00110011";
 
-    const jmprInst = JumpRegisterInstruction.fromMachineCode(Word.fromString(machineCode, 8), Word.fromString("00000000"));
+    const jmprInst = JumpRegisterInstruction.fromMachineCode(
+        {address: 0, value: Word.fromString(machineCode, 8)},
+        {address: 1, value: Word.fromString("00000000")});
 
     expect(jmprInst).toStrictEqual(new JumpRegisterInstruction(["R3"]));
 })
@@ -28,8 +30,8 @@ test("test creating jmpr instruction from mnemonic", () => {
 test("test creating jmpr instruction from opcode", () => {
     const factory = new ScottInstructionFactory();
     const mockSystem = new ScottEmulator()
-    mockSystem.memory[0].set(Word.fromString("00110011", 8));
-    mockSystem.memory[1].set(Word.fromString("00000000", 8));
+    mockSystem.memory[0].value.set(Word.fromString("00110011", 8));
+    mockSystem.memory[1].value.set(Word.fromString("00000000", 8));
 
     const jmprInst = factory.createFromOpCode(mockSystem.memory, 0);
 

@@ -5,7 +5,7 @@ import {
     EorInstruction
 } from "@/architectures/armlet/instructions.js";
 import {generateMockSystem} from "./util.js";
-import {Word} from "@/architectures/system.js";
+import {Word} from "@/architectures/emulator.ts";
 
 test("eor instruction to string", () => {
     let instruction = new EorInstruction(['$4', '$1', '$5']);
@@ -47,7 +47,10 @@ test("create eor instruction from machine code", () => {
     let machineCode = "0" + "101" + "010" + "111" + "000100";
     let expectedInstruction = new EorInstruction(['$7', '$2', '$5']);
     let factory = new ArmletInstructionFactory();
-    let instruction = factory.createFromOpCode([Word.fromString(machineCode), Word.fromSignedIntValue(0)], 0);
+    let instruction = factory.createFromOpCode([
+        {address: 0, value: Word.fromString(machineCode)},
+        {address: 1, value: Word.fromSignedIntValue(0)},
+    ], 0);
     expect(instruction).toMatchObject(expectedInstruction);
 });
 
@@ -55,7 +58,10 @@ test("create eor instruction with immediate from machine code", () => {
     let machineCode = "0" + "000" + "010" + "111" + "011101" + "0000000000001010";
     let expectedInstruction = new EorImmediateInstruction(['$7', '$2', '10']);
     let factory = new ArmletInstructionFactory();
-    let instruction = factory.createFromOpCode([Word.fromString(machineCode), Word.fromSignedIntValue(10)], 0);
+    let instruction = factory.createFromOpCode([
+        {address: 0, value: Word.fromString(machineCode)},
+        {address: 1, value: Word.fromSignedIntValue(10)},
+    ], 0);
     expect(instruction).toMatchObject(expectedInstruction);
 })
 

@@ -1,4 +1,4 @@
-import {Word} from "@/architectures/system.js";
+import {Word} from "@/architectures/emulator.ts";
 import {ArmletEmulator} from "@/architectures/armlet/system.js";
 import {AbstractImmediateArmletInstruction} from "@/architectures/armlet/instructions.js";
 
@@ -18,11 +18,13 @@ export const generateMockSystem = (registers, instruction = null) => {
     mockSystem.registers['$7'] = registerWords[8]
 
     if (instruction) {
-        mockSystem.memory[0] = Word.fromString(instruction.toMachineCode().slice(0, 16))
+        mockSystem.memory[0].address = 0;
+        mockSystem.memory[0].value = Word.fromString(instruction.toMachineCode().slice(0, 16));
 
     }
     if (instruction instanceof AbstractImmediateArmletInstruction) {
-        mockSystem.memory[1] = Word.fromString(instruction.toMachineCode().slice(16, 32))
+        mockSystem.memory[1].address = 1;
+        mockSystem.memory[1].value = Word.fromString(instruction.toMachineCode().slice(16, 32));
     }
 
     return mockSystem

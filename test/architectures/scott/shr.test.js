@@ -1,6 +1,6 @@
 import {expect, test} from "vitest";
 import {ScottInstructionFactory, ShiftRightInstruction} from "@/architectures/scott/instructions.js";
-import {Word} from "@/architectures/system.js";
+import {Word} from "@/architectures/emulator.ts";
 import {ScottEmulator} from "@/architectures/scott/system.js";
 
 /**
@@ -26,7 +26,10 @@ test("test converting shr instruction to machine code", () => {
 test("test creating shr instruction from machine code", () => {
     // This corresponds to 1010 0001 => 0xA1 => SHR R1
     const machineCode = "10010110";
-    const shrInst = ShiftRightInstruction.fromMachineCode(Word.fromString(machineCode, 8));
+    const shrInst = ShiftRightInstruction.fromMachineCode({
+        address: 0,
+        value: Word.fromString(machineCode, 8)
+    });
 
     expect(shrInst).toStrictEqual(new ShiftRightInstruction(["R1", "R2"]));
 });
@@ -44,7 +47,7 @@ test("test creating shr instruction from opcode", () => {
     const factory = new ScottInstructionFactory();
     const mockSystem = new ScottEmulator();
 
-    mockSystem.memory[0].set(Word.fromString("10010110", 8));
+    mockSystem.memory[0].value.set(Word.fromString("10010110", 8));
 
     const shrInst = factory.createFromOpCode(mockSystem.memory, 0);
 

@@ -1,4 +1,4 @@
-import {BaseEmulator, ImmutableWord, Word} from "../system";
+import {BaseEmulator, ImmutableWord, Word} from "../emulator.ts";
 import {AnnaInstructionFactory} from "./instructions";
 
 const addressSize = 16;

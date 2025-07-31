@@ -1,5 +1,27 @@
+import type {Instruction, InstructionFactory, InterruptFunction, MemoryLocation} from '@/types/emulator';
+
+
 export class BaseEmulator {
-    constructor(registers, addressSize, instructionFactory, interruptHandler, hasConsole = true) {
+    instructionFactory: InstructionFactory;
+    interruptHandler: Record<string, InterruptFunction>;
+    addressSize: number;
+    memorySize: number;
+    loadedProgramSize: number;
+    isTerminated: boolean;
+    isPaused: boolean;
+    executionIntervalId: ReturnType<typeof setInterval> | null;
+    executionSpeed: number;
+    hasConsole: boolean;
+    output: Array<string>;
+    registers: Record<string, Word>;
+    memory: Array<MemoryLocation>;
+
+    constructor(registers: Record<string, Word>,
+                addressSize: number,
+                instructionFactory: InstructionFactory,
+                interruptHandler: Record<string, InterruptFunction>,
+                hasConsole: boolean = true) {
+
         this.instructionFactory = instructionFactory;
         this.interruptHandler = interruptHandler;
         this.addressSize = addressSize;
@@ -7,7 +29,7 @@ export class BaseEmulator {
         this.loadedProgramSize = 0;
         this.isTerminated = false;
         this.isPaused = true;
-        this.executionIntervalId = -1;
+        this.executionIntervalId = null;
         this.executionSpeed = 500;
         this.hasConsole = hasConsole;
         this.output = [];
@@ -19,37 +41,29 @@ export class BaseEmulator {
 
         this.memory = [];
 
-        this.initMemory(this.memorySize);
+        this.initMemory();
     }
 
-    print(msg) {
+    print(msg: string) {
         this.output.push(msg.toString());
-    }
-
-    getInstructionFactory() {
-        return this.instructionFactory;
     }
 
     initMemory() {
         this.memory = [];
 
         for (let address = 0; address < this.memorySize; address++) {
-            this.memory[address] = Word.fromSignedIntValue(0, this.addressSize);
-            this.memory[address].id = address;
+            this.memory.push({
+                address: address,
+                value: Word.fromSignedIntValue(0),
+            })
         }
     }
 
-    getMemoryFragment(start, end) {
-        let fragment = [];
-
-        for (let idx = start; idx < end; idx++) {
-            fragment.push({address: idx, word: this.memory[idx]});
-        }
-
-        return fragment;
+    getMemoryFragment(start: number, end: number): Array<MemoryLocation> {
+        return this.memory.slice(start, end);
     }
 
-    loadProgram(program) {
+    loadProgram(program: Array<Instruction>) {
         let code = ""
         for (let inst of program) {
             code += inst.toMachineCode();
@@ -60,7 +74,12 @@ export class BaseEmulator {
         let addr = 0;
 
         while (addr < this.loadedProgramSize) {
-            this.memory[addr] = Word.fromString(code.slice(addr * this.addressSize, (addr + 1) * this.addressSize), this.addressSize);
+            const codeSlice = code.slice(addr * this.addressSize, (addr + 1) * this.addressSize);
+            this.memory[addr] = {
+                address: addr,
+                value: Word.fromString(codeSlice, this.addressSize),
+            };
+
             addr += 1
         }
     }
@@ -77,14 +96,16 @@ export class BaseEmulator {
         }
 
         this.isPaused = false;
+
         this.executionIntervalId = setInterval(() => {
             this.executeSingleInstruction();
-        }, this.executionSpeed)
+        }, this.executionSpeed);
     }
 
     pauseExecution() {
         this.isPaused = true;
-        clearInterval(this.executionIntervalId)
+        if (this.executionIntervalId !== null)
+            clearInterval(this.executionIntervalId);
     }
 
     executeSingleInstruction() {
@@ -104,19 +125,19 @@ export class BaseEmulator {
         this.registers.pc.set(this.registers.pc.addImmediate(instructionLength));
     }
 
-    loadInstructionAt(address) {
+    loadInstructionAt(address: number): Instruction {
         return this.instructionFactory.createFromOpCode(this.memory, address);
     }
 
-    storeToMemory(address, register) {
-        this.memory[address].set(register);
+    storeToMemory(address: number, register: Word) {
+        this.memory[address].value.set(register);
     }
 
-    loadFromMemory(address) {
-        return this.memory[address];
+    loadFromMemory(address: number): Word {
+        return this.memory[address].value;
     }
 
-    callInterrupt(intName, ...args) {
+    callInterrupt(intName: string, ...args: Array<string>): string | void {
         const continueAfterInterrupt = !this.isPaused;
         this.pauseExecution()
 
@@ -132,7 +153,7 @@ export class BaseEmulator {
     resetMemory() {
         this.loadedProgramSize = 0;
         for (let address in this.memory) {
-            this.memory[address].set(Word.fromSignedIntValue(0, this.addressSize));
+            this.memory[address].value.set(Word.fromSignedIntValue(0, this.addressSize));
         }
     }
 
@@ -143,37 +164,53 @@ export class BaseEmulator {
     }
 
     halt() {
-        clearInterval(this.executionIntervalId);
+        if (this.executionIntervalId !== null) {
+            clearInterval(this.executionIntervalId);
+        }
+
         this.isTerminated = true;
     }
 }
 
+type Bit = 0 | 1;
+
 export class Word {
-    bits = [];
+    bits: Array<Bit> = [];
 
     get len() {
         return this.bits.length;
     }
 
-    static fromString(bitString, size = 16) {
+    static fromString(bitString: string, size: number = 16) {
         if (size) {
             bitString = bitString.padStart(size, "0").slice(0, size);
         }
-        return Word.fromBitArray([...bitString].reverse());
+
+        const bits: Array<Bit> = [];
+        for (let c of bitString) {
+            if (c == "0")
+                bits.push(0);
+            else if (c == "1")
+                bits.push(1);
+            else
+                throw new Error("Unknown bit: " + c);
+        }
+
+        return Word.fromBitArray(bits.reverse());
     }
 
-    static fromBitArray(bits) {
+    static fromBitArray(bits: Array<Bit>) {
         let newWord = new Word();
-        newWord.bits = bits.map((bit) => parseInt(bit));
+        newWord.bits = [...bits];
         return newWord;
     }
 
-    static fromSignedIntValue(instant, size = 16) {
-        let newWord = new Word();
-        let isNegative = instant < 0;
+    static fromSignedIntValue(instant: number, size = 16): Word {
+        let newWord: Word = new Word();
+        let isNegative: boolean = instant < 0;
 
         if (isNegative) {
-            newWord.bits = Word.integerToTwoCompliment(Math.abs(instant), size);
+            return Word.integerToTwoCompliment(Math.abs(instant), size);
         } else {
             newWord.bits = Word.integerToBitArray(instant, size);
         }
@@ -181,14 +218,16 @@ export class Word {
         return newWord;
     }
 
-    static integerToTwoCompliment(val, size) {
+    static integerToTwoCompliment(val: number, size: number): Word {
         let parsedBits = Word.integerToBitArray(val - 1, size);
-        return Word.invertBits(parsedBits);
+        let newWord: Word = new Word();
+        newWord.bits = Word.invertBits(parsedBits);
+        return newWord;
     }
 
-    static integerToBitArray(val, size) {
-        let bitArray = [...val.toString(2)]
-            .map((strBit) => parseInt(strBit))
+    static integerToBitArray(val: number, size: number): Array<Bit> {
+        let bitArray: Array<Bit> = [...val.toString(2)]
+            .map((strBit: string): Bit => strBit === "0" ? 0 : 1)
             .reverse();
 
         while (bitArray.length < size) {
@@ -202,88 +241,93 @@ export class Word {
         return bitArray;
     }
 
-    static invertBits(bits) {
+    static invertBits(bits: Array<Bit>): Array<Bit> {
         return bits.map((bit) => (bit === 1 ? 0 : 1));
     }
 
-    toSignedIntValue() {
+    toSignedIntValue(): number {
         let isNegative = this.bits[this.bits.length - 1] === 1;
 
         let bits = [...this.bits].reverse();
 
         if (isNegative) {
-            let bitString = Word.invertBits(bits).reduce(
-                (prev, cur) => prev.toString() + cur.toString()
-            );
+            let bitString = ""
+
+            for (let b of bits) {
+                bitString += b.toString() == "0" ? "1" : "0";
+            }
+
             return (parseInt(bitString, 2) + 1) * -1;
         }
 
-        return parseInt(
-            bits.reduce((prev, cur) => prev.toString() + cur.toString()),
-            2
-        );
+        let bitStr = "";
+
+        for (let b of bits) {
+            bitStr += b.toString();
+        }
+        return parseInt(bitStr, 2);
     }
 
-    toHexValue() {
+    toHexValue(): string {
         let hexStr = String(parseInt(this.toBitString(), 2).toString(16));
         let len = Number(this.bits.length / 4);
         return `0x${hexStr.padStart(len, '0')}`;
     }
 
-    toUnsignedIntValue() {
+    toUnsignedIntValue(): number {
         let bitString = [...this.bits].reverse().join("");
         return parseInt(bitString, 2);
     }
 
-    set(word) {
+    set(word: Word) {
         this.bits = [...word.bits];
     }
 
-    add(word) {
+    add(word: Word) {
         let result = this.toSignedIntValue() + word.toSignedIntValue();
-        return Word.fromSignedIntValue(result, this.length);
+        return Word.fromSignedIntValue(result, this.bits.length);
     }
 
-    inc() {
+    inc(): Word {
         let result = this.toSignedIntValue() + 1;
-        return Word.fromSignedIntValue(result, this.length);
+        return Word.fromSignedIntValue(result, this.bits.length);
     }
 
-    dec() {
+    dec(): Word {
         let result = this.toSignedIntValue() - 1;
-        return Word.fromSignedIntValue(result, this.length);
+        return Word.fromSignedIntValue(result, this.bits.length);
     }
 
-    addImmediate(immediate) {
+    addImmediate(immediate: number): Word {
         let immediateWord = Word.fromSignedIntValue(immediate, this.bits.length);
         return this.add(immediateWord);
     }
 
-    subtract(word) {
+    subtract(word: Word): Word {
         let result = this.toSignedIntValue() - word.toSignedIntValue();
-        return Word.fromSignedIntValue(result, this.size);
+        return Word.fromSignedIntValue(result, this.bits.length);
     }
 
-    invert() {
+    invert(): Word {
         return Word.fromBitArray(Word.invertBits(this.bits));
     }
 
-    or(word) {
+    or(word: Word): Word {
         let result = this.toSignedIntValue() | word.toSignedIntValue();
         return Word.fromSignedIntValue(result, this.bits.length);
     }
 
-    xor(word) {
+    xor(word: Word): Word {
         let result = this.toSignedIntValue() ^ word.toSignedIntValue();
         return Word.fromSignedIntValue(result, this.bits.length);
     }
 
-    and(word) {
+    and(word: Word): Word {
         let result = this.toUnsignedIntValue() & word.toUnsignedIntValue();
         return Word.fromSignedIntValue(result, this.bits.length);
     }
 
-    shift(immediate) {
+    shift(immediate: number): Word {
         let size = this.bits.length;
 
         let newWord = Word.fromBitArray(this.bits);
@@ -304,7 +348,7 @@ export class Word {
         return newWord;
     }
 
-    arithmeticShift(immediate) {
+    arithmeticShift(immediate: number): Word {
         let size = this.bits.length;
 
         let val = this.toSignedIntValue();
@@ -318,68 +362,35 @@ export class Word {
         return Word.fromSignedIntValue(val, size)
     }
 
-    toBitString() {
+    toBitString(): string {
         return [...this.bits].reverse().join("");
     }
 
-    toString() {
+    toString(): string {
         return `${this.toSignedIntValue()}`;
     }
 }
 
 export class ImmutableWord extends Word {
-    static fromString(bitString) {
-        return ImmutableWord.fromBitArray([...bitString].reverse());
-    }
-
-    static fromBitArray(bits) {
-        let newWord = new ImmutableWord();
-        newWord.bits = bits.map((bit) => parseInt(bit));
+    static fromString(bitString: string, size: number): Word {
+        const newWord = new ImmutableWord();
+        newWord.bits = Word.fromString(bitString, size).bits;
         return newWord;
     }
 
-    static fromSignedIntValue(instant, size = 16) {
-        let newWord = new ImmutableWord();
-        let isNegative = instant < 0;
-
-        if (isNegative) {
-            newWord.bits = ImmutableWord.integerToTwoCompliment(
-                Math.abs(instant),
-                size
-            );
-        } else {
-            newWord.bits = ImmutableWord.integerToBitArray(instant, size);
-        }
-
+    static fromBitArray(bits: Array<Bit>): Word {
+        const newWord = new ImmutableWord();
+        newWord.bits = Word.fromBitArray(bits).bits;
         return newWord;
     }
 
-    static integerToTwoCompliment(val, size) {
-        let parsedBits = ImmutableWord.integerToBitArray(val - 1, size);
-        return ImmutableWord.invertBits(parsedBits);
+    static fromSignedIntValue(instant: number, size: number = 16): Word {
+        const newWord = new ImmutableWord();
+        newWord.bits = Word.fromSignedIntValue(instant, size).bits;
+        return newWord;
     }
 
-    static integerToBitArray(val, size) {
-        let bitArray = [...val.toString(2)]
-            .map((strBit) => parseInt(strBit))
-            .reverse();
-
-        while (bitArray.length < size) {
-            bitArray.push(0);
-        }
-
-        if (bitArray.length > size) {
-            bitArray = bitArray.slice(0, size);
-        }
-
-        return bitArray;
-    }
-
-    static invertBits(bits) {
-        return bits.map((bit) => (bit === 1 ? 0 : 1));
-    }
-
-    set(word) {
+    set(_word: Word): void {
         // Do Nothing
     }
 }
