@@ -3,10 +3,23 @@ import {BlocksemblerSettings} from "@/settings";
 import {pluginRegistry} from "@/architectures/pluginRegistry";
 import {setupDefaultBlocks} from "@/architectures/blocks";
 import {logEvent} from "@/logging";
+import {ArchitecturePlugin} from "@/types/plugin";
+import {WorkspaceListener} from "@/types/state";
 
-const architecturePluginKey = window.env['DEFAULT_ARCHITECTURE'] || 'anna';
+declare global {
+    interface Window {
+        env: Record<string, string>;
+    }
+}
+
+const architecturePluginKey = window.env["DEFAULT_ARCHITECTURE"] || 'anna';
+
 
 class BlocksemblerState {
+    archPlugin: ArchitecturePlugin;
+    sourceCode: string;
+    onInitWorkspaceListener: Array<WorkspaceListener>
+
     constructor() {
         console.log(architecturePluginKey);
         setupDefaultBlocks();
@@ -16,24 +29,24 @@ class BlocksemblerState {
         this.onInitWorkspaceListener = [];
     }
 
-    initWorkspace(sourceCode) {
+    initWorkspace(sourceCode: string): void {
         this.archPlugin = this.loadPlugin(architecturePluginKey);
 
         try {
             this.archPlugin.parser.parseCode(sourceCode);
             this.sourceCode = this.archPlugin.formatter.formatCode(sourceCode);
             this.onInitWorkspaceListener.forEach(callback => callback(this.sourceCode))
-        } catch (e) {
+        } catch (e: any) {
             logEvent("failedToImportSourceCode", e);
             alert("Failed to import source file.")
         }
     }
 
-    addOnInitWorkspaceListener(listener) {
+    addOnInitWorkspaceListener(listener: WorkspaceListener) {
         this.onInitWorkspaceListener.push(listener);
     }
 
-    loadPlugin(pluginName) {
+    loadPlugin(pluginName: string) {
         if (!(pluginName in pluginRegistry)) {
             throw new Error(`architecture plugin "${pluginName}" not found`);
         }

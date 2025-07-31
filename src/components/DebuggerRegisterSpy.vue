@@ -1,6 +1,6 @@
 <script setup>
 import {reactive} from "vue";
-import {codingWorkspaceState} from "@/state.js";
+import {codingWorkspaceState} from "@/state";
 
 const registers = reactive(codingWorkspaceState.archPlugin.emulator.registers);
 </script>
