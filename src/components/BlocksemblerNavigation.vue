@@ -1,7 +1,7 @@
 <script setup>
 import {codingWorkspaceState} from "@/state";
 import {saveAs} from "file-saver";
-import {downloadLogData, logEvent} from "@/logging.js";
+import {downloadLogData, logEvent} from "@/logging";
 import CloudDownloadIcon from "@/components/icons/CloudDownloadIcon.vue";
 import * as bootstrap from "bootstrap";
 import NewProjectModal from "@/components/modals/NewProjectModal.vue";
