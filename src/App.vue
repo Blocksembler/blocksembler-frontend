@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import * as bootstrap from "bootstrap";
-import {Component, computed, onMounted, ref} from "vue";
+import {computed, onMounted, ref} from "vue";
 
 import BlocksemblerNavigation from "@/components/BlocksemblerNavigation.vue";
 import BlocksemblerCodingView from "@/components/BlocksemblerCodingView.vue";
@@ -9,7 +9,7 @@ import Blocksembler404 from "@/components/Blocksembler404.vue";
 import DataUsageConsentBanner from "@/components/modals/DataUsageConsentBanner.vue";
 
 
-const routes: Record<string, Component> = {
+const routes: Record<string, any> = {
   "/": BlocksemblerCodingView,
   "/editor": BlocksemblerCodingView,
   "/debugger": BlocksemblerDebugView,

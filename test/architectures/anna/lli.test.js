@@ -1,6 +1,6 @@
 import {expect, test} from "vitest";
-import {AnnaInstructionFactory, LoadLowerImmediateInstruction} from "@/architectures/anna/instructions.js";
-import {Word} from "@/architectures/emulator.ts";
+import {AnnaInstructionFactory, LoadLowerImmediateInstruction} from "@/architectures/anna/instructions";
+import {Word} from "@/architectures/emulator";
 
 test("test load lower immediate instruction to machine code", () => {
     let instruction = new LoadLowerImmediateInstruction(["r1", 11]);
@@ -24,7 +24,9 @@ test("test create load lower immediate instruction from machine code", () => {
     let expectedInstruction = new LoadLowerImmediateInstruction(["r1", 3]);
 
     let factory = new AnnaInstructionFactory();
-    let instruction = factory.createFromOpCode([Word.fromString(machineCode)], 0);
+    let instruction = factory.createFromOpCode([
+        {address: 0, value: Word.fromString(machineCode)}
+    ], 0);
 
     expect(instruction).toMatchObject(expectedInstruction);
 });
