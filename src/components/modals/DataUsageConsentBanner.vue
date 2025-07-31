@@ -1,6 +1,6 @@
 <script setup>
 import BaseModal from "@/components/modals/BaseModal.vue";
-import {deleteLogData} from "@/logging.js";
+import {deleteLogData} from "@/logging";
 
 const consentHandler = () => {
   window.localStorage?.setItem('blocksembler-data-usage-consent', 'true');
