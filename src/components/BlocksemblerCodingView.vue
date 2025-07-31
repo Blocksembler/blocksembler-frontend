@@ -3,7 +3,7 @@ import {ref} from 'vue'
 
 import BaseBlocklyEditor from "./base/BaseBlocklyEditor.vue";
 import BaseCodeMirrorEditor from "./base/BaseCodeMirrorEditor.vue";
-import {codingWorkspaceState} from "@/state.js";
+import {codingWorkspaceState} from "@/state";
 
 
 let options = ref({

@@ -1,0 +1,1 @@
+export type WorkspaceListener = (code: string) => void;

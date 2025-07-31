@@ -1,6 +1,6 @@
 <script setup>
 import {computed, ref} from "vue";
-import {codingWorkspaceState} from "@/state";
+import {codingWorkspaceState} from "@/state.js";
 
 const startAddress = ref("0");
 const sliceSize = ref("9");
