@@ -1,6 +1,6 @@
 import {expect, test, vi} from "vitest";
 import {AnnaInstructionFactory, HaltInstruction} from "@/architectures/anna/instructions.js";
-import {Word} from "@/architectures/system.js";
+import {Word} from "@/architectures/emulator.ts";
 
 test("test halt instruction to machine code", () => {
     let instruction = new HaltInstruction();

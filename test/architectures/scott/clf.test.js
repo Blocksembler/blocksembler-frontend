@@ -1,6 +1,6 @@
 import {expect, test} from "vitest";
 import {ClearFlagsInstruction, ScottInstructionFactory} from "@/architectures/scott/instructions.js";
-import {Word} from "@/architectures/system.js";
+import {Word} from "@/architectures/emulator.ts";
 import {ScottEmulator} from "@/architectures/scott/system.js";
 
 test("test converting clf instruction to machine code", () => {
@@ -28,8 +28,8 @@ test("test creating clf instruction from mnemonic", () => {
 test("test creating clf instruction from opcode", () => {
     const factory = new ScottInstructionFactory();
     const mockSystem = new ScottEmulator()
-    mockSystem.memory[0].set(Word.fromString("01100000", 8));
-    mockSystem.memory[1].set(Word.fromString("00000000", 8));
+    mockSystem.memory[0].value.set(Word.fromString("01100000", 8));
+    mockSystem.memory[1].value.set(Word.fromString("00000000", 8));
 
     const clfInst = factory.createFromOpCode(mockSystem.memory, 0);
 

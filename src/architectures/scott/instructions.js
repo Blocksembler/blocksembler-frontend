@@ -1,5 +1,5 @@
 import {BaseInstruction} from "@/architectures/instructions.js";
-import {Word} from "@/architectures/system.js";
+import {Word} from "@/architectures/emulator.ts";
 
 export class ScottInstructionFactory {
     createFromMnemonic(mnemonic, args) {
@@ -14,7 +14,7 @@ export class ScottInstructionFactory {
 
 
     createFromOpCode(memory, address) {
-        const opCode = memory[address].toBitString().slice(0, 4);
+        const opCode = memory[address].value.toBitString().slice(0, 4);
         const instClass = instructionClasses.filter(instClass => instClass.opCode === opCode)[0];
 
         if (!instClass) {
@@ -40,8 +40,8 @@ class ScottInstruction extends BaseInstruction {
     }
 
     static fromMachineCode(instWord, _immediateWord) {
-        const regA = `R${parseInt(instWord.toBitString().slice(4, 6), 2)}`
-        const regB = `R${parseInt(instWord.toBitString().slice(6, 8), 2)}`
+        const regA = `R${parseInt(instWord.value.toBitString().slice(4, 6), 2)}`
+        const regB = `R${parseInt(instWord.value.toBitString().slice(6, 8), 2)}`
 
         return new this([regA, regB]);
     }
@@ -279,7 +279,7 @@ export class LoadInstruction extends ScottInstruction {
 
     executeOn(system) {
         const regAVal = system.registers[this.regALabel].toUnsignedIntValue();
-        const memoryWord = system.memory[regAVal]
+        const memoryWord = system.memory[regAVal].value
         system.registers[this.regBLabel].set(memoryWord);
     }
 }
@@ -296,7 +296,7 @@ export class StoreInstruction extends ScottInstruction {
     executeOn(system) {
         const regAVal = system.registers[this.regALabel].toUnsignedIntValue();
         const regB = system.registers[this.regBLabel];
-        system.memory[regAVal].set(regB)
+        system.memory[regAVal].value.set(regB)
     }
 }
 
@@ -322,8 +322,8 @@ export class DataInstruction extends ScottInstruction {
     }
 
     static fromMachineCode(instWord, immediateWord) {
-        const regB = `R${parseInt(instWord.toBitString().slice(6, 8), 2)}`
-        const immediate = immediateWord.toUnsignedIntValue().toString();
+        const regB = `R${parseInt(instWord.value.toBitString().slice(6, 8), 2)}`
+        const immediate = immediateWord.value.toUnsignedIntValue().toString();
 
         return new this([regB, immediate]);
     }
@@ -352,7 +352,7 @@ export class JumpRegisterInstruction extends ScottInstruction {
     }
 
     static fromMachineCode(instWord, immediateWord) {
-        const regB = `R${parseInt(instWord.toBitString().slice(6, 8), 2)}`
+        const regB = `R${parseInt(instWord.value.toBitString().slice(6, 8), 2)}`
 
         return new this([regB]);
     }
@@ -385,7 +385,7 @@ export class JumpAddressInstruction extends ScottInstruction {
     }
 
     static fromMachineCode(instWord, immediateWord) {
-        const immediate = `${parseInt(immediateWord.toBitString(), 2)}`
+        const immediate = `${parseInt(immediateWord.value.toBitString(), 2)}`
         return new this([immediate]);
     }
 
@@ -421,14 +421,14 @@ class ConditionalJumpInstruction extends ScottInstruction {
     }
 
     static fromMachineCode(instWord, immediateWord) {
-        const conditionCode = instWord.toBitString().slice(4, 8);
+        const conditionCode = instWord.value.toBitString().slice(4, 8);
         const instClass = conditionalJumpClasses.filter(c => c.conditionCode === conditionCode)[0];
 
         if (!instClass) {
             throw new Error(`No conditional jump instruction found for conditionCode "${conditionCode}".`);
         }
 
-        const immediate = immediateWord.toUnsignedIntValue().toString();
+        const immediate = immediateWord.value.toUnsignedIntValue().toString();
 
         return new instClass([immediate]);
     }

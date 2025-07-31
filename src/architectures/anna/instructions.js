@@ -1,5 +1,5 @@
 import {BaseInstruction} from "../instructions";
-import {Word} from "../system";
+import {Word} from "../emulator.ts";
 
 export class AnnaInstructionFactory {
     createFromMnemonic(mnemonic, instructionMeta) {

@@ -1,7 +1,7 @@
 import {expect, test} from "vitest";
 import {ArmletInstructionFactory, LoaInstruction} from "@/architectures/armlet/instructions.js";
 import {generateMockSystem} from "./util.js";
-import {Word} from "@/architectures/system.js";
+import {Word} from "@/architectures/emulator.ts";
 
 let opCode = "001100"
 
@@ -27,14 +27,17 @@ test("create loa instruction from machine code", () => {
     let machineCode = "0" + "000" + "010" + "111" + opCode;
     let expectedInstruction = new LoaInstruction(['$7', '$2']);
     let factory = new ArmletInstructionFactory();
-    let instruction = factory.createFromOpCode([Word.fromString(machineCode), Word.fromSignedIntValue(0)], 0);
+    let instruction = factory.createFromOpCode([
+        {address: 0, value: Word.fromString(machineCode)},
+        {address: 0, value: Word.fromSignedIntValue(0)},
+    ], 0);
     expect(instruction).toMatchObject(expectedInstruction);
 });
 
 test("test execute loa instruction", () => {
     let instruction = new LoaInstruction(['$2', '$3']);
     let mockSystem = generateMockSystem([0, 13, 17, 5, 4, 1, 7, 7, 1], instruction)
-    mockSystem.memory[4].set(Word.fromSignedIntValue(24))
+    mockSystem.memory[4].value.set(Word.fromSignedIntValue(24))
 
     let expectedSystemState = generateMockSystem([0, 13, 17, 24, 4, 1, 7, 7, 1], instruction)
 

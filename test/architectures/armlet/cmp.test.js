@@ -5,7 +5,7 @@ import {
     CmpInstruction
 } from "@/architectures/armlet/instructions.js";
 import {generateMockSystem} from "./util.js";
-import {Word} from "@/architectures/system.js";
+import {Word} from "@/architectures/emulator.ts";
 
 let registerOpCode = "001110"
 let immediateOpCode = "100011"
@@ -50,7 +50,12 @@ test("create cmp instruction from machine code", () => {
     let machineCode = "0" + "011" + "010" + "000" + registerOpCode;
     let expectedInstruction = new CmpInstruction(['$2', '$3']);
     let factory = new ArmletInstructionFactory();
-    let instruction = factory.createFromOpCode([Word.fromString(machineCode), Word.fromSignedIntValue(0)], 0);
+
+    let instruction = factory.createFromOpCode([
+        {address: 0, value: Word.fromString(machineCode)},
+        {address: 1, value: Word.fromSignedIntValue(0)},
+    ], 0);
+
     expect(instruction).toMatchObject(expectedInstruction);
 });
 
@@ -58,7 +63,10 @@ test("create cmp instruction with immediate from machine code", () => {
     let machineCode = "0" + "000" + "010" + "000" + immediateOpCode + "0000000000001010";
     let expectedInstruction = new CmpImmediateInstruction(['$2', '10']);
     let factory = new ArmletInstructionFactory();
-    let instruction = factory.createFromOpCode([Word.fromString(machineCode), Word.fromSignedIntValue(10)], 0);
+    let instruction = factory.createFromOpCode([
+        {address: 0, value: Word.fromString(machineCode)},
+        {address: 1, value: Word.fromSignedIntValue(10)},
+    ], 0);
     expect(instruction).toMatchObject(expectedInstruction);
 })
 

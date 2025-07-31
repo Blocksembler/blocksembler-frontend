@@ -17,7 +17,7 @@ import {
     JumpIfZeroInstruction,
     ScottInstructionFactory
 } from "@/architectures/scott/instructions.js";
-import {Word} from "@/architectures/system.js";
+import {Word} from "@/architectures/emulator.ts";
 import {ScottEmulator} from "@/architectures/scott/system.js";
 
 
@@ -90,8 +90,8 @@ test("test creating conditional jmp instruction from machine code", () => {
     const generatedInstructions = jumpInstructionCodes.map(code => {
         return factory.createFromOpCode(
             [
-                Word.fromString(code[0], 8),
-                Word.fromString(code[1], 8)
+                {address: 0, value: Word.fromString(code[0], 8)},
+                {address: 0, value: Word.fromString(code[1], 8)}
             ],
             0)
     });

@@ -1,6 +1,6 @@
 import {expect, test} from "vitest";
 import {BranchIfEqualInstruction, SimpleRISCInstructionFactory} from "@/architectures/simpleRISC/instructions.js";
-import {Word} from "@/architectures/system.js";
+import {Word} from "@/architectures/emulator.ts";
 import {SimpleRISCEmulator} from "@/architectures/simpleRISC/system.js";
 
 
@@ -60,7 +60,10 @@ test(`create ${mnemonic} instruction from machine code`, () => {
     const factory = new SimpleRISCInstructionFactory();
     const expectedInstruction = new BranchIfEqualInstruction(['$1']);
 
-    const memory = [Word.fromString("000" + opCode + "1" + "00000001")];
+    const memory = [{
+        address: 0,
+        value: Word.fromString("000" + opCode + "1" + "00000001"),
+    }];
 
     expect(factory.createFromOpCode(memory, 0)).toStrictEqual(expectedInstruction);
 });
@@ -69,7 +72,10 @@ test(`create ${mnemonic} instruction with immediate from machine code`, () => {
     const factory = new SimpleRISCInstructionFactory();
     const expectedInstruction = new BranchIfEqualInstruction(['255']);
 
-    const memory = [Word.fromString("000" + opCode + "0" + "11111111")];
+    const memory = [{
+        address: 0,
+        value: Word.fromString("000" + opCode + "0" + "11111111")
+    }];
 
     expect(factory.createFromOpCode(memory, 0)).toStrictEqual(expectedInstruction);
 });

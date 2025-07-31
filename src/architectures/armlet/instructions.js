@@ -1,5 +1,5 @@
 import {BaseInstruction, PseudoInstruction} from "@/architectures/instructions.js";
-import {Word} from "@/architectures/system.js";
+import {Word} from "@/architectures/emulator.ts";
 import {addressSize} from "@/architectures/armlet/system.js";
 import Random from "java-random";
 
@@ -80,7 +80,7 @@ export class ArmletInstructionFactory {
     }
 
     createFromOpCode(memory, address) {
-        let instWord = memory[address].toBitString()
+        let instWord = memory[address].value.toBitString()
 
         let instructionClass = this.getInstructionClassByOpCode(instWord.slice(10, 16));
 
@@ -88,7 +88,7 @@ export class ArmletInstructionFactory {
             return instructionClass.fromMachineCode(instWord, Word.fromSignedIntValue(0));
         }
 
-        let immediateWord = memory[address + 1].toBitString()
+        let immediateWord = memory[address + 1].value.toBitString()
         return instructionClass.fromMachineCode(instWord, immediateWord);
 
     }
@@ -570,7 +570,7 @@ export class AbstractArmletImmediateControlInstruction extends AbstractImmediate
     getJmpTarget(system) {
         let immediateAddress = system.registers.pc.toUnsignedIntValue() + 1
         let immediate = system.memory[immediateAddress]
-        return immediate.addImmediate(-2)
+        return immediate.value.addImmediate(-2)
     }
 }
 
@@ -657,7 +657,7 @@ export class MovImmediateInstruction extends AbstractImmediateArmletInstruction 
 
     executeOn(system) {
         let targetReg = system.registers[this.lArgument];
-        let immediate = system.memory[system.registers['pc'].toUnsignedIntValue() + 1]
+        let immediate = system.memory[system.registers['pc'].toUnsignedIntValue() + 1].value
         system.registers['pc'].addImmediate(1)
 
         targetReg.set(immediate);
@@ -728,7 +728,7 @@ export class AndImmediateInstruction extends AbstractImmediateArmletInstruction 
     executeOn(system) {
         let dest = system.registers[this.lArgument]
         let firstOp = system.registers[this.aArgument]
-        let secondOp = system.memory[system.registers['pc'].toUnsignedIntValue() + 1]
+        let secondOp = system.memory[system.registers['pc'].toUnsignedIntValue() + 1].value
 
         let result = firstOp.and(secondOp)
         dest.set(result)
@@ -861,7 +861,7 @@ export class EorImmediateInstruction extends AbstractImmediateArmletInstruction 
     executeOn(system) {
         let dest = system.registers[this.lArgument]
         let firstOp = system.registers[this.aArgument]
-        let secondOp = system.memory[system.registers['pc'].toUnsignedIntValue() + 1]
+        let secondOp = system.memory[system.registers['pc'].toUnsignedIntValue() + 1].value
         let result = firstOp.xor(secondOp)
         dest.set(result)
     }
@@ -954,7 +954,7 @@ export class AddImmediateInstruction extends AbstractImmediateArmletInstruction 
     executeOn(system) {
         let destReg = system.registers[this.lArgument];
         let firstOpReg = system.registers[this.aArgument];
-        let secondOpReg = system.memory[system.registers['pc'].toUnsignedIntValue() + 1];
+        let secondOpReg = system.memory[system.registers['pc'].toUnsignedIntValue() + 1].value;
 
         let result = firstOpReg.add(secondOpReg);
         destReg.set(result);
@@ -1024,7 +1024,7 @@ export class SubImmediateInstruction extends AbstractImmediateArmletInstruction 
         let firstOpReg = system.registers[this.aArgument];
         let secondOpReg = system.memory[system.registers['pc'].toUnsignedIntValue() + 1];
 
-        let twoCompliment = secondOpReg.invert().addImmediate(1)
+        let twoCompliment = secondOpReg.value.invert().addImmediate(1)
 
         let result = firstOpReg.add(twoCompliment);
         destReg.set(result);
@@ -1100,7 +1100,7 @@ export class LslImmediateInstruction extends AbstractImmediateArmletInstruction 
     executeOn(system) {
         let destReg = system.registers[this.lArgument]
         let firstOpReg = system.registers[this.aArgument]
-        let secondOpVal = system.memory[system.registers['pc'].toUnsignedIntValue() + 1].toUnsignedIntValue()
+        let secondOpVal = system.memory[system.registers['pc'].toUnsignedIntValue() + 1].value.toUnsignedIntValue()
 
         let result = firstOpReg.shift(secondOpVal)
         destReg.set(result)
@@ -1146,7 +1146,7 @@ export class LsrImmediateInstruction extends AbstractImmediateArmletInstruction 
     executeOn(system) {
         let destReg = system.registers[this.lArgument];
         let firstOpReg = system.registers[this.aArgument];
-        let secondOpVal = system.memory[system.registers['pc'].toUnsignedIntValue() + 1].toUnsignedIntValue();
+        let secondOpVal = system.memory[system.registers['pc'].toUnsignedIntValue() + 1].value.toUnsignedIntValue();
 
         let result = firstOpReg.shift(-secondOpVal);
         destReg.set(result);
@@ -1193,7 +1193,7 @@ export class AsrImmediateInstruction extends AbstractImmediateArmletInstruction 
     executeOn(system) {
         let destReg = system.registers[this.lArgument];
         let firstOpReg = system.registers[this.aArgument];
-        let secondOpVal = system.memory[system.registers['pc'].toUnsignedIntValue() + 1].toUnsignedIntValue();
+        let secondOpVal = system.memory[system.registers['pc'].toUnsignedIntValue() + 1].value.toUnsignedIntValue();
 
         let result = firstOpReg.arithmeticShift(-secondOpVal);
 
@@ -1230,7 +1230,7 @@ export class LoaInstruction extends AbstractArmletInstruction {
 
     executeOn(system) {
         let idx = system.registers[this.aArgument].toUnsignedIntValue()
-        system.registers[this.lArgument].set(system.memory[idx])
+        system.registers[this.lArgument].set(system.memory[idx].value)
     }
 }
 
@@ -1263,7 +1263,7 @@ export class StoInstruction extends AbstractArmletInstruction {
 
     executeOn(system) {
         let idx = system.registers[this.lArgument].toUnsignedIntValue()
-        system.memory[idx].set(system.registers[this.aArgument])
+        system.memory[idx].value.set(system.registers[this.aArgument])
     }
 }
 
@@ -1351,15 +1351,15 @@ export class CmpImmediateInstruction extends AbstractImmediateArmletInstruction 
 
         let result = Word.fromSignedIntValue(0, 3)
 
-        if (firstOp.toBitString() === immediate.toBitString()) {
+        if (firstOp.toBitString() === immediate.value.toBitString()) {
             result.bits[0] = 1;
         }
 
-        if (firstOp.toSignedIntValue() > immediate.toSignedIntValue()) {
+        if (firstOp.toSignedIntValue() > immediate.value.toSignedIntValue()) {
             result.bits[1] = 1;
         }
 
-        if (firstOp.toUnsignedIntValue() > immediate.toUnsignedIntValue()) {
+        if (firstOp.toUnsignedIntValue() > immediate.value.toUnsignedIntValue()) {
             result.bits[2] = 1;
         }
 

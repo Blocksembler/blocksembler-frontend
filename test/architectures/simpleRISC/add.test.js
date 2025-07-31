@@ -1,6 +1,6 @@
 import {expect, test} from "vitest";
 import {AddInstruction, SimpleRISCInstructionFactory} from "@/architectures/simpleRISC/instructions.js";
-import {Word} from "@/architectures/system.js";
+import {Word} from "@/architectures/emulator.ts";
 import {SimpleRISCEmulator} from "@/architectures/simpleRISC/system.js";
 
 test("add instruction to string", () => {
@@ -36,7 +36,10 @@ test("create add instruction from machine code", () => {
     let machineCode = "000" + "0011" + "1" + "00000011"
     let expectedInstruction = new AddInstruction(['$3']);
     let factory = new SimpleRISCInstructionFactory();
-    let instruction = factory.createFromOpCode([Word.fromString(machineCode), Word.fromSignedIntValue(0)], 0);
+    let instruction = factory.createFromOpCode([
+        {address: 0, value: Word.fromString(machineCode)},
+        {address: 1, value: Word.fromSignedIntValue(0)},
+    ], 0);
     expect(instruction).toMatchObject(expectedInstruction);
 });
 
@@ -44,7 +47,10 @@ test("create add instruction with immediate from machine code", () => {
     let machineCode = "000" + "0011" + "0" + "00111010"
     let expectedInstruction = new AddInstruction(['58']);
     let factory = new SimpleRISCInstructionFactory();
-    let instruction = factory.createFromOpCode([Word.fromString(machineCode), Word.fromSignedIntValue(0)], 0);
+    let instruction = factory.createFromOpCode([
+        {address: 0, value: Word.fromString(machineCode)},
+        {address: 0, value: Word.fromSignedIntValue(0)},
+    ], 0);
     expect(instruction).toMatchObject(expectedInstruction);
 })
 

@@ -1,6 +1,6 @@
-import { NegInstruction, InsperHackInstructionFactory } from "@/architectures/insperHack/instructions";
+import {InsperHackInstructionFactory, NegInstruction} from "@/architectures/insperHack/instructions";
 import {expect, test} from "vitest";
-import {Word} from "@/architectures/system.js";
+import {Word} from "@/architectures/emulator.ts";
 
 //neg %A
 test("Test 1: neg-instruction to maschine code (neg %A)", () => {

@@ -1,6 +1,6 @@
 import {expect, test} from "vitest";
 import {AndInstruction, ScottInstructionFactory} from "@/architectures/scott/instructions.js";
-import {Word} from "@/architectures/system.js";
+import {Word} from "@/architectures/emulator.ts";
 import {ScottEmulator} from "@/architectures/scott/system.js";
 
 test("test converting and instruction to machine code", () => {
@@ -12,7 +12,10 @@ test("test converting and instruction to machine code", () => {
 test("test creating and instruction from machine code", () => {
     const machineCode = "11001101";
 
-    const andInst = AndInstruction.fromMachineCode(Word.fromString(machineCode, 8));
+    const andInst = AndInstruction.fromMachineCode({
+        address: 0,
+        value: Word.fromString(machineCode, 8)
+    });
 
     expect(andInst).toStrictEqual(new AndInstruction(["R3", "R1"]));
 })
@@ -28,7 +31,7 @@ test("test creating and instruction from mnemonic", () => {
 test("test creating and instruction from opcode", () => {
     const factory = new ScottInstructionFactory();
     const mockSystem = new ScottEmulator()
-    mockSystem.memory[0].set(Word.fromString("11001101", 8));
+    mockSystem.memory[0].value.set(Word.fromString("11001101", 8));
 
     const andInst = factory.createFromOpCode(mockSystem.memory, 0);
 
