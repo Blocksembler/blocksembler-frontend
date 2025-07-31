@@ -24,7 +24,9 @@ test("test create shift instruction from machine code", () => {
     let expectedInstruction = new ShiftInstruction(["r1", "r2", 3]);
 
     let factory = new AnnaInstructionFactory();
-    let instruction = factory.createFromOpCode([Word.fromString(machineCode)], 0);
+    let instruction = factory.createFromOpCode([
+        {address: 0, value: Word.fromString(machineCode)}
+    ], 0);
 
     expect(instruction).toMatchObject(expectedInstruction);
 });

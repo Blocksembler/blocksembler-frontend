@@ -1,6 +1,6 @@
 <script setup>
 import {computed, ref} from "vue";
-import {codingWorkspaceState} from "@/state.js";
+import {codingWorkspaceState} from "@/state";
 
 const startAddress = ref("0");
 const sliceSize = ref("9");
@@ -59,13 +59,13 @@ const memory = computed(() => {
         <tr v-for="mem in memory" :key="mem.address">
           <td>0x{{ mem.address.toString(16).padStart(4, "0") }}</td>
           <td>
-            <pre>{{ mem.word.toBitString() }}</pre>
+            <pre>{{ mem.value.toBitString() }}</pre>
           </td>
           <td>
-            <pre>{{ mem.word.toUnsignedIntValue() }}</pre>
+            <pre>{{ mem.value.toUnsignedIntValue() }}</pre>
           </td>
           <td>
-            <pre>{{ mem.word.toHexValue() }}</pre>
+            <pre>{{ mem.value.toHexValue() }}</pre>
           </td>
         </tr>
         </tbody>

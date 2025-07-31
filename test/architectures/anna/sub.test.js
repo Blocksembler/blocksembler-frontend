@@ -1,6 +1,6 @@
 import {expect, test} from "vitest";
-import {AnnaInstructionFactory, SubtractInstruction} from "@/architectures/anna/instructions.js";
-import {Word} from "@/architectures/emulator.ts";
+import {AnnaInstructionFactory, SubtractInstruction} from "@/architectures/anna/instructions";
+import {Word} from "@/architectures/emulator";
 
 test("test subtract instruction to machine code", () => {
     let instruction = new SubtractInstruction(["r1", "r2", "r3"]);
@@ -11,14 +11,10 @@ test("test subtract instruction to machine code", () => {
 
 test("test create subtract instruction from mnemonic", () => {
     let mnemonic = "sub";
-    let expectedInstruction = new SubtractInstruction({
-        args: ["r1", "r2", "r3"],
-    });
+    let expectedInstruction = new SubtractInstruction(["r1", "r2", "r3"]);
 
     let factory = new AnnaInstructionFactory();
-    let instruction = factory.createFromMnemonic(mnemonic, {
-        args: ["r1", "r2", "r3"],
-    });
+    let instruction = factory.createFromMnemonic(mnemonic, ["r1", "r2", "r3"]);
 
     expect(instruction).toMatchObject(expectedInstruction);
 });
@@ -29,7 +25,9 @@ test("test create subtract instruction from machine code", () => {
     let expectedInstruction = new SubtractInstruction(["r1", "r2", "r3"]);
 
     let factory = new AnnaInstructionFactory();
-    let instruction = factory.createFromOpCode([Word.fromString(machineCode)], 0);
+    let instruction = factory.createFromOpCode([
+        {address: 0, value: Word.fromString(machineCode)}
+    ], 0);
 
     expect(instruction).toMatchObject(expectedInstruction);
 });

@@ -3,8 +3,8 @@ import {
     AnnaInstructionFactory,
     LoadLowerImmediateInstruction,
     LoadUpperImmediateInstruction
-} from "@/architectures/anna/instructions.js";
-import {Word} from "@/architectures/emulator.ts";
+} from "@/architectures/anna/instructions";
+import {Word} from "@/architectures/emulator";
 
 test("test load upper immediate instruction to machine code", () => {
     let instruction = new LoadUpperImmediateInstruction(["r1", 11]);
@@ -28,14 +28,16 @@ test("test create load upper immediate instruction from machine code", () => {
     let expectedInstruction = new LoadLowerImmediateInstruction(["r1", 3]);
 
     let factory = new AnnaInstructionFactory();
-    let instruction = factory.createFromOpCode([Word.fromString(machineCode)], 0);
+    let instruction = factory.createFromOpCode([
+        {address: 0, value: Word.fromString(machineCode)}
+    ], 0);
 
     expect(instruction).toMatchObject(expectedInstruction);
 });
 
 test("test load upper immediate instruction", () => {
-    let pcWord = Word.fromSignedIntValue(0);
-    let reg1Word = Word.fromSignedIntValue("1111111111111111");
+    let pcWord = Word.fromSignedIntValue(0, 16);
+    let reg1Word = Word.fromString("1111111111111111", 16);
     let immediate = 0;
 
     let mockSystem = {

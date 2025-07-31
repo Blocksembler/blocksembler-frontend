@@ -1,10 +1,10 @@
 import {reactive} from "vue";
-import {BlocksemblerSettings} from "@/settings.js";
-import {pluginRegistry} from "@/architectures/pluginRegistry.js";
-import {setupDefaultBlocks} from "@/architectures/blocks.js";
-import {logEvent} from "@/logging.js";
+import {BlocksemblerSettings} from "@/settings";
+import {pluginRegistry} from "@/architectures/pluginRegistry";
+import {setupDefaultBlocks} from "@/architectures/blocks";
+import {logEvent} from "@/logging";
 
-const architecturePluginKey = window.env['DEFAULT_ARCHITECTURE'];
+const architecturePluginKey = window.env['DEFAULT_ARCHITECTURE'] || 'anna';
 
 class BlocksemblerState {
     constructor() {

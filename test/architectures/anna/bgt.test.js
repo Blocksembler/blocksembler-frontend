@@ -1,6 +1,6 @@
 import {expect, test} from "vitest";
-import {AnnaInstructionFactory, BranchGreaterZeroInstruction} from "@/architectures/anna/instructions.js";
-import {Word} from "@/architectures/emulator.ts";
+import {AnnaInstructionFactory, BranchGreaterZeroInstruction} from "@/architectures/anna/instructions";
+import {Word} from "@/architectures/emulator";
 
 test("test branch if greater zero instruction to machine code", () => {
     let instruction = new BranchGreaterZeroInstruction(["r1", 11]);
@@ -11,12 +11,10 @@ test("test branch if greater zero instruction to machine code", () => {
 
 test("test create branch if greater than zero instruction from mnemonic", () => {
     let mnemonic = "bgz";
-    let expectedInstruction = new BranchGreaterZeroInstruction({
-        args: ["r1", 12],
-    });
+    let expectedInstruction = new BranchGreaterZeroInstruction(["r1", 12]);
 
     let factory = new AnnaInstructionFactory();
-    let instruction = factory.createFromMnemonic(mnemonic, {args: ["r1", 12]});
+    let instruction = factory.createFromMnemonic(mnemonic, ["r1", 12]);
 
     expect(instruction).toMatchObject(expectedInstruction);
 });
@@ -27,7 +25,9 @@ test("test create branch if greater than zero instruction from machine code", ()
     let expectedInstruction = new BranchGreaterZeroInstruction(["r1", 12]);
 
     let factory = new AnnaInstructionFactory();
-    let instruction = factory.createFromOpCode([Word.fromString(machineCode)], 0);
+    let instruction = factory.createFromOpCode([
+        {address: 0, value: Word.fromString(machineCode)}
+    ], 0);
 
     expect(instruction).toMatchObject(expectedInstruction);
 });
