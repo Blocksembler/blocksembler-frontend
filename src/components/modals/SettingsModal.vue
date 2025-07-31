@@ -1,12 +1,11 @@
 <script setup>
 import BaseModal from "@/components/modals/BaseModal.vue";
-import {settings} from "@/state.js";
-
+import {settings} from "@/state";
 </script>
 
 <template>
   <BaseModal id="settingsModal" data-bs-backdrop="static" savable title="Settings">
-   <template v-slot:header>
+    <template v-slot:header>
       <div class="d-flex w-100 justify-content-start align-items-baseline">
         <h3 class="my-2">Settings</h3>
       </div>

@@ -1,5 +1,5 @@
 import {BaseInstruction} from "../instructions";
-import {Word} from "../emulator.ts";
+import {Word} from "../emulator";
 
 export class AnnaInstructionFactory {
     createFromMnemonic(mnemonic, instructionMeta) {
@@ -22,7 +22,7 @@ export class AnnaInstructionFactory {
     }
 
     createFromOpCode(memory, address) {
-        let code = memory[address].toBitString()
+        let code = memory[address].value.toBitString()
 
         if (code === "1111000000000000") {
             return HaltInstruction.fromMachineCode(code);

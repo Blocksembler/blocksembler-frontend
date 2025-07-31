@@ -1,5 +1,5 @@
 <script setup>
-import {codingWorkspaceState} from "@/state.js";
+import {codingWorkspaceState} from "@/state";
 import {saveAs} from "file-saver";
 import {downloadLogData, logEvent} from "@/logging.js";
 import CloudDownloadIcon from "@/components/icons/CloudDownloadIcon.vue";

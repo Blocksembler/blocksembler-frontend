@@ -1,6 +1,6 @@
 import {expect, test} from "vitest";
-import {AnnaInstructionFactory, OrInstruction} from "@/architectures/anna/instructions.js";
-import {Word} from "@/architectures/emulator.ts";
+import {AnnaInstructionFactory, OrInstruction} from "@/architectures/anna/instructions";
+import {Word} from "@/architectures/emulator";
 
 test("test or instruction to machine code", () => {
     let instruction = new OrInstruction(["r1", "r2", "r3"]);
@@ -24,7 +24,10 @@ test("test create or instruction from machine code", () => {
     let expectedInstruction = new OrInstruction(["r1", "r2", "r3"]);
 
     let factory = new AnnaInstructionFactory();
-    let instruction = factory.createFromOpCode([Word.fromString(machineCode)], 0);
+    let instruction = factory.createFromOpCode([
+        {
+            address: 0, value: Word.fromString(machineCode)
+        }], 0);
 
     expect(instruction).toMatchObject(expectedInstruction);
 });
