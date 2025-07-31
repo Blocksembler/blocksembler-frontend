@@ -5,7 +5,7 @@ import {
     SubInstruction
 } from "@/architectures/armlet/instructions.js";
 import {generateMockSystem} from "./util.js";
-import {Word} from "@/architectures/system.js";
+import {Word} from "@/architectures/emulator.ts";
 
 test("sub instruction to string", () => {
     let instruction = new SubInstruction(['$1', '$2', '$3']);
@@ -47,7 +47,10 @@ test("create sub instruction from machine code", () => {
     let machineCode = "0" + "011" + "010" + "001" + "000110";
     let expectedInstruction = new SubInstruction(['$1', '$2', '$3']);
     let factory = new ArmletInstructionFactory();
-    let instruction = factory.createFromOpCode([Word.fromString(machineCode), Word.fromSignedIntValue(0)], 0);
+    let instruction = factory.createFromOpCode([
+        {address: 0, value: Word.fromString(machineCode)},
+        {address: 1, value: Word.fromSignedIntValue(0)},
+    ], 0);
     expect(instruction).toMatchObject(expectedInstruction);
 });
 
@@ -55,7 +58,10 @@ test("create sub instruction with immediate from machine code", () => {
     let machineCode = "0" + "000" + "010" + "001" + "011110" + "0000000000001010";
     let expectedInstruction = new SubImmediateInstruction(['$1', '$2', '10']);
     let factory = new ArmletInstructionFactory();
-    let instruction = factory.createFromOpCode([Word.fromString(machineCode), Word.fromSignedIntValue(10)], 0);
+    let instruction = factory.createFromOpCode([
+        {address: 0, value: Word.fromString(machineCode)},
+        {address: 1, value: Word.fromSignedIntValue(10)},
+    ], 0);
     expect(instruction).toMatchObject(expectedInstruction);
 })
 

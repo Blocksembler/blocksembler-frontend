@@ -1,6 +1,6 @@
-import { IncInstruction, InsperHackInstructionFactory } from "@/architectures/insperHack/instructions";
+import {IncInstruction, InsperHackInstructionFactory} from "@/architectures/insperHack/instructions";
 import {expect, test} from "vitest";
-import {Word} from "@/architectures/system.js";
+import {Word} from "@/architectures/emulator.ts";
 
 //inc %A
 test("Test 1: inc-instruction to maschine code (inc %A)", () => {
@@ -48,7 +48,6 @@ test("Test 4: increment register A", () => {
     expect(regAWord.toSignedIntValue()).toBe(13);
     expect(regDWord.toSignedIntValue()).toBe(5);
 });
-
 
 
 //inc %D

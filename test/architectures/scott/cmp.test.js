@@ -1,6 +1,6 @@
 import {expect, test} from "vitest";
 import {CmpInstruction, ScottInstructionFactory} from "@/architectures/scott/instructions.js";
-import {Word} from "@/architectures/system.js";
+import {Word} from "@/architectures/emulator.ts";
 import {ScottEmulator} from "@/architectures/scott/system.js";
 
 test("test converting cmp instruction to machine code", () => {
@@ -12,7 +12,10 @@ test("test converting cmp instruction to machine code", () => {
 test("test creating cmp instruction from machine code", () => {
     const machineCode = "11111101";
 
-    const cmpInst = CmpInstruction.fromMachineCode(Word.fromString(machineCode, 8));
+    const cmpInst = CmpInstruction.fromMachineCode({
+        address: 0,
+        value: Word.fromString(machineCode, 8)
+    });
 
     expect(cmpInst).toStrictEqual(new CmpInstruction(["R3", "R1"]));
 })
@@ -28,7 +31,7 @@ test("test creating cmp instruction from mnemonic", () => {
 test("test creating cmp instruction from opcode", () => {
     const factory = new ScottInstructionFactory();
     const mockSystem = new ScottEmulator()
-    mockSystem.memory[0].set(Word.fromString("11111101", 8));
+    mockSystem.memory[0].value.set(Word.fromString("11111101", 8));
 
     const cmpInst = factory.createFromOpCode(mockSystem.memory, 0);
 

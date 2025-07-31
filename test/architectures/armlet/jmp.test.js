@@ -5,7 +5,7 @@ import {
     JmpInstruction
 } from "@/architectures/armlet/instructions.js";
 import {generateMockSystem} from "./util.js";
-import {Word} from "@/architectures/system.js";
+import {Word} from "@/architectures/emulator.ts";
 
 let registerOpCode = "001111";
 let immediateOpCode = "100100";
@@ -62,7 +62,10 @@ test("create jmp instruction from machine code", () => {
     let expectedInstruction = new JmpInstruction(['$2']);
 
     let factory = new ArmletInstructionFactory();
-    let instruction = factory.createFromOpCode([Word.fromString(machineCode), Word.fromSignedIntValue(0)], 0);
+    let instruction = factory.createFromOpCode([
+        {address: 0, value: Word.fromString(machineCode)},
+        {address: 1, value: Word.fromSignedIntValue(0)},
+    ], 0);
 
     expect(instruction).toStrictEqual(expectedInstruction);
 });
@@ -73,8 +76,10 @@ test("create jmp instruction with immediate from machine code", () => {
     let expectedInstruction = new JmpImmediateInstruction(['10']);
 
     let factory = new ArmletInstructionFactory();
-    let instruction = factory.createFromOpCode([Word.fromString(machineCode), Word.fromSignedIntValue(10)], 0);
-
+    let instruction = factory.createFromOpCode([
+        {address: 0, value: Word.fromString(machineCode)},
+        {address: 1, value: Word.fromSignedIntValue(10)},
+    ], 0);
     expect(instruction).toStrictEqual(expectedInstruction);
 });
 

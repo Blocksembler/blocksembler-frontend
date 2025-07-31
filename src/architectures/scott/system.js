@@ -1,4 +1,4 @@
-import {BaseEmulator, Word} from "../system";
+import {BaseEmulator, Word} from "../emulator.ts";
 import {ScottInstructionFactory} from "@/architectures/scott/instructions.js";
 
 export const addressSize = 8;

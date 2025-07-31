@@ -1,4 +1,4 @@
-import {BaseEmulator, Word} from "@/architectures/system.js";
+import {BaseEmulator, Word} from "@/architectures/emulator.ts";
 import {SimpleRISCInstructionFactory} from "@/architectures/simpleRISC/instructions.js";
 
 const factory = new SimpleRISCInstructionFactory();

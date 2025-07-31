@@ -1,6 +1,6 @@
 import {expect, test} from "vitest";
 import {LoadInstruction, ScottInstructionFactory} from "@/architectures/scott/instructions.js";
-import {Word} from "@/architectures/system.js";
+import {Word} from "@/architectures/emulator.ts";
 import {ScottEmulator} from "@/architectures/scott/system.js";
 
 test("test converting ld instruction to machine code", () => {
@@ -12,7 +12,10 @@ test("test converting ld instruction to machine code", () => {
 test("test creating ld instruction from machine code", () => {
     const machineCode = "00001101";
 
-    const ldInst = LoadInstruction.fromMachineCode(Word.fromString(machineCode, 8));
+    const ldInst = LoadInstruction.fromMachineCode({
+        address: 0,
+        value: Word.fromString(machineCode, 8)
+    });
 
     expect(ldInst).toStrictEqual(new LoadInstruction(["R3", "R1"]));
 })
@@ -28,7 +31,7 @@ test("test creating ld instruction from mnemonic", () => {
 test("test creating ld instruction from opcode", () => {
     const factory = new ScottInstructionFactory();
     const mockSystem = new ScottEmulator()
-    mockSystem.memory[0].set(Word.fromString("00001101", 8));
+    mockSystem.memory[0].value.set(Word.fromString("00001101", 8));
 
     const ldInst = factory.createFromOpCode(mockSystem.memory, 0);
 
@@ -40,7 +43,7 @@ test("test loading value from memory", () => {
     mockSystem.registers.R1.set(Word.fromSignedIntValue(10, 8));
     mockSystem.registers.R2.set(Word.fromSignedIntValue(0, 8));
 
-    mockSystem.memory[10].set(Word.fromSignedIntValue(123, 8));
+    mockSystem.memory[10].value.set(Word.fromSignedIntValue(123, 8));
 
     const ldInst = new LoadInstruction(['R1', 'R2']);
 

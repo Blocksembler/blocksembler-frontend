@@ -1,6 +1,6 @@
 import {expect, test} from "vitest";
 import {AndInstruction, AnnaInstructionFactory} from "@/architectures/anna/instructions.js";
-import {Word} from "@/architectures/system.js";
+import {Word} from "@/architectures/emulator.ts";
 
 test("test and instruction to machine code", () => {
     let instruction = new AndInstruction(["r1", "r2", "r3"]);

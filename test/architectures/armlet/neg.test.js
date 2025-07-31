@@ -1,7 +1,7 @@
 import {expect, test} from "vitest";
 import {ArmletInstructionFactory, NegInstruction} from "@/architectures/armlet/instructions.js";
 import {generateMockSystem} from "./util.js";
-import {Word} from "@/architectures/system.js";
+import {Word} from "@/architectures/emulator.ts";
 
 
 test("neg instruction to string", () => {
@@ -31,7 +31,10 @@ test("create neg instruction from machine code", () => {
     let machineCode = "0" + "000" + "110" + "011" + "001000";
     let expectedInstruction = new NegInstruction(['$3', '$6']);
     let factory = new ArmletInstructionFactory();
-    let instruction = factory.createFromOpCode([Word.fromString(machineCode), Word.fromSignedIntValue(0)], 0);
+    let instruction = factory.createFromOpCode([
+        {address: 0, value: Word.fromString(machineCode)},
+        {address: 1, value: Word.fromSignedIntValue(0)},
+    ], 0);
     expect(instruction).toMatchObject(expectedInstruction);
 });
 
