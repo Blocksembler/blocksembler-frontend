@@ -7,7 +7,7 @@ import "./style.scss";
 
 // noinspection ES6UnusedImports
 import * as bootstrap from "bootstrap";
-import {logEvent} from "@/logging.js";
+import {logEvent} from "@/logging";
 
 import {v4 as uuidv4} from 'uuid';
 
