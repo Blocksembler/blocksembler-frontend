@@ -1,7 +1,7 @@
 <script setup>
 import {reactive} from "vue";
 import {codingWorkspaceState, settings} from "../state";
-import {logEvent} from "@/logging.js";
+import {logEvent} from "@/logging";
 import BaseButton from "./base/BaseButton.vue";
 import BaseModal from "./modals/BaseModal.vue";
 import PlayCircleIcon from "@/components/icons/PlayCircleIcon.vue";
