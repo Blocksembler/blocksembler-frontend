@@ -1,4 +1,4 @@
-import {BaseEmulator, Word} from "../system";
+import {BaseEmulator, Word} from "../emulator.ts";
 import {ArmletInstructionFactory} from "@/architectures/armlet/instructions.js";
 
 export const addressSize = 16;

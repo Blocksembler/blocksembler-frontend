@@ -1,6 +1,6 @@
 import {expect, test} from "vitest";
 import {AnnaInstructionFactory, BranchEqualZeroInstruction} from "@/architectures/anna/instructions.js";
-import {Word} from "@/architectures/system.js";
+import {Word} from "@/architectures/emulator.ts";
 
 test("test branch if equal zero instruction to machine code", () => {
     let instruction = new BranchEqualZeroInstruction(["r1", 11]);

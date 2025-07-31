@@ -1,6 +1,6 @@
 import {expect, test} from "vitest";
 import {AnnaInstructionFactory, JumpAndLinkRegisterInstruction} from "@/architectures/anna/instructions.js";
-import {Word} from "@/architectures/system.js";
+import {Word} from "@/architectures/emulator.ts";
 
 test("test jump and link register instruction to machine code", () => {
     let instruction = new JumpAndLinkRegisterInstruction(["r1", "r2"]);

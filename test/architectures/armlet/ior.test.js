@@ -5,7 +5,7 @@ import {
     IorInstruction
 } from "@/architectures/armlet/instructions.js";
 import {generateMockSystem} from "./util.js";
-import {Word} from "@/architectures/system.js";
+import {Word} from "@/architectures/emulator.ts";
 
 test("ior instruction to string", () => {
     let instruction = new IorInstruction(['$4', '$1', '$0']);
@@ -57,7 +57,10 @@ test("create ior instruction from machine code", () => {
     let expectedInstruction = new IorInstruction(['$7', '$2', '$6']);
 
     let factory = new ArmletInstructionFactory();
-    let instruction = factory.createFromOpCode([Word.fromString(machineCode), Word.fromSignedIntValue(0)], 0);
+    let instruction = factory.createFromOpCode([
+        {address: 0, value: Word.fromString(machineCode)},
+        {address: 1, value: Word.fromSignedIntValue(0)},
+    ], 0);
 
     expect(instruction).toMatchObject(expectedInstruction);
 });
@@ -68,7 +71,10 @@ test("create ior instruction with immediate from machine code", () => {
     let expectedInstruction = new IorImmediateInstruction(['$7', '$2', '10']);
 
     let factory = new ArmletInstructionFactory();
-    let instruction = factory.createFromOpCode([Word.fromString(machineCode), Word.fromSignedIntValue(10)], 0);
+    let instruction = factory.createFromOpCode([
+        {address: 0, value: Word.fromString(machineCode)},
+        {address: 1, value: Word.fromSignedIntValue(10)},
+    ], 0);
 
     expect(instruction).toMatchObject(expectedInstruction);
 });

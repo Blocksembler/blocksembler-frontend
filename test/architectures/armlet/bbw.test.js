@@ -5,7 +5,7 @@ import {
     BbwInstruction
 } from "@/architectures/armlet/instructions.js";
 import {generateMockSystem} from "./util.js";
-import {Word} from "@/architectures/system.js";
+import {Word} from "@/architectures/emulator.ts";
 
 let registerOpCode = "010111";
 let immediateOpCode = "101100";
@@ -62,7 +62,10 @@ test("create bbw instruction from machine code", () => {
     let expectedInstruction = new BbwInstruction(['$2']);
 
     let factory = new ArmletInstructionFactory();
-    let instruction = factory.createFromOpCode([Word.fromString(machineCode), Word.fromSignedIntValue(0)], 0);
+    let instruction = factory.createFromOpCode([
+        {address: 0, value: Word.fromString(machineCode)},
+        {address: 1, value: Word.fromSignedIntValue(0)},
+    ], 0);
 
     expect(instruction).toStrictEqual(expectedInstruction);
 });
@@ -73,7 +76,10 @@ test("create bbw instruction with immediate from machine code", () => {
     let expectedInstruction = new BbwImmediateInstruction(['10']);
 
     let factory = new ArmletInstructionFactory();
-    let instruction = factory.createFromOpCode([Word.fromString(machineCode), Word.fromSignedIntValue(10)], 0);
+    let instruction = factory.createFromOpCode([
+        {address: 0, value: Word.fromString(machineCode)},
+        {address: 1, value: Word.fromSignedIntValue(10)},
+    ], 0);
 
     expect(instruction).toStrictEqual(expectedInstruction);
 });

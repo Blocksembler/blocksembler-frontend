@@ -1,6 +1,6 @@
 import {expect, test} from "vitest";
 import {ScottInstructionFactory, XorInstruction} from "@/architectures/scott/instructions.js";
-import {Word} from "@/architectures/system.js";
+import {Word} from "@/architectures/emulator.ts";
 import {ScottEmulator} from "@/architectures/scott/system.js";
 
 test("test converting xor instruction to machine code", () => {
@@ -12,7 +12,10 @@ test("test converting xor instruction to machine code", () => {
 test("test creating xor instruction from machine code", () => {
     const machineCode = "11101101";
 
-    const xorInst = XorInstruction.fromMachineCode(Word.fromString(machineCode, 8));
+    const xorInst = XorInstruction.fromMachineCode({
+        address: 0,
+        value: Word.fromString(machineCode, 8)
+    });
 
     expect(xorInst).toStrictEqual(new XorInstruction(["R3", "R1"]));
 })
@@ -28,7 +31,7 @@ test("test creating xor instruction from mnemonic", () => {
 test("test creating xor instruction from opcode", () => {
     const factory = new ScottInstructionFactory();
     const mockSystem = new ScottEmulator()
-    mockSystem.memory[0].set(Word.fromString("11101101", 8));
+    mockSystem.memory[0].value.set(Word.fromString("11101101", 8));
 
     const xorInst = factory.createFromOpCode(mockSystem.memory, 0);
 

@@ -1,6 +1,6 @@
-import { NotInstruction, InsperHackInstructionFactory } from "@/architectures/insperHack/instructions";
+import {InsperHackInstructionFactory, NotInstruction} from "@/architectures/insperHack/instructions";
 import {expect, test} from "vitest";
-import {Word} from "@/architectures/system.js";
+import {Word} from "@/architectures/emulator.ts";
 
 //not %A
 test("Test 1: not-instruction to maschine code (not %A)", () => {

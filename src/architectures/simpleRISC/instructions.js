@@ -1,5 +1,5 @@
 import {BaseInstruction} from "@/architectures/instructions.js";
-import {Word} from "@/architectures/system.js";
+import {Word} from "@/architectures/emulator.ts";
 
 export class SimpleRISCInstructionFactory {
     createFromMnemonic(mnemonic, args) {
@@ -13,14 +13,14 @@ export class SimpleRISCInstructionFactory {
     }
 
     createFromOpCode(memory, address) {
-        const opCode = memory[address].toBitString().slice(3, 7);
+        const opCode = memory[address].value.toBitString().slice(3, 7);
         const instClass = instructionClasses.filter(instClass => instClass.opCode === opCode)[0];
 
         if (!instClass) {
             throw new Error(`No instruction for opCode "${opCode}" found.`);
         }
 
-        return instClass.fromMachineCode(memory[address]);
+        return instClass.fromMachineCode(memory[address].value);
     }
 }
 

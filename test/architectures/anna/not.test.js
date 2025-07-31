@@ -1,6 +1,6 @@
 import {expect, test} from "vitest";
 import {AnnaInstructionFactory, NotInstruction} from "@/architectures/anna/instructions.js";
-import {Word} from "@/architectures/system.js";
+import {Word} from "@/architectures/emulator.ts";
 
 test("test create not instruction from mnemonic", () => {
     let mnemonic = "not";

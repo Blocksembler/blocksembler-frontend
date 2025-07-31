@@ -5,7 +5,7 @@ import {
     AsrInstruction
 } from "@/architectures/armlet/instructions.js";
 import {generateMockSystem} from "./util.js";
-import {Word} from "@/architectures/system.js";
+import {Word} from "@/architectures/emulator.ts";
 
 test("asr instruction to string", () => {
     let instruction = new AsrInstruction(['$1', '$2', '$4']);
@@ -47,7 +47,10 @@ test("create asr instruction from machine code", () => {
     let machineCode = "0" + "011" + "100" + "001" + "001011";
     let expectedInstruction = new AsrInstruction(['$1', '$4', '$3']);
     let factory = new ArmletInstructionFactory();
-    let instruction = factory.createFromOpCode([Word.fromString(machineCode), Word.fromSignedIntValue(0)], 0);
+    let instruction = factory.createFromOpCode([
+        {address: 0, value: Word.fromString(machineCode)},
+        {address: 1, value: Word.fromSignedIntValue(0)},
+    ], 0);
     expect(instruction).toStrictEqual(expectedInstruction);
 });
 
@@ -55,7 +58,11 @@ test("create asr instruction with immediate from machine code", () => {
     let machineCode = "0" + "000" + "100" + "001" + "100010" + "0000000000001010";
     let expectedInstruction = new AsrImmediateInstruction(['$1', '$4', '10']);
     let factory = new ArmletInstructionFactory();
-    let instruction = factory.createFromOpCode([Word.fromString(machineCode), Word.fromSignedIntValue(10)], 0);
+    let instruction = factory.createFromOpCode([
+        {address: 0, value: Word.fromString(machineCode)},
+        {address: 1, value: Word.fromSignedIntValue(10)},
+    ], 0);
+
     expect(instruction).toStrictEqual(expectedInstruction);
 });
 

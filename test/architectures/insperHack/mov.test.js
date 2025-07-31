@@ -1,6 +1,6 @@
-import { MovInstruction, InsperHackInstructionFactory } from "@/architectures/insperHack/instructions";
+import {InsperHackInstructionFactory, MovInstruction} from "@/architectures/insperHack/instructions";
 import {expect, test} from "vitest";
-import {Word} from "@/architectures/system.js";
+import {Word} from "@/architectures/emulator.ts";
 
 
 test("Test 1: mov-instruction to machine code (mov %A %D)", () => {
@@ -49,7 +49,7 @@ test("Test 4: copy value to destinations", () => {
 
     instruction.executeOn(emulator);
 
-    expect(regAWord.toSignedIntValue()).toBe(1); 
+    expect(regAWord.toSignedIntValue()).toBe(1);
     expect(regDWord.toSignedIntValue()).toBe(1);
 });
 test("Test 5: copy value from memory to destinations", () => {
@@ -70,7 +70,7 @@ test("Test 5: copy value from memory to destinations", () => {
 
     instruction.executeOn(emulator);
 
-    expect(regAWord.toSignedIntValue()).toBe(0); 
+    expect(regAWord.toSignedIntValue()).toBe(0);
     expect(regDWord.toSignedIntValue()).toBe(10);
 });
 
@@ -92,6 +92,6 @@ test("Test 6: copy immediate to destinations", () => {
 
     instruction.executeOn(emulator);
 
-    expect(regAWord.toSignedIntValue()).toBe(5); 
+    expect(regAWord.toSignedIntValue()).toBe(5);
     expect(regDWord.toSignedIntValue()).toBe(1);
 });

@@ -1,5 +1,5 @@
 import {expect, test} from "vitest";
-import {ImmutableWord, Word} from "@/architectures/system.js";
+import {ImmutableWord, Word} from "@/architectures/emulator.ts";
 
 test("initialize word with bit string", () => {
     let bitString = "1101";

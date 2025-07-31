@@ -1,4 +1,4 @@
-import {BaseEmulator, ImmutableWord, Word} from "../system";
+import {BaseEmulator, Word} from "../emulator.ts";
 import {InsperHackInstructionFactory} from "./instructions";
 
 const addressSize = 16;
