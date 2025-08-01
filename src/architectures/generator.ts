@@ -5,7 +5,9 @@ export const Order = {
 };
 
 export class BaseBlocklyGenerator {
-    constructor(name) {
+    generator: Blockly.Generator;
+
+    constructor(name: string) {
         this.generator = new Blockly.Generator(name);
         this.setupGenerator()
     }
@@ -21,11 +23,11 @@ export class BaseBlocklyGenerator {
             return source
         }
 
-        this.generator.scrub_ = (block, code, thisOnly) => {
+        this.generator.scrub_ = (block: Blockly.Block, code: string, thisOnly: boolean): string => {
             const nextBlock = block.nextConnection && block.nextConnection.targetBlock();
 
-            if (block.parentBlock_ === null && block.type !== "start") {
-                return null;
+            if (block.getParent() === null && block.type !== "start") {
+                return "";
             }
 
             if (nextBlock && !thisOnly) {
