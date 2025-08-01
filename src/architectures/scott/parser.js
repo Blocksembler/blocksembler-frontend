@@ -1,5 +1,5 @@
-import {BaseParser} from "@/architectures/parser.js";
-import {ScottInstructionFactory} from "@/architectures/scott/instructions.js";
+import {BaseParser} from "@/architectures/parser";
+import {ScottInstructionFactory} from "@/architectures/scott/instructions";
 
 export class ScottAssemblyParser extends BaseParser {
     constructor() {

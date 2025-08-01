@@ -1,5 +1,5 @@
-import {BaseParser} from "@/architectures/parser.js";
-import {SimpleRISCInstructionFactory} from "@/architectures/simpleRISC/instructions.js";
+import {BaseParser} from "@/architectures/parser";
+import {SimpleRISCInstructionFactory} from "@/architectures/simpleRISC/instructions";
 
 export class SimpleRISCParser extends BaseParser {
     constructor() {
