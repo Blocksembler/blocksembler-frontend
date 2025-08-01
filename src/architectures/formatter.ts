@@ -1,4 +1,9 @@
 export class BaseFormatter {
+    labelIndent: number;
+    instructionIndent: number;
+    labelChar: string;
+    commentChar: string;
+
     constructor(labelIndent = 10, instructionIndent = 20, labelChar = ":", commentChar = "#") {
         this.labelIndent = labelIndent;
         this.instructionIndent = instructionIndent;
@@ -6,12 +11,12 @@ export class BaseFormatter {
         this.commentChar = commentChar;
     }
 
-    formatCode(code) {
+    formatCode(code: string) {
         const lines = code.split("\n");
         return lines.map(line => this.formatLine(line)).join('\n');
     };
 
-    formatLine(line) {
+    formatLine(line: string) {
         const labelEnd = line.indexOf(this.labelChar);
         const commentStart = line.indexOf(this.commentChar);
 

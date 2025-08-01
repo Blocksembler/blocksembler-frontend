@@ -1,4 +1,4 @@
-import {BaseBlocklyGenerator, Order} from "@/architectures/generator.js";
+import {BaseBlocklyGenerator, Order} from "@/architectures/generator";
 
 const handleComments = (block) => {
     let comment = block.getCommentText()
