@@ -1,5 +1,5 @@
-import {BaseParser} from "@/architectures/parser.js";
-import {AnnaInstructionFactory} from "@/architectures/anna/instructions.js";
+import {BaseParser} from "@/architectures/parser";
+import {AnnaInstructionFactory} from "@/architectures/anna/instructions";
 
 export class AnnaAssemblyParser extends BaseParser {
     constructor() {
