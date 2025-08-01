@@ -21,7 +21,7 @@ test("test create load word instruction from mnemonic", () => {
 
 test("test create load word instruction from machine code", () => {
     let machineCode = "1000001010000011";
-    let expectedInstruction = new LoadWordInstruction(["r1", "r2", 3]);
+    let expectedInstruction = new LoadWordInstruction(["r1", "r2", "3"]);
 
     let factory = new AnnaInstructionFactory();
     let instruction = factory.createFromOpCode([

@@ -137,7 +137,7 @@ export class BaseEmulator {
         return this.memory[address].value;
     }
 
-    callInterrupt(intName: string, ...args: Array<string>): string | void {
+    callInterrupt(intName: string, ...args: Array<string>): string | null {
         const continueAfterInterrupt = !this.isPaused;
         this.pauseExecution()
 
