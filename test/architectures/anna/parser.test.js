@@ -7,7 +7,7 @@ import {
     OrInstruction
 } from "@/architectures/anna/instructions.js";
 
-import {MultilineComment} from "@/architectures/instructions.js";
+import {MultilineComment} from "@/architectures/instructions";
 
 test("parse empty file", () => {
     let emptyFile = "";
@@ -79,6 +79,6 @@ test("parse assembler code with labels", () => {
     let parser = new AnnaAssemblyParser();
     let result = parser.parseCode(assemblerCode.join('\n'));
     expect(result).toEqual([
-        new BranchEqualZeroInstruction(["r0", "-1"], [{"name": "loop", "lineNumber": 1}])
+        new BranchEqualZeroInstruction(["r0", "-1"], ["loop"])
     ]);
 });
