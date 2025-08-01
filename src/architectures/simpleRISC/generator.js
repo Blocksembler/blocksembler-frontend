@@ -1,4 +1,4 @@
-import {BaseBlocklyGenerator, Order} from "@/architectures/generator.js";
+import {BaseBlocklyGenerator, Order} from "@/architectures/generator";
 
 const defaultInstruction = (mnemonic, g) => {
     return (block, _generator) => {
