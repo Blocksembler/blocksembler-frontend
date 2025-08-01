@@ -51,9 +51,9 @@ import {
     SubInstruction
 } from "@/architectures/armlet/instructions.js";
 import {AddInstruction, AndInstruction, NotInstruction} from "@/architectures/anna/instructions.js";
-import {ParsingError} from "@/architectures/parser.js";
+import {ParsingError} from "@/architectures/parser";
 
-import {MultilineComment} from "@/architectures/instructions.js";
+import {MultilineComment} from "@/architectures/instructions";
 
 
 test('test new parser', () => {
@@ -76,10 +76,10 @@ test('test new parser', () => {
     ];
 
     let expectedProgram = [
-        new MovImmediateInstruction(["$2", "2"], [{"name": "@inlinelabel", "lineNumber": 1}]),
+        new MovImmediateInstruction(["$2", "2"], ["@inlinelabel"]),
         new MultilineComment(" this is a comment\n abc"),
         new MultilineComment(" test 2\n abc"),
-        new MovInstruction(["$1", "$2"], [{"name": "@test", "lineNumber": 7}], " in-line comment"),
+        new MovInstruction(["$1", "$2"], ["@test"], " in-line comment"),
         new NopInstruction()
     ]
 
@@ -257,8 +257,8 @@ test("label on directives", () => {
         new MovImmediateInstruction(["$7", "5"]),
         new LoaInstruction(["$0", "$7"]),
         new MovImmediateInstruction(["$2", "6"]),
-        new DataDirective(["0"], [{"name": "@len", "lineNumber": 4}]),
-        new DataDirective(["1", "2", "3"], [{"name": "@target", "lineNumber": 6}]),
+        new DataDirective(["0"], ["@len"]),
+        new DataDirective(["1", "2", "3"], ["@target"]),
     ]
 
     let parser = new ArmletAssemblyParser(new ArmletInstructionFactory());
