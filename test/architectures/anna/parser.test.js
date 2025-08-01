@@ -1,11 +1,11 @@
 import {expect, test} from "vitest";
-import {AnnaAssemblyParser} from "@/architectures/anna/parser.js";
+import {AnnaAssemblyParser} from "@/architectures/anna/parser";
 import {
     AddImmediateInstruction,
     AddInstruction,
     BranchEqualZeroInstruction,
     OrInstruction
-} from "@/architectures/anna/instructions.js";
+} from "@/architectures/anna/instructions.ts";
 
 import {MultilineComment} from "@/architectures/instructions";
 

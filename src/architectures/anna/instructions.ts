@@ -1,27 +1,26 @@
 import {BaseInstruction} from "../instructions";
-import {Word} from "../emulator";
+import {BaseEmulator, Word} from "../emulator";
+import {MemoryLocation} from "@/types/emulator";
 
 export class AnnaInstructionFactory {
-    createFromMnemonic(mnemonic, instructionMeta) {
+    createFromMnemonic(mnemonic: string, args: Array<string>): BaseInstruction {
         let instructionClass = this.getInstructionClassByMnemonic(mnemonic);
-        return new instructionClass(instructionMeta);
+
+        return new instructionClass(args);
     }
 
-    getInstructionClassByMnemonic(mnemonic) {
-        return instructionClasses.filter((c) => c.mnemonic === mnemonic)[0];
-    }
-
-    //Deprecated!!
-    createFromMachineCode(code) {
-        if (code === "1111000000000000") {
-            return HaltInstruction.fromMachineCode(code);
+    getInstructionClassByMnemonic(mnemonic: string): typeof AnnaBaseInstruction {
+        for (let clazz of instructionClasses) {
+            if (clazz.getMnemonic() === mnemonic) {
+                return clazz;
+            }
         }
 
-        let instructionClass = this.getInstructionClassByOpCode(code.slice(0, 4));
-        return instructionClass.fromMachineCode(code);
+        throw Error(`Unknown instruction ${mnemonic}`);
     }
 
-    createFromOpCode(memory, address) {
+
+    createFromOpCode(memory: Array<MemoryLocation>, address: number): AnnaBaseInstruction {
         let code = memory[address].value.toBitString()
 
         if (code === "1111000000000000") {
@@ -29,16 +28,34 @@ export class AnnaInstructionFactory {
         }
 
         let instructionClass = this.getInstructionClassByOpCode(code.slice(0, 4));
+
         return instructionClass.fromMachineCode(code);
     }
 
-    getInstructionClassByOpCode(opCode) {
-        return instructionClasses.filter((c) => c.opCode === opCode)[0];
+    getInstructionClassByOpCode(opCode: string): typeof AnnaBaseInstruction {
+
+        for (let clazz of instructionClasses) {
+            if (clazz.getOpCode() === opCode) {
+                return clazz;
+            }
+        }
+
+        throw Error(`Unknown opCode ${opCode}`);
     }
 
 }
 
-class AnnaRTypeInstruction extends BaseInstruction {
+class AnnaBaseInstruction extends BaseInstruction {
+    static getOpCode(): string {
+        throw Error("Not implemented");
+    }
+
+    static getMnemonic(): string {
+        throw Error("Not implemented");
+    }
+}
+
+class AnnaRTypeInstruction extends AnnaBaseInstruction {
 
     get rd() {
         return this.args[0] ? parseInt(this.args[0][1]) : 0;
@@ -52,7 +69,7 @@ class AnnaRTypeInstruction extends BaseInstruction {
         return this.args[2] ? parseInt(this.args[2][1]) : 0;
     }
 
-    static extractArgs(code) {
+    static extractArgs(code: string) {
         let rd = parseInt(code.slice(4, 7), 2);
         let rs1 = parseInt(code.slice(7, 10), 2);
         let rs2 = parseInt(code.slice(10, 13), 2);
@@ -61,7 +78,8 @@ class AnnaRTypeInstruction extends BaseInstruction {
     }
 
     toMachineCode() {
-        let machineInstruction = this.constructor.opCode + this.rd.toString(2).padStart(3, "0");
+        const constructor = (this.constructor as typeof AnnaRTypeInstruction);
+        let machineInstruction = constructor.getOpCode() + this.rd.toString(2).padStart(3, "0");
         machineInstruction += this.rs1.toString(2).padStart(3, "0");
         machineInstruction += this.rs2.toString(2).padStart(3, "0");
         machineInstruction += "000";
@@ -69,12 +87,12 @@ class AnnaRTypeInstruction extends BaseInstruction {
     }
 
     toString() {
-        let prototype = Object.getPrototypeOf(this);
-        return `${prototype.constructor.mnemonic} r${this.rd} r${this.rs1} r${this.rs2}`;
+        const constructor = (this.constructor as typeof AnnaRTypeInstruction);
+        return `${constructor.getMnemonic()} r${this.rd} r${this.rs1} r${this.rs2}`;
     }
 }
 
-class AnnaI6TypeInstruction extends BaseInstruction {
+class AnnaI6TypeInstruction extends AnnaBaseInstruction {
 
     get rd() {
         return this.args[0] ? parseInt(this.args[0][1]) : 0;
@@ -88,31 +106,32 @@ class AnnaI6TypeInstruction extends BaseInstruction {
         return this.args[2] ? parseInt(this.args[2]) : 0;
     }
 
-    static extractArgs(code) {
+    static extractArgs(code: string): Array<string> {
         let rd = parseInt(code.slice(4, 7), 2);
         let rs = parseInt(code.slice(7, 10), 2);
 
         let immStr = code.slice(10, 16);
         let imm = Word.fromString(immStr, 6).toSignedIntValue();
 
-        return [`r${rd}`, `r${rs}`, imm];
+        return [`r${rd}`, `r${rs}`, `${imm}`];
     }
 
-    toMachineCode() {
+    toMachineCode(): string {
+        const constructor = (this.constructor as typeof AnnaI6TypeInstruction);
         let machineInstruction =
-            this.constructor.opCode + this.rd.toString(2).padStart(3, "0");
+            constructor.getOpCode() + this.rd.toString(2).padStart(3, "0");
         machineInstruction += this.rs.toString(2).padStart(3, "0");
         machineInstruction += Word.fromSignedIntValue(this.imm, 6).toBitString();
         return machineInstruction;
     }
 
-    toString() {
-        let prototype = Object.getPrototypeOf(this);
-        return `${prototype.constructor.mnemonic} r${this.rd} r${this.rs} #${this.imm}`;
+    toString(): string {
+        const constructor = (this.constructor as typeof AnnaI6TypeInstruction);
+        return `${constructor.getMnemonic()} r${this.rd} r${this.rs} #${this.imm}`;
     }
 }
 
-class AnnaI8TypeInstruction extends BaseInstruction {
+class AnnaI8TypeInstruction extends AnnaBaseInstruction {
 
     get rd() {
         return this.args[0] ? parseInt(this.args[0][1]) : 0;
@@ -122,18 +141,19 @@ class AnnaI8TypeInstruction extends BaseInstruction {
         return this.args[1] ? parseInt(this.args[1]) : 0;
     }
 
-    static extractArgs(code) {
+    static extractArgs(code: string): Array<string> {
         let rd = parseInt(code.slice(4, 7), 2);
 
         let immStr = code.slice(8, 16);
         let imm = Word.fromString(immStr, 8).toSignedIntValue();
 
-        return [`r${rd}`, imm];
+        return [`r${rd}`, `${imm}`];
     }
 
     toMachineCode() {
+        const constructor = (this.constructor as typeof AnnaI8TypeInstruction);
         let machineInstruction =
-            this.constructor.opCode + this.rd.toString(2).padStart(3, "0");
+            constructor.getOpCode() + this.rd.toString(2).padStart(3, "0");
         machineInstruction += "0";
         machineInstruction += Word.fromSignedIntValue(this.imm, 8).toBitString();
 
@@ -141,21 +161,27 @@ class AnnaI8TypeInstruction extends BaseInstruction {
     }
 
     toString() {
-        let prototype = Object.getPrototypeOf(this);
-        return `${prototype.constructor.mnemonic} r${this.rd} #${this.imm}`;
+        const constructor = (this.constructor as typeof AnnaI8TypeInstruction);
+        return `${constructor.getMnemonic()} r${this.rd} #${this.imm}`;
     }
 }
 
 export class AddInstruction extends AnnaRTypeInstruction {
-    static mnemonic = "add";
-    static opCode = "0000";
 
-    static fromMachineCode(code) {
+    static getMnemonic(): string {
+        return "add";
+    }
+
+    static getOpCode(): string {
+        return "0000";
+    }
+
+    static fromMachineCode(code: string): AnnaBaseInstruction {
         let args = this.extractArgs(code);
         return new AddInstruction(args);
     }
 
-    executeOn(system) {
+    executeOn(system: BaseEmulator) {
         let target = system.registers[`r${this.rd}`];
         let firstOperand = system.registers[`r${this.rs1}`];
         let secondOperand = system.registers[`r${this.rs2}`];
@@ -166,15 +192,20 @@ export class AddInstruction extends AnnaRTypeInstruction {
 }
 
 export class AddImmediateInstruction extends AnnaI6TypeInstruction {
-    static mnemonic = "addi";
-    static opCode = "1100";
+    static getMnemonic(): string {
+        return "addi";
+    }
 
-    static fromMachineCode(code) {
-        let args = AnnaI6TypeInstruction.extractArgs(code);
+    static getOpCode(): string {
+        return "1100";
+    }
+
+    static fromMachineCode(code: string): AnnaBaseInstruction {
+        let args: Array<string> = AnnaI6TypeInstruction.extractArgs(code);
         return new AddImmediateInstruction(args);
     }
 
-    executeOn(system) {
+    executeOn(system: BaseEmulator) {
         let target = system.registers[`r${this.rd}`];
         let firstOperand = system.registers[`r${this.rs}`];
         let immediate = Number(this.imm);
@@ -185,15 +216,21 @@ export class AddImmediateInstruction extends AnnaI6TypeInstruction {
 }
 
 export class SubtractInstruction extends AnnaRTypeInstruction {
-    static mnemonic = "sub";
-    static opCode = "0001";
 
-    static fromMachineCode(code) {
+    static getMnemonic(): string {
+        return "sub";
+    }
+
+    static getOpCode(): string {
+        return "0001";
+    }
+
+    static fromMachineCode(code: string) {
         let args = this.extractArgs(code);
         return new SubtractInstruction(args);
     }
 
-    executeOn(system) {
+    executeOn(system: BaseEmulator) {
         let target = system.registers[`r${this.rd}`];
         let firstOperand = system.registers[`r${this.rs1}`];
         let secondOperand = system.registers[`r${this.rs2}`];
@@ -204,15 +241,20 @@ export class SubtractInstruction extends AnnaRTypeInstruction {
 }
 
 export class AndInstruction extends AnnaRTypeInstruction {
-    static mnemonic = "and";
-    static opCode = "0010";
+    static getMnemonic(): string {
+        return "and";
+    }
 
-    static fromMachineCode(code) {
+    static getOpCode(): string {
+        return "0010";
+    }
+
+    static fromMachineCode(code: string) {
         let args = this.extractArgs(code);
         return new AndInstruction(args);
     }
 
-    executeOn(system) {
+    executeOn(system: BaseEmulator) {
         let target = system.registers[`r${this.rd}`];
         let firstOperand = system.registers[`r${this.rs1}`];
         let secondOperand = system.registers[`r${this.rs2}`];
@@ -223,15 +265,20 @@ export class AndInstruction extends AnnaRTypeInstruction {
 }
 
 export class OrInstruction extends AnnaRTypeInstruction {
-    static mnemonic = "or";
-    static opCode = "0011";
+    static getMnemonic(): string {
+        return "or";
+    }
 
-    static fromMachineCode(code) {
+    static getOpCode(): string {
+        return "0011";
+    }
+
+    static fromMachineCode(code: string) {
         let args = this.extractArgs(code);
         return new OrInstruction(args);
     }
 
-    executeOn(system) {
+    executeOn(system: BaseEmulator) {
         let target = system.registers[`r${this.rd}`];
         let firstOperand = system.registers[`r${this.rs1}`];
         let secondOperand = system.registers[`r${this.rs2}`];
@@ -242,22 +289,28 @@ export class OrInstruction extends AnnaRTypeInstruction {
 }
 
 export class NotInstruction extends AnnaRTypeInstruction {
-    static mnemonic = "not";
-    static opCode = "0100";
 
-    static fromMachineCode(code) {
+    static getMnemonic(): string {
+        return "not";
+    }
+
+    static getOpCode(): string {
+        return "0100";
+    }
+
+    static fromMachineCode(code: string) {
         let args = this.extractArgs(code);
         return new NotInstruction(args);
     }
 
-    static extractArgs(code) {
+    static extractArgs(code: string): Array<string> {
         let rd = parseInt(code.slice(4, 7), 2);
         let rs1 = parseInt(code.slice(7, 10), 2);
 
         return [`r${rd}`, `r${rs1}`];
     }
 
-    executeOn(system) {
+    executeOn(system: BaseEmulator) {
         let target = system.registers[`r${this.rd}`];
         let operand = system.registers[`r${this.rs1}`];
 
@@ -266,15 +319,21 @@ export class NotInstruction extends AnnaRTypeInstruction {
 }
 
 export class ShiftInstruction extends AnnaI6TypeInstruction {
-    static mnemonic = "shf";
-    static opCode = "0101";
 
-    static fromMachineCode(code) {
+    static getMnemonic(): string {
+        return "shf";
+    }
+
+    static getOpCode(): string {
+        return "0101";
+    }
+
+    static fromMachineCode(code: string) {
         let args = this.extractArgs(code);
         return new ShiftInstruction(args);
     }
 
-    executeOn(system) {
+    executeOn(system: BaseEmulator) {
         let target = system.registers[`r${this.rd}`];
         let operand = system.registers[`r${this.rs}`];
         let immediate = Number(this.imm);
@@ -284,15 +343,21 @@ export class ShiftInstruction extends AnnaI6TypeInstruction {
 }
 
 export class LoadLowerImmediateInstruction extends AnnaI8TypeInstruction {
-    static mnemonic = "lli";
-    static opCode = "0110";
 
-    static fromMachineCode(code) {
+    static getMnemonic(): string {
+        return "lli";
+    }
+
+    static getOpCode(): string {
+        return "0110";
+    }
+
+    static fromMachineCode(code: string) {
         let args = this.extractArgs(code);
         return new LoadLowerImmediateInstruction(args);
     }
 
-    executeOn(system) {
+    executeOn(system: BaseEmulator) {
         let target = system.registers[`r${this.rd}`];
         let immediate = Number(this.imm);
 
@@ -304,15 +369,21 @@ export class LoadLowerImmediateInstruction extends AnnaI8TypeInstruction {
 }
 
 export class LoadUpperImmediateInstruction extends AnnaI8TypeInstruction {
-    static mnemonic = "lui";
-    static opCode = "0111";
 
-    static fromMachineCode(code) {
+    static getMnemonic(): string {
+        return "lui";
+    }
+
+    static getOpCode(): string {
+        return "0111";
+    }
+
+    static fromMachineCode(code: string) {
         let args = this.extractArgs(code);
         return new LoadUpperImmediateInstruction(args);
     }
 
-    executeOn(system) {
+    executeOn(system: BaseEmulator) {
         let target = system.registers[`r${this.rd}`];
         let immediate = Number(this.imm);
 
@@ -324,15 +395,21 @@ export class LoadUpperImmediateInstruction extends AnnaI8TypeInstruction {
 }
 
 export class LoadWordInstruction extends AnnaI6TypeInstruction {
-    static mnemonic = "lw";
-    static opCode = "1000";
 
-    static fromMachineCode(code) {
+    static getMnemonic(): string {
+        return "lw";
+    }
+
+    static getOpCode(): string {
+        return "1000";
+    }
+
+    static fromMachineCode(code: string) {
         let args = this.extractArgs(code);
         return new LoadWordInstruction(args);
     }
 
-    executeOn(system) {
+    executeOn(system: BaseEmulator) {
         let target = system.registers[`r${this.rd}`];
         let source = system.registers[`r${this.rs}`];
         let offset = Number(this.imm);
@@ -342,15 +419,21 @@ export class LoadWordInstruction extends AnnaI6TypeInstruction {
 }
 
 export class StoreWordInstruction extends AnnaI6TypeInstruction {
-    static mnemonic = "sw";
-    static opCode = "1001";
 
-    static fromMachineCode(code) {
+    static getMnemonic(): string {
+        return "sw";
+    }
+
+    static getOpCode(): string {
+        return "1001";
+    }
+
+    static fromMachineCode(code: string) {
         let args = this.extractArgs(code);
         return new StoreWordInstruction(args);
     }
 
-    executeOn(system) {
+    executeOn(system: BaseEmulator) {
         let destination = system.registers[`r${this.rd}`];
         let source = system.registers[`r${this.rs}`];
         let offset = this.imm;
@@ -360,15 +443,21 @@ export class StoreWordInstruction extends AnnaI6TypeInstruction {
 }
 
 export class BranchEqualZeroInstruction extends AnnaI8TypeInstruction {
-    static mnemonic = "bez";
-    static opCode = "1010";
 
-    static fromMachineCode(code) {
+    static getMnemonic(): string {
+        return "bez";
+    }
+
+    static getOpCode(): string {
+        return "1010";
+    }
+
+    static fromMachineCode(code: string) {
         let args = this.extractArgs(code);
         return new BranchEqualZeroInstruction(args);
     }
 
-    executeOn(system) {
+    executeOn(system: BaseEmulator) {
         let checkWord = system.registers[`r${this.rd}`];
 
         if (checkWord.toSignedIntValue() === 0) {
@@ -379,15 +468,21 @@ export class BranchEqualZeroInstruction extends AnnaI8TypeInstruction {
 }
 
 export class BranchGreaterZeroInstruction extends AnnaI8TypeInstruction {
-    static mnemonic = "bgz";
-    static opCode = "1011";
 
-    static fromMachineCode(code) {
+    static getMnemonic(): string {
+        return "bgz";
+    }
+
+    static getOpCode(): string {
+        return "1011";
+    }
+
+    static fromMachineCode(code: string) {
         let args = this.extractArgs(code);
         return new BranchGreaterZeroInstruction(args);
     }
 
-    executeOn(system) {
+    executeOn(system: BaseEmulator) {
         let checkWord = system.registers[`r${this.rd}`];
 
         if (checkWord.toSignedIntValue() > 0) {
@@ -398,22 +493,28 @@ export class BranchGreaterZeroInstruction extends AnnaI8TypeInstruction {
 }
 
 export class JumpAndLinkRegisterInstruction extends AnnaRTypeInstruction {
-    static mnemonic = "jalr";
-    static opCode = "1101";
 
-    static fromMachineCode(code) {
+    static getMnemonic(): string {
+        return "jalr";
+    }
+
+    static getOpCode(): string {
+        return "1101";
+    }
+
+    static fromMachineCode(code: string) {
         let args = this.extractArgs(code);
         return new JumpAndLinkRegisterInstruction(args);
     }
 
-    static extractArgs(code) {
+    static extractArgs(code: string): Array<string> {
         let rd = parseInt(code.slice(4, 7), 2);
         let rs1 = parseInt(code.slice(7, 10), 2);
 
         return [`r${rd}`, `r${rs1}`];
     }
 
-    executeOn(system) {
+    executeOn(system: BaseEmulator) {
         let target = system.registers[this.rd];
         let source = system.registers[this.rs1];
 
@@ -423,70 +524,90 @@ export class JumpAndLinkRegisterInstruction extends AnnaRTypeInstruction {
 }
 
 export class InputInstruction extends AnnaRTypeInstruction {
-    static mnemonic = "in";
-    static opCode = "1110";
 
-    static fromMachineCode(code) {
+    static getMnemonic(): string {
+        return "in";
+    }
+
+    static getOpCode(): string {
+        return "1110";
+    }
+
+    static fromMachineCode(code: string) {
         let args = this.extractArgs(code);
         return new InputInstruction(args);
     }
 
-    static extractArgs(code) {
+    static extractArgs(code: string): Array<string> {
         let rd = parseInt(code.slice(4, 7), 2);
 
         return [`r${rd}`];
     }
 
-    executeOn(system) {
+    executeOn(system: BaseEmulator) {
         let target = system.registers[`r${this.rd}`];
         let result = system.callInterrupt("input");
 
-        target.set(Word.fromSignedIntValue(result));
+        if (result === null)
+            return
+
+        target.set(Word.fromSignedIntValue(parseInt(result)));
     }
 }
 
 export class OutputInstruction extends AnnaRTypeInstruction {
-    static mnemonic = "out";
-    static opCode = "1111";
 
-    static fromMachineCode(code) {
+    static getMnemonic(): string {
+        return "out";
+    }
+
+    static getOpCode(): string {
+        return "1111";
+    }
+
+    static fromMachineCode(code: string) {
         let args = this.extractArgs(code);
         return new OutputInstruction(args);
     }
 
-    static extractArgs(code) {
+    static extractArgs(code: string): Array<string> {
         let rd = parseInt(code.slice(4, 7), 2);
 
         return [`r${rd}`];
     }
 
-    executeOn(system) {
+    executeOn(system: BaseEmulator) {
         let source = system.registers[`r${this.rd}`];
 
-        system.callInterrupt("output", source);
+        system.callInterrupt("output", source.toString());
     }
 }
 
 export class HaltInstruction extends AnnaRTypeInstruction {
-    static mnemonic = ".halt";
-    static opCode = "1111";
 
     constructor() {
         super([])
     }
 
-    static fromMachineCode(code) {
-        let args = this.extractArgs(code);
-        return new HaltInstruction(args);
+    static getMnemonic(): string {
+        return ".halt";
     }
 
-    static extractArgs(code) {
+    static getOpCode(): string {
+        return "1111";
+    }
+
+    static fromMachineCode(_code: string) {
+        return new HaltInstruction();
+    }
+
+    static extractArgs(code: string): Array<string> {
         let rd = parseInt(code.slice(4, 7), 2);
 
         return [`r${rd}`];
     }
 
-    executeOn(system) {
+    executeOn(system: BaseEmulator) {
         system.callInterrupt("halt");
     }
 
@@ -495,7 +616,7 @@ export class HaltInstruction extends AnnaRTypeInstruction {
     }
 }
 
-const instructionClasses = [
+const instructionClasses: Array<typeof AnnaBaseInstruction> = [
     BranchEqualZeroInstruction,
     BranchGreaterZeroInstruction,
     JumpAndLinkRegisterInstruction,
@@ -512,5 +633,6 @@ const instructionClasses = [
     OutputInstruction,
     LoadWordInstruction,
     StoreWordInstruction,
-    HaltInstruction,
+    HaltInstruction
 ];
+

@@ -1,12 +1,14 @@
-import {BaseEmulator, ImmutableWord, Word} from "../emulator.ts";
+import {BaseEmulator, ImmutableWord, Word} from "@/architectures/emulator";
 import {AnnaInstructionFactory} from "./instructions";
+import {InterruptFunction} from "@/types/emulator";
 
 const addressSize = 16;
 
 export class AnnaEmulator extends BaseEmulator {
     constructor() {
         const registers = AnnaEmulator.setUpRegisters();
-        const interrupts = AnnaEmulator.setUpInterrupts();
+        const interrupts: Record<string, InterruptFunction> = AnnaEmulator.setUpInterrupts();
+
         super(registers, addressSize, new AnnaInstructionFactory(), interrupts);
     }
 
@@ -23,17 +25,23 @@ export class AnnaEmulator extends BaseEmulator {
         };
     }
 
-    static setUpInterrupts() {
+    static setUpInterrupts(): Record<string, InterruptFunction> {
         return {
-            input: (_emulator, _register) => {
-                return parseInt(prompt("Enter a value"));
+            "input": (_emulator: BaseEmulator): string => {
+                let userInput = prompt("Enter a value");
+                if (userInput === null) {
+                    return "0";
+                }
+                return userInput;
             },
-            output: (emulator, value) => {
+            "output": (emulator: BaseEmulator, value: string): string => {
                 emulator.print(value);
+                return "";
             },
-            halt: (emulator, _register) => {
+            "halt": (emulator: BaseEmulator): string => {
                 alert("The program terminated");
                 emulator.halt();
+                return "";
             },
         };
     }

@@ -25,7 +25,7 @@ test("test create load upper immediate instruction from mnemonic", () => {
 
 test("test create load upper immediate instruction from machine code", () => {
     let machineCode = "0111001000000011";
-    let expectedInstruction = new LoadLowerImmediateInstruction(["r1", 3]);
+    let expectedInstruction = new LoadLowerImmediateInstruction(["r1", "3"]);
 
     let factory = new AnnaInstructionFactory();
     let instruction = factory.createFromOpCode([
