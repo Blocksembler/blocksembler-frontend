@@ -1,5 +1,5 @@
 import {expect, test} from "vitest";
-import {AnnaInstructionFactory, OrInstruction} from "@/architectures/anna/instructions";
+import {AnnaInstructionFactory, OrInstruction} from "@/architectures/anna/instructions.js";
 import {Word} from "@/architectures/emulator";
 
 test("test or instruction to machine code", () => {

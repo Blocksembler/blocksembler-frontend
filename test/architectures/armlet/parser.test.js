@@ -50,7 +50,7 @@ import {
     SubImmediateInstruction,
     SubInstruction
 } from "@/architectures/armlet/instructions.js";
-import {AddInstruction, AndInstruction, NotInstruction} from "@/architectures/anna/instructions.js";
+import {AddInstruction, AndInstruction, NotInstruction} from "@/architectures/anna/instructions";
 import {ParsingError} from "@/architectures/parser";
 
 import {MultilineComment} from "@/architectures/instructions";

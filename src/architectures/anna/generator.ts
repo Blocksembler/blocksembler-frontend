@@ -1,4 +1,5 @@
 import {BaseBlocklyGenerator, Order} from "@/architectures/generator";
+import {Block, Generator} from "blockly";
 
 
 export class AnnaBlocklyGenerator extends BaseBlocklyGenerator {
@@ -6,10 +7,10 @@ export class AnnaBlocklyGenerator extends BaseBlocklyGenerator {
         super("anna");
     }
 
-    setupGenerator() {
+    setupGenerator(): void {
         super.setupGenerator();
 
-        this.generator.forBlock["add"] = (block) => {
+        this.generator.forBlock["add"] = (block: Block): string => {
             const rs1 = this.generator.valueToCode(block, "rs1", Order.ATOMIC);
             const rs2 = this.generator.valueToCode(block, "rs2", Order.ATOMIC);
             const rd = this.generator.valueToCode(block, "rd", Order.ATOMIC);
@@ -17,13 +18,13 @@ export class AnnaBlocklyGenerator extends BaseBlocklyGenerator {
             return `add ${rd} ${rs1} ${rs2}`;
         };
 
-        this.generator.forBlock["register"] = (block, _generator) => {
+        this.generator.forBlock["register"] = (block: Block, _generator: Generator) => {
             const registerNr = block.getFieldValue("registerNr");
 
             return [`r${registerNr}`, Order.ATOMIC];
         };
 
-        this.generator.forBlock["addi"] = (block) => {
+        this.generator.forBlock["addi"] = (block: Block) => {
             const rs1 = this.generator.valueToCode(block, "rs1", Order.ATOMIC);
             const immediate = block.getFieldValue("immediate");
             const rd = this.generator.valueToCode(block, "rd", Order.ATOMIC);
@@ -31,7 +32,7 @@ export class AnnaBlocklyGenerator extends BaseBlocklyGenerator {
             return `addi ${rd} ${rs1} ${immediate}`;
         };
 
-        this.generator.forBlock["sub"] = (block) => {
+        this.generator.forBlock["sub"] = (block: Block) => {
             const rs1 = this.generator.valueToCode(block, "rs1", Order.ATOMIC);
             const rs2 = this.generator.valueToCode(block, "rs2", Order.ATOMIC);
             const rd = this.generator.valueToCode(block, "rd", Order.ATOMIC);
@@ -39,35 +40,35 @@ export class AnnaBlocklyGenerator extends BaseBlocklyGenerator {
             return `sub ${rd} ${rs1} ${rs2}`;
         };
 
-        this.generator.forBlock["lli"] = (block) => {
+        this.generator.forBlock["lli"] = (block: Block) => {
             const rd = this.generator.valueToCode(block, "rd", Order.ATOMIC);
             const immediate = block.getFieldValue("immediate");
 
             return `lli ${rd} ${immediate}`;
         };
 
-        this.generator.forBlock["lli_label"] = (block) => {
+        this.generator.forBlock["lli_label"] = (block: Block) => {
             const rd = this.generator.valueToCode(block, "rd", Order.ATOMIC);
             const label = this.generator.valueToCode(block, "label", Order.ATOMIC);
 
             return `lli ${rd} ${label}`;
         };
 
-        this.generator.forBlock["lui_label"] = (block) => {
+        this.generator.forBlock["lui_label"] = (block: Block) => {
             const rd = this.generator.valueToCode(block, "rd", Order.ATOMIC);
             const label = this.generator.valueToCode(block, "label", Order.ATOMIC);
 
             return `lui ${rd} ${label}`;
         };
 
-        this.generator.forBlock["lui"] = (block) => {
+        this.generator.forBlock["lui"] = (block: Block) => {
             const rd = this.generator.valueToCode(block, "rd", Order.ATOMIC);
             const immediate = block.getFieldValue("immediate");
 
             return `lui ${rd} ${immediate}`;
         };
 
-        this.generator.forBlock["and"] = (block) => {
+        this.generator.forBlock["and"] = (block: Block) => {
             const rs1 = this.generator.valueToCode(block, "rs1", Order.ATOMIC);
             const rs2 = this.generator.valueToCode(block, "rs2", Order.ATOMIC);
             const rd = this.generator.valueToCode(block, "rd", Order.ATOMIC);
@@ -75,7 +76,7 @@ export class AnnaBlocklyGenerator extends BaseBlocklyGenerator {
             return `and ${rd} ${rs1} ${rs2}`;
         };
 
-        this.generator.forBlock["or"] = (block) => {
+        this.generator.forBlock["or"] = (block: Block) => {
             const rs1 = this.generator.valueToCode(block, "rs1", Order.ATOMIC);
             const rs2 = this.generator.valueToCode(block, "rs2", Order.ATOMIC);
             const rd = this.generator.valueToCode(block, "rd", Order.ATOMIC);
@@ -83,14 +84,14 @@ export class AnnaBlocklyGenerator extends BaseBlocklyGenerator {
             return `or ${rd} ${rs1} ${rs2}`;
         };
 
-        this.generator.forBlock["not"] = (block) => {
+        this.generator.forBlock["not"] = (block: Block) => {
             const rs = this.generator.valueToCode(block, "rs", Order.ATOMIC);
             const rd = this.generator.valueToCode(block, "rd", Order.ATOMIC);
 
             return `not ${rd} ${rs}`;
         };
 
-        this.generator.forBlock["shf"] = (block) => {
+        this.generator.forBlock["shf"] = (block: Block) => {
             const rs = this.generator.valueToCode(block, "rs", Order.ATOMIC);
             const rd = this.generator.valueToCode(block, "rd", Order.ATOMIC);
             const immediate = block.getFieldValue("immediate");
@@ -98,7 +99,7 @@ export class AnnaBlocklyGenerator extends BaseBlocklyGenerator {
             return `shf ${rd} ${rs} ${immediate}`;
         };
 
-        this.generator.forBlock["lw"] = (block) => {
+        this.generator.forBlock["lw"] = (block: Block) => {
             const rs = this.generator.valueToCode(block, "rs", Order.ATOMIC);
             const offset = block.getFieldValue("offset");
             const rd = this.generator.valueToCode(block, "rd", Order.ATOMIC);
@@ -106,55 +107,55 @@ export class AnnaBlocklyGenerator extends BaseBlocklyGenerator {
             return `lw ${rd} ${rs} ${offset}`;
         };
 
-        this.generator.forBlock["sw"] = (block) => {
+        this.generator.forBlock["sw"] = (block: Block) => {
             const rd = this.generator.valueToCode(block, "rd", Order.ATOMIC);
             const rs = this.generator.valueToCode(block, "rs", Order.ATOMIC);
             const offset = block.getFieldValue("offset");
             return `sw ${rd} ${rs} ${offset}`;
         };
 
-        this.generator.forBlock["in"] = (block) => {
+        this.generator.forBlock["in"] = (block: Block) => {
             const rd = this.generator.valueToCode(block, "rd", Order.ATOMIC);
 
             return `in ${rd}`;
         };
 
-        this.generator.forBlock["out"] = (block) => {
+        this.generator.forBlock["out"] = (block: Block) => {
             const rd = this.generator.valueToCode(block, "rd", Order.ATOMIC);
 
             return `out ${rd}`;
         };
 
-        this.generator.forBlock["bez"] = (block) => {
+        this.generator.forBlock["bez"] = (block: Block) => {
             const rd = this.generator.valueToCode(block, "rd", Order.ATOMIC);
             const label = this.generator.valueToCode(block, "label", Order.ATOMIC);
 
             return `bez ${rd} ${label}`;
         };
 
-        this.generator.forBlock["bgz"] = (block) => {
+        this.generator.forBlock["bgz"] = (block: Block) => {
             const rd = this.generator.valueToCode(block, "rd", Order.ATOMIC);
             const label = this.generator.valueToCode(block, "label", Order.ATOMIC);
 
             return `bgz ${rd} ${label}`;
         };
 
-        this.generator.forBlock["jalr"] = (block) => {
+        this.generator.forBlock["jalr"] = (block: Block) => {
             const rd = this.generator.valueToCode(block, "rd", Order.ATOMIC);
             const rs = this.generator.valueToCode(block, "rs", Order.ATOMIC);
 
             return `jalr ${rd} ${rs}`;
         };
 
-        this.generator.forBlock["halt"] = (_block, _generator) => {
+        this.generator.forBlock["halt"] = (_block: Block, _generator) => {
             return ".halt";
         };
 
-        this.generator.forBlock["start"] = (_block, _generator) => {
+        this.generator.forBlock["start"] = (_block: Block, _generator) => {
             return "";
         };
 
-        const generateRegister = (block, _generator) => {
+        const generateRegister = (block: Block, _generator: Generator): [string, number] => {
             return [block.type, Order.ATOMIC];
         };
 

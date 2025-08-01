@@ -21,7 +21,7 @@ test("test create branch if equal to zero instruction from mnemonic", () => {
 
 test("test create branch if equal to zero instruction from machine code", () => {
     let machineCode = "1010001000001100";
-    let expectedInstruction = new BranchEqualZeroInstruction(["r1", 12]);
+    let expectedInstruction = new BranchEqualZeroInstruction(["r1", "12"]);
 
     let factory = new AnnaInstructionFactory();
     let instruction = factory.createFromOpCode([

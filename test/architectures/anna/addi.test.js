@@ -21,7 +21,7 @@ test("test create add immediate instruction from mnemonic", () => {
 
 test("test create add immediate instruction from machine code", () => {
     let machineCode = "1100001010001100";
-    let expectedInstruction = new AddImmediateInstruction(["r1", "r2", 12]);
+    let expectedInstruction = new AddImmediateInstruction(["r1", "r2", "12"]);
 
     let factory = new AnnaInstructionFactory();
     let instruction = factory.createFromOpCode([

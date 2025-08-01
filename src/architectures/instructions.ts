@@ -12,6 +12,10 @@ export class BaseInstruction {
         this.comment = comment;
     }
 
+    static fromMachineCode(_code: string): BaseInstruction {
+        throw Error("Not implemented");
+    }
+
     toString(): string {
         return "";
     }
