@@ -1,4 +1,4 @@
-import {BaseFormatter} from "@/architectures/formatter.js";
+import {BaseFormatter} from "@/architectures/formatter";
 
 export class AnnaCodeFormatter extends BaseFormatter {
     constructor() {

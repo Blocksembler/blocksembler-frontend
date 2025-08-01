@@ -1,7 +1,7 @@
 import * as Blockly from "blockly";
 import {FieldMultilineInput} from "@blockly/field-multilineinput";
 
-export const setupDefaultBlocks = () => {
+export const setupDefaultBlocks = (): void => {
     Blockly.Blocks['comment'] = {
         init: function () {
             this.appendDummyInput('label text')
