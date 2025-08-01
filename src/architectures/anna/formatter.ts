@@ -6,10 +6,10 @@ export class AnnaCodeFormatter extends BaseFormatter {
 
     }
 
-    formatCode(code) {
-        let codeLines = code.split("\n").map(line => line.trim());
+    formatCode(code: string): string {
+        let codeLines: Array<string> = code.split("\n").map(line => line.trim());
 
-        codeLines = codeLines.reduce((codeLines, line) => {
+        codeLines = codeLines.reduce((codeLines: Array<string>, line) => {
             const lastLine = codeLines[codeLines.length - 1];
 
             if (lastLine !== undefined && lastLine.endsWith(':')) {

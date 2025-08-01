@@ -6,15 +6,15 @@ export class AnnaAssemblyParser extends BaseParser {
         super(new AnnaInstructionFactory(), "#", " ", ":");
     }
 
-    isLabelReference(arg) {
+    isLabelReference(arg: string): boolean {
         return arg.startsWith('&')
     }
 
-    labelReferenceToName(arg) {
+    labelReferenceToName(arg: string): string {
         return arg.slice(1);
     }
 
-    labelToVal(labelAddress, instructionAddress) {
+    labelToVal(labelAddress: number, instructionAddress: number): number {
         return labelAddress - instructionAddress - 1;
     }
 }

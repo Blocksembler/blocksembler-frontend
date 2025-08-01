@@ -50,6 +50,6 @@ test("test output instruction", () => {
 
     expect(mockSystem.callInterrupt).toBeCalledWith(
         "output",
-        Word.fromSignedIntValue(123)
+        "123"
     );
 });

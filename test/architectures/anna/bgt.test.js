@@ -22,7 +22,7 @@ test("test create branch if greater than zero instruction from mnemonic", () => 
 test("test create branch if greater than zero instruction from machine code", () => {
     let machineCode = "1011001000001100";
 
-    let expectedInstruction = new BranchGreaterZeroInstruction(["r1", 12]);
+    let expectedInstruction = new BranchGreaterZeroInstruction(["r1", "12"]);
 
     let factory = new AnnaInstructionFactory();
     let instruction = factory.createFromOpCode([
@@ -43,7 +43,7 @@ test("test branch if greater than zero instruction", () => {
         },
     };
 
-    let instruction = new BranchGreaterZeroInstruction(["r1", -10]);
+    let instruction = new BranchGreaterZeroInstruction(["r1", "-10"]);
 
     instruction.executeOn(mockSystem);
 

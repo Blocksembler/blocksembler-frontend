@@ -1,5 +1,5 @@
 import {expect, test, vi} from "vitest";
-import {AnnaInstructionFactory, StoreWordInstruction} from "@/architectures/anna/instructions";
+import {AnnaInstructionFactory, StoreWordInstruction} from "@/architectures/anna/instructions.js";
 import {Word} from "@/architectures/emulator";
 
 test("test create store word instruction from mnemonic", () => {
@@ -14,7 +14,7 @@ test("test create store word instruction from mnemonic", () => {
 
 test("test create store word instruction from machine code", () => {
     let machineCode = "1001001010000101";
-    let expectedInstruction = new StoreWordInstruction(["r1", "r2", 5]);
+    let expectedInstruction = new StoreWordInstruction(["r1", "r2", "5"]);
 
     let factory = new AnnaInstructionFactory();
     let instruction = factory.createFromOpCode([{

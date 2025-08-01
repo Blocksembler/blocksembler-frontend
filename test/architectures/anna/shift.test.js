@@ -1,5 +1,5 @@
 import {expect, test} from "vitest";
-import {AnnaInstructionFactory, ShiftInstruction} from "@/architectures/anna/instructions.js";
+import {AnnaInstructionFactory, ShiftInstruction} from "@/architectures/anna/instructions";
 import {Word} from "@/architectures/emulator.ts";
 
 test("test shift instruction to machine code", () => {
@@ -21,7 +21,7 @@ test("test create shift instruction from mnemonic", () => {
 
 test("test create shift instruction from machine code", () => {
     let machineCode = "0101001010000011";
-    let expectedInstruction = new ShiftInstruction(["r1", "r2", 3]);
+    let expectedInstruction = new ShiftInstruction(["r1", "r2", "3"]);
 
     let factory = new AnnaInstructionFactory();
     let instruction = factory.createFromOpCode([
