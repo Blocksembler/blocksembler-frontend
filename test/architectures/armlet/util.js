@@ -1,6 +1,6 @@
 import {Word} from "@/architectures/emulator.ts";
-import {ArmletEmulator} from "@/architectures/armlet/system.js";
-import {AbstractImmediateArmletInstruction} from "@/architectures/armlet/instructions.js";
+import {ArmletEmulator} from "@/architectures/armlet/system.ts";
+import {AbstractImmediateArmletInstruction} from "@/architectures/armlet/instructions.ts";
 
 export const generateMockSystem = (registers, instruction = null) => {
     let registerWords = registers.map((regVal) => Word.fromSignedIntValue(regVal))

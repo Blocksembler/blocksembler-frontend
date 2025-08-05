@@ -1,5 +1,5 @@
 import {expect, test} from "vitest";
-import {ArmletAssemblyParser} from "@/architectures/armlet/parser.js";
+import {ArmletAssemblyParser} from "@/architectures/armlet/parser.ts";
 import {
     AddImmediateInstruction,
     AndImmediateInstruction,
@@ -49,7 +49,7 @@ import {
     StoInstruction,
     SubImmediateInstruction,
     SubInstruction
-} from "@/architectures/armlet/instructions.js";
+} from "@/architectures/armlet/instructions.ts";
 import {AddInstruction, AndInstruction, NotInstruction} from "@/architectures/anna/instructions";
 import {ParsingError} from "@/architectures/parser";
 
