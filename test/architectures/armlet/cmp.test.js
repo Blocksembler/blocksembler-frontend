@@ -3,7 +3,7 @@ import {
     ArmletInstructionFactory,
     CmpImmediateInstruction,
     CmpInstruction
-} from "@/architectures/armlet/instructions.js";
+} from "@/architectures/armlet/instructions.ts";
 import {generateMockSystem} from "./util.js";
 import {Word} from "@/architectures/emulator.ts";
 
@@ -60,7 +60,7 @@ test("create cmp instruction from machine code", () => {
 });
 
 test("create cmp instruction with immediate from machine code", () => {
-    let machineCode = "0" + "000" + "010" + "000" + immediateOpCode + "0000000000001010";
+    let machineCode = "0" + "000" + "010" + "000" + immediateOpCode;
     let expectedInstruction = new CmpImmediateInstruction(['$2', '10']);
     let factory = new ArmletInstructionFactory();
     let instruction = factory.createFromOpCode([
