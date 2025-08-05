@@ -1,12 +1,13 @@
-import {BaseEmulator, Word} from "../emulator.ts";
-import {ArmletInstructionFactory} from "@/architectures/armlet/instructions.js";
+import {BaseEmulator, Word} from "../emulator";
+import {ArmletInstructionFactory} from "@/architectures/armlet/instructions";
+import {InterruptFunction} from "@/types/emulator";
 
 export const addressSize = 16;
 
 export class ArmletEmulator extends BaseEmulator {
     constructor() {
         const registers = ArmletEmulator.setUpRegistersStatic();
-        const interrupts = ArmletEmulator.setUpInterruptsStatic();
+        const interrupts: Record<string, InterruptFunction> = ArmletEmulator.setUpInterruptsStatic();
         super(registers, addressSize, new ArmletInstructionFactory(), interrupts, false);
     }
 
@@ -36,17 +37,21 @@ export class ArmletEmulator extends BaseEmulator {
         }
     }
 
-    static setUpInterruptsStatic() {
+    static setUpInterruptsStatic(): Record<string, InterruptFunction> {
         return {
-            'trp': (system) => {
-                system.pauseExecution()
+            trp: (emulator: BaseEmulator): string | null => {
+                emulator.pauseExecution()
+                return null;
             },
-            'hlt': (system) => {
-                system.callInterrupt('alert', 'The program terminated');
-                system.halt();
+            hlt: (e: BaseEmulator): string | null => {
+                e.callInterrupt('alert', 'The program terminated');
+                e.halt();
+
+                return null;
             },
-            'alert': (system, msg) => {
+            alert: (_e: BaseEmulator, msg: string): string | null => {
                 alert(msg);
+                return null;
             }
         }
     }

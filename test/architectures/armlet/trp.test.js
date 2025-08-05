@@ -1,5 +1,5 @@
 import {expect, test} from "vitest";
-import {ArmletInstructionFactory, TrpInstruction} from "@/architectures/armlet/instructions.js";
+import {ArmletInstructionFactory, TrpInstruction} from "@/architectures/armlet/instructions.ts";
 import {generateMockSystem} from "./util.js";
 
 let opCode = "111110"

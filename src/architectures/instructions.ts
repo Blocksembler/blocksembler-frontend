@@ -24,42 +24,16 @@ export class BaseInstruction {
         return "";
     }
 
-    toBlocks(ws: Blockly.Workspace): Array<Blockly.Block> {
+    toBlocks(_ws: Blockly.WorkspaceSvg): Array<Blockly.Block> {
         return [];
     }
 
     executeOn(_e: BaseEmulator): void {
+        throw new Error("Not implemented");
     }
 }
 
-export class PseudoInstruction {
-    args: Array<string>;
-    labels: Array<string>;
-    comment: string;
-
-    constructor(args: Array<string> = [], labels: Array<string> = [], comment: string = "") {
-        this.args = args;
-        this.labels = labels;
-        this.comment = comment;
-    }
-
-    toString(): string {
-        return "";
-    }
-
-    toMachineCode(): string {
-        return "";
-    }
-
-    toBlocks(ws: Blockly.Workspace): Array<Blockly.Block> {
-        return [];
-    }
-
-    executeOn(_e: BaseEmulator): void {
-    }
-}
-
-export class MultilineComment extends PseudoInstruction {
+export class MultilineComment extends BaseInstruction {
     text: string;
 
     constructor(text: string) {
@@ -75,9 +49,9 @@ export class MultilineComment extends PseudoInstruction {
         return "";
     }
 
-    toBlocks(ws: Blockly.Workspace): Array<Blockly.Block> {
+    toBlocks(ws: Blockly.WorkspaceSvg): Array<Blockly.Block> {
         let multilineCommentBlock = ws.newBlock('comment');
-        multilineCommentBlock.initModel();
+        multilineCommentBlock.initSvg();
         multilineCommentBlock.getField('text')?.setValue(this.text);
         multilineCommentBlock.setCollapsed(true);
         return [multilineCommentBlock]
