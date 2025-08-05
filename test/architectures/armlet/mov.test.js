@@ -3,7 +3,7 @@ import {
     ArmletInstructionFactory,
     MovImmediateInstruction,
     MovInstruction
-} from "@/architectures/armlet/instructions.js";
+} from "@/architectures/armlet/instructions.ts";
 import {Word} from "@/architectures/emulator.ts";
 import {generateMockSystem} from "./util.js";
 

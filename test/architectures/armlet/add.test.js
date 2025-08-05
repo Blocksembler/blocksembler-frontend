@@ -1,11 +1,7 @@
 import {expect, test} from "vitest";
-import {
-    AddImmediateInstruction,
-    AddInstruction,
-    ArmletInstructionFactory
-} from "@/architectures/armlet/instructions.js";
-import {generateMockSystem} from "./util.js";
-import {Word} from "@/architectures/emulator.ts";
+import {AddImmediateInstruction, AddInstruction, ArmletInstructionFactory} from "@/architectures/armlet/instructions";
+import {generateMockSystem} from "./util";
+import {Word} from "@/architectures/emulator";
 
 test("add instruction to string", () => {
     let instruction = new AddInstruction(['$1', '$2', '$3']);

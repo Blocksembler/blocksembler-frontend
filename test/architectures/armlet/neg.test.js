@@ -1,5 +1,5 @@
 import {expect, test} from "vitest";
-import {ArmletInstructionFactory, NegInstruction} from "@/architectures/armlet/instructions.js";
+import {ArmletInstructionFactory, NegInstruction} from "@/architectures/armlet/instructions.ts";
 import {generateMockSystem} from "./util.js";
 import {Word} from "@/architectures/emulator.ts";
 

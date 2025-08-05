@@ -1,4 +1,5 @@
 import * as Blockly from "blockly";
+import {MenuOption} from "blockly";
 
 const atomicValueColor = 350;
 const operationColor = 200;
@@ -7,7 +8,7 @@ const cmpColor = 150;
 const dataWordColor = 0;
 
 
-export const setupBlocklyBlocks = () => {
+export const setupBlocklyBlocks = (): void => {
     Blockly.Blocks['start'] = {
         init: function () {
             this.appendDummyInput('start')
@@ -59,7 +60,7 @@ export const setupBlocklyBlocks = () => {
         }
     };
 
-    const validateHex = (val) => {
+    const validateHex = (val: string): string => {
         if (val.startsWith("0x")) {
             val = val.slice(2);
         }
@@ -282,7 +283,7 @@ export const setupBlocklyBlocks = () => {
         }
     };
 
-    const arithmeticOps = [['+', 'add'], ['-', 'sub'],];
+    const arithmeticOps: MenuOption[] = [['+', 'add'], ['-', 'sub'],];
 
     Blockly.Blocks['ainst'] = {
         init: function () {
@@ -293,7 +294,7 @@ export const setupBlocklyBlocks = () => {
                 .appendField(':=');
             this.appendDummyInput()
                 .appendField(" ")
-                .appendField(new Blockly.FieldDropdown(() => arithmeticOps), 'operation')
+                .appendField(new Blockly.FieldDropdown(arithmeticOps), 'operation')
                 .appendField(" ")
             this.appendValueInput('B')
                 .setCheck(['register', 'immediate', 'label'])
@@ -305,7 +306,7 @@ export const setupBlocklyBlocks = () => {
         }
     };
 
-    const logicOps = [['OR', 'ior'], ['XOR', 'eor'], ['AND', 'and'],];
+    const logicOps: MenuOption[] = [['OR', 'ior'], ['XOR', 'eor'], ['AND', 'and'],];
 
     Blockly.Blocks['linst'] = {
         init: function () {
@@ -316,7 +317,7 @@ export const setupBlocklyBlocks = () => {
                 .appendField(':=');
             this.appendDummyInput()
                 .appendField(" ")
-                .appendField(new Blockly.FieldDropdown(() => logicOps), 'operation')
+                .appendField(new Blockly.FieldDropdown(logicOps), 'operation')
                 .appendField(" ")
             this.appendValueInput('B')
                 .setCheck(['register', 'immediate', 'label'])
@@ -416,7 +417,7 @@ export const setupBlocklyBlocks = () => {
         }
     };
 
-    const branchingConditions = [
+    const branchingConditions: MenuOption[] = [
         ['equal', 'beq'],
         ['not equal', 'bne'],
         ['greater than (signed)', 'bgt'],
@@ -436,7 +437,7 @@ export const setupBlocklyBlocks = () => {
                 .appendField('jump to address ');
             this.appendDummyInput('CON')
                 .appendField('if last comparison was')
-                .appendField(new Blockly.FieldDropdown(() => branchingConditions), 'condition');
+                .appendField(new Blockly.FieldDropdown(branchingConditions), 'condition');
 
             this.setInputsInline(true)
             this.setPreviousStatement(true, null);

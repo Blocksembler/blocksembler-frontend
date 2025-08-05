@@ -1,5 +1,5 @@
 import {expect, test} from "vitest";
-import {ArmletEmulator} from "@/architectures/armlet/system.js";
+import {ArmletEmulator} from "@/architectures/armlet/system.ts";
 import {
     AddInstruction,
     BneImmediateInstruction,
@@ -7,7 +7,7 @@ import {
     HltInstruction,
     MovImmediateInstruction,
     SubImmediateInstruction
-} from "@/architectures/armlet/instructions.js";
+} from "@/architectures/armlet/instructions.ts";
 
 test("test execution of a program", () => {
     let emulator = new ArmletEmulator();

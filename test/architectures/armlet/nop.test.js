@@ -1,5 +1,5 @@
 import {expect, test} from "vitest";
-import {ArmletInstructionFactory, NopInstruction} from "@/architectures/armlet/instructions.js";
+import {ArmletInstructionFactory, NopInstruction} from "@/architectures/armlet/instructions.ts";
 import {generateMockSystem} from "./util.js";
 
 test("nop instruction to string", () => {

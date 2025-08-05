@@ -1,5 +1,5 @@
 import {BaseEmulator, Word} from "@/architectures/emulator";
-import {BaseInstruction, PseudoInstruction} from "@/architectures/instructions";
+import {BaseInstruction} from "@/architectures/instructions";
 
 
 export interface InstructionFactory {
@@ -15,4 +15,4 @@ export type MemoryLocation = {
     value: Word;
 }
 
-export type Instruction = BaseInstruction | PseudoInstruction;
+export type Instruction = BaseInstruction;
