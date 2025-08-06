@@ -1,18 +1,23 @@
 import {BaseInstruction} from "../instructions";
-import {Word} from "../emulator.ts";
+import {BaseEmulator, Word} from "../emulator";
+import {MemoryLocation} from "@/types/emulator";
 
 export class InsperHackInstructionFactory {
-    createFromMnemonic(mnemonic, args) {
+    createFromMnemonic(mnemonic: string, args: Array<string>): InsperHackInstruction {
         let instructionClass = this.getInstructionClassByMnemonic(mnemonic);
         return new instructionClass(args);
     }
 
-    getInstructionClassByMnemonic(mnemonic) {
-        return mnemonicToClass[mnemonic];
+    getInstructionClassByMnemonic(mnemonic: string): typeof InsperHackInstruction {
+        if (mnemonic in mnemonicToClass) {
+            return mnemonicToClass[mnemonic];
+        }
+
+        throw new Error("Mnemonic not found.");
     }
 
-    createFromOpCode(memory, address) {
-        const code = memory[address].toBitString();
+    createFromOpCode(memory: Array<MemoryLocation>, address: number): InsperHackInstruction {
+        const code = memory[address].value.toBitString();
 
         // is lea ?
         // true then return lea class
@@ -51,7 +56,7 @@ export class InsperHackInstructionFactory {
             case "1110000":
                 return MovInstruction.fromMachineCode(code);
             default:
-                break;
+                throw new Error("Unknown opcode");
         }
     }
 }
@@ -69,58 +74,63 @@ export class InsperHackInstruction extends BaseInstruction {
         return this.args.slice(2);
     }
 
-    static extractMemoryBit(code) {
+    static extractMemoryBit(code: string) {
         return code.slice(3, 4);
     }
 
-    static extractOpCode(code) {
+    static extractOpCode(code: string) {
         return code.slice(4, 10);
     }
 
-    static extractDestCode(code) {
+    static extractDestCode(code: string) {
         return code.slice(10, 13);
     }
 
-    static extractJumpCode(code) {
+    static extractJumpCode(code: string) {
         return code.slice(13, 16);
     }
 
     // append 000 for no jump operations
-    noJump(code) {
+    noJump(code: string) {
         code += "000";
         return code;
     }
 
-    getRegValue(system, operand) {
-        return system.registers[operand];
+    getRegValue(e: BaseEmulator, operand: string) {
+        return e.registers[operand];
     }
 
-    getMemoryAddress(system) {
+    dereferenceARegister(e: BaseEmulator): MemoryLocation {
         // get value of Memory
-        let address = system.registers["%A"].toUnsignedIntValue();
+        let address = e.registers["%A"].toUnsignedIntValue();
         // set value
-        return system.memory[address];
+        return e.memory[address];
     }
 
-    getImmediateValue(operand) {
+    getImmediateValue(operand: string): Word {
         //turns immediate into a number - then a Word
         let imm = parseInt(operand.slice(1));
         return Word.fromSignedIntValue(imm);
     }
 
-    isMemoryAccess(param) {
+    isMemoryAccess(param: string): boolean {
         return param.startsWith("(");
     }
 }
 
 export class OverwriteInstruction extends InsperHackInstruction {
-    argToDest = {
+
+    static cCodeToArgs: Record<string, Array<string>> = {};
+
+    argsToCcode: Record<string, string> = {};
+
+    argToDest: Record<string, string> = {
         "%D": "010", // d Code
         "%A": "100",
     };
 
     // checks if argument is valid and returns its code
-    static matchCode(code) {
+    static matchCode(code: string) {
         let memoryBit = this.extractMemoryBit(code);
         let opCode = this.extractOpCode(code);
         let cCode = memoryBit + opCode;
@@ -133,7 +143,7 @@ export class OverwriteInstruction extends InsperHackInstruction {
     }
 
     // checks if destination(arg) is valid and returns its code
-    matchDest(arg) {
+    matchDest(arg: string) {
         if (arg in this.argToDest) {
             return this.argToDest[arg];
         } else {
@@ -154,110 +164,111 @@ export class OverwriteInstruction extends InsperHackInstruction {
     }
 
     //gets the word of the operand
-    getOpWord(system, operand) {
-        return this.getRegValue(system, operand);
+    getOpWord(e: BaseEmulator, operand: string) {
+        return this.getRegValue(e, operand);
     }
 
     // gets the destination of the instruction with argument arg
-    getDestWord(system, arg) {
-        return this.getRegValue(system, arg);
+    getDestWord(e: BaseEmulator, arg: string) {
+        return this.getRegValue(e, arg);
     }
 }
 
 export class IncInstruction extends OverwriteInstruction {
-    static cCodeToArgs = {
+    static cCodeToArgs: Record<string, Array<string>> = {
         "0011111": ["%D"],
         "0110111": ["%A"],
     };
-    argsToCcode = {
+
+    argsToCcode: Record<string, string> = {
         "%D": "0011111", //a+c Code
         "%A": "0110111",
     };
 
-    static fromMachineCode(code) {
+    static fromMachineCode(code: string): IncInstruction {
         let arg = this.matchCode(code);
         return new IncInstruction(arg);
     }
 
-    executeOn(system) {
+    executeOn(e: BaseEmulator) {
         // operand 1 reg
-        let resultWord = this.getOpWord(system, this.op1).inc();
+        let resultWord = this.getOpWord(e, this.op1).inc();
         // overwrite with its negation
-        this.getDestWord(system, this.args[0]).set(resultWord);
+        this.getDestWord(e, this.args[0]).set(resultWord);
     }
 }
 
 export class DecInstruction extends OverwriteInstruction {
-    static cCodeToArgs = {
+    static cCodeToArgs: Record<string, Array<string>> = {
         "0001110": ["%D"],
         "0110010": ["%A"],
     };
-    argsToCcode = {
+    argsToCcode: Record<string, string> = {
         "%D": "0001110", //a+c Code
         "%A": "0110010",
     };
 
-    static fromMachineCode(code) {
+    static fromMachineCode(code: string): DecInstruction {
         let arg = this.matchCode(code);
         return new DecInstruction(arg);
     }
 
-    executeOn(system) {
+    executeOn(e: BaseEmulator): void {
         // operand 1 reg
-        let resultWord = this.getOpWord(system, this.op1).dec();
+        let resultWord = this.getOpWord(e, this.op1).dec();
         // overwrite with its negation
-        this.getDestWord(system, this.args[0]).set(resultWord);
+        this.getDestWord(e, this.args[0]).set(resultWord);
     }
 }
 
 export class NotInstruction extends OverwriteInstruction {
-    static cCodeToArgs = {
+    static cCodeToArgs: Record<string, Array<string>> = {
         "0001101": ["%D"],
         "0110001": ["%A"],
     };
-    argsToCcode = {
+    argsToCcode: Record<string, string> = {
         "%D": "0001101", //a+c Code
         "%A": "0110001",
     };
 
-    static fromMachineCode(code) {
+    static fromMachineCode(code: string): NotInstruction {
         let arg = this.matchCode(code);
         return new NotInstruction(arg);
     }
 
-    executeOn(system) {
+    executeOn(e: BaseEmulator): void {
         // operand 1 reg
-        let resultWord = this.getOpWord(system, this.op1).invert();
+        let resultWord = this.getOpWord(e, this.op1).invert();
         // overwrite with its negation
-        this.getDestWord(system, this.args[0]).set(resultWord);
+        this.getDestWord(e, this.args[0]).set(resultWord);
     }
 }
 
 export class NegInstruction extends OverwriteInstruction {
-    static cCodeToArgs = {
+    static cCodeToArgs: Record<string, Array<string>> = {
         "0001111": ["%D"],
         "0110011": ["%A"],
     };
-    argsToCcode = {
+    argsToCcode: Record<string, string> = {
         "%D": "0001111", //a+c Code
         "%A": "0110011",
     };
 
-    static fromMachineCode(code) {
+    static fromMachineCode(code: string): NegInstruction {
         let arg = this.matchCode(code);
         return new NegInstruction(arg);
     }
 
-    executeOn(system) {
+    executeOn(e: BaseEmulator): void {
         // operand 1 reg
-        let resultWord = this.getOpWord(system, this.op1).invert().addImmediate(1);
+        let resultWord = this.getOpWord(e, this.op1).invert().addImmediate(1);
         // overwrite with its negation
-        this.getDestWord(system, this.args[0]).set(resultWord);
+        this.getDestWord(e, this.args[0]).set(resultWord);
     }
 }
 
 export class MovInstruction extends InsperHackInstruction {
-    static cCodeToArgs = {
+    static cCodeToArgs: Record<string, Array<string>> = {
         "0101010": ["$0"],
         "0111111": ["$1"],
         "0111010": ["$-1"],
@@ -265,7 +276,7 @@ export class MovInstruction extends InsperHackInstruction {
         "0110000": ["%A"],
         1110000: ["(%A)"],
     };
-    static cCodeToDests = {
+    static cCodeToDests: Record<string, Array<string>> = {
         "000": [""],
         100: ["%A"],
         "010": ["%D"],
@@ -275,23 +286,23 @@ export class MovInstruction extends InsperHackInstruction {
         "011": ["%D", "(%A)"],
         111: ["%A", "%D", "(%A)"],
     };
-    argsToCcode = {
-        $0: "0101010", //a+c Code
-        $1: "0111111",
+    argsToCcode: Record<string, string> = {
+        "$0": "0101010", //a+c Code
+        "$1": "0111111",
         "$-1": "0111010",
         "%D": "0001100",
         "%A": "0110000",
         "(%A)": "1110000",
     };
 
-    static matchesCode(code) {
+    static matchesCode(code: string): boolean {
         let memoryBit = this.extractMemoryBit(code);
         let opCode = this.extractOpCode(code);
 
         return memoryBit + opCode in this.cCodeToArgs;
     }
 
-    static fromMachineCode(code) {
+    static fromMachineCode(code: string): MovInstruction {
         // IN-PROGRESS
         let memoryBit = this.extractMemoryBit(code);
         let opCode = this.extractOpCode(code);
@@ -299,13 +310,13 @@ export class MovInstruction extends InsperHackInstruction {
 
         let params = this.cCodeToArgs[cCode];
 
-        let dests = this.cCodeToDests[this.extractDestCode(code)];
-        let args = params.concat(dests);
+        let destinations = this.cCodeToDests[this.extractDestCode(code)];
+        let args = params.concat(destinations);
 
         return new MovInstruction(args);
     }
 
-    createDestCodeFrom(args) {
+    createDestCodeFrom(args: Array<string>): string {
         let destCode = [0, 0, 0];
         args = args.slice(1);
         args.forEach((arg) => {
@@ -322,7 +333,7 @@ export class MovInstruction extends InsperHackInstruction {
         return destCode.join("");
     }
 
-    toMachineCode() {
+    toMachineCode(): string {
         // setup instruction code
         let code = "111";
         // get opCode and append
@@ -334,13 +345,13 @@ export class MovInstruction extends InsperHackInstruction {
         return code;
     }
 
-    executeOn(system) {
+    executeOn(e: BaseEmulator): void {
         // operand 1 reg/mem/im
-        let op1Word;
+        let op1Word: Word;
         if (this.isMemoryAccess(this.op1)) {
-            op1Word = this.getMemoryAddress(system);
+            op1Word = this.dereferenceARegister(e).value;
         } else if (this.op1.startsWith("%")) {
-            op1Word = this.getRegValue(system, this.op1);
+            op1Word = this.getRegValue(e, this.op1);
         } else {
             op1Word = this.getImmediateValue(this.op1);
         }
@@ -350,14 +361,14 @@ export class MovInstruction extends InsperHackInstruction {
 
         // overwrite each destination with op1Word
         dest.forEach((dest) => {
-            let destWord = this.getRegValue(system, dest);
+            let destWord = this.getRegValue(e, dest);
             // set result word
             destWord.set(op1Word);
         });
     }
 }
 
-const mnemonicToClass = {
+const mnemonicToClass: Record<string, typeof InsperHackInstruction> = {
     inc: IncInstruction,
     dec: DecInstruction,
     not: NotInstruction,
