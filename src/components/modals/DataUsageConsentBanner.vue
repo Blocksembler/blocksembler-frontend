@@ -1,16 +1,15 @@
-<script setup>
+<script lang="ts" setup>
 import BaseModal from "@/components/modals/BaseModal.vue";
 import {deleteLogData} from "@/logging";
 
-const consentHandler = () => {
+const consentHandler = (): void => {
   window.localStorage?.setItem('blocksembler-data-usage-consent', 'true');
 }
 
-const declineHandler = () => {
+const declineHandler = (): void => {
   deleteLogData()
   window.localStorage?.setItem('blocksembler-data-usage-consent', 'false');
 }
-
 </script>
 
 <template>

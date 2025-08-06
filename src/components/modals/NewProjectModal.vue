@@ -1,19 +1,17 @@
-<script setup>
+<script lang="ts" setup>
 import BaseModal from "@/components/modals/BaseModal.vue";
 
-const props = defineProps({
-  onCreateProject: {
-    type: Function,
-    required: true
-  }
-});
+const props = defineProps<{
+  onCreateProject: (e: MouseEvent) => void;
+}>();
 
 </script>
 
 <template>
   <BaseModal id="settingsModal" data-bs-backdrop="static" savable title="Settings">
     <template v-slot:default>
-      <p>Creating a new project will erase your current workspace. To avoid losing your data, please download your current project before proceeding.</p>
+      <p>Creating a new project will erase your current workspace. To avoid losing your data, please download your
+        current project before proceeding.</p>
     </template>
     <template v-slot:header>
       <div class="d-flex w-100 justify-content-start align-items-baseline">
