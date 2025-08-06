@@ -9,9 +9,9 @@ import "./style.scss";
 import * as bootstrap from "bootstrap";
 import {logEvent} from "@/logging";
 
-import {v4 as uuidv4} from 'uuid';
+import {UUIDTypes, v4 as uuidv4} from 'uuid';
 
-let uuid;
+let uuid: UUIDTypes;
 
 window.onload = () => {
     uuid = uuidv4();

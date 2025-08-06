@@ -1,4 +1,4 @@
-<script setup>
+<script lang="ts" setup>
 
 let props = defineProps({
   id: String,
