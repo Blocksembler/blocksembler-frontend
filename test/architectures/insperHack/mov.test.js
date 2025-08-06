@@ -1,6 +1,6 @@
 import {InsperHackInstructionFactory, MovInstruction} from "@/architectures/insperHack/instructions";
 import {expect, test} from "vitest";
-import {Word} from "@/architectures/emulator.ts";
+import {Word} from "@/architectures/emulator";
 
 
 test("Test 1: mov-instruction to machine code (mov %A %D)", () => {
@@ -26,7 +26,9 @@ test("Test 3: create mov-instruction from machine code (mov %A %D)", () => {
     let expectedInstruction = new MovInstruction(['%A', '%D']);
 
     let factory = new InsperHackInstructionFactory();
-    let instruction = factory.createFromOpCode([Word.fromString(machineCode)], 0);
+    let instruction = factory.createFromOpCode([
+        {address: 0, value: Word.fromString(machineCode)}
+    ], 0);
 
     expect(instruction).toMatchObject(expectedInstruction);
 });
@@ -42,7 +44,9 @@ test("Test 4: copy value to destinations", () => {
             '%A': regAWord,
             '%D': regDWord,
         },
-        memory: [Word.fromSignedIntValue(10)],
+        memory: [
+            {address: 0, value: Word.fromSignedIntValue(10)}
+        ],
     };
 
     let instruction = new MovInstruction(['%A', '%D']);
@@ -63,7 +67,9 @@ test("Test 5: copy value from memory to destinations", () => {
             '%A': regAWord,
             '%D': regDWord,
         },
-        memory: [Word.fromSignedIntValue(10)],
+        memory: [
+            {address: 0, value: Word.fromSignedIntValue(10)}
+        ],
     };
 
     let instruction = new MovInstruction(['(%A)', '%D']);

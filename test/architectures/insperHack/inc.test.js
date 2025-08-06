@@ -1,6 +1,6 @@
 import {IncInstruction, InsperHackInstructionFactory} from "@/architectures/insperHack/instructions";
 import {expect, test} from "vitest";
-import {Word} from "@/architectures/emulator.ts";
+import {Word} from "@/architectures/emulator";
 
 //inc %A
 test("Test 1: inc-instruction to maschine code (inc %A)", () => {
@@ -16,7 +16,9 @@ test("Test 2: create inc-instruction from machine code (inc %A)", () => {
     let expectedInstruction = new IncInstruction(['%A']);
 
     let factory = new InsperHackInstructionFactory();
-    let instruction = factory.createFromOpCode([Word.fromString(machineCode)], 0);
+    let instruction = factory.createFromOpCode([
+        {address: 0, value: Word.fromString(machineCode)}
+    ], 0);
 
     expect(instruction).toMatchObject(expectedInstruction);
 });
@@ -64,7 +66,9 @@ test("Test 2: create inc-instruction from machine code (inc %D)", () => {
     let expectedInstruction = new IncInstruction(['%D']);
 
     let factory = new InsperHackInstructionFactory();
-    let instruction = factory.createFromOpCode([Word.fromString(machineCode)], 0);
+    let instruction = factory.createFromOpCode([
+        {address: 0, value: Word.fromString(machineCode)}
+    ], 0);
 
     expect(instruction).toMatchObject(expectedInstruction);
 });
