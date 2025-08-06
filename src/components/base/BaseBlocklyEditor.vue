@@ -1,6 +1,7 @@
-<script setup>
+<script lang="ts" setup>
 import {onMounted, onUnmounted, ref, shallowRef, watch} from "vue";
 import * as Blockly from "blockly";
+import {BlockSvg, WorkspaceSvg} from "blockly";
 import {codingWorkspaceState} from "@/state";
 import {logEvent} from "@/logging";
 import {load, save} from "@/util/serialization";
@@ -36,9 +37,9 @@ onMounted(() => {
       let code = generator.workspaceToCode(workspace.value);
       codingWorkspaceState.sourceCode = codingWorkspaceState.archPlugin.formatter.formatCode(code);
     } catch (error) {
-
-      console.log(error);
-      logEvent('failedToGenerateAssemblyCode', error.toString());
+      if (error instanceof Error) {
+        logEvent('failedToGenerateAssemblyCode', error.toString());
+      }
     }
   };
 
@@ -57,10 +58,12 @@ onMounted(() => {
         logEvent("failedToLoadBlocklyWorkspaceFromLS",
             "Could not load from local storage due to architecture plugin mismatch.");
       } else {
-        Blockly.serialization.workspaces.load(blocklyWorkspace, workspace.value, false);
+        Blockly.serialization.workspaces.load(blocklyWorkspace, workspace.value, {recordUndo: false});
       }
     } catch (error) {
-      logEvent('failedToLoadBlocklyWorkspaceFromLS', error.toString());
+      if (error instanceof Error) {
+        logEvent('failedToLoadBlocklyWorkspaceFromLS', error.toString());
+      }
     } finally {
       Blockly.Events.enable();
     }
@@ -68,7 +71,7 @@ onMounted(() => {
 
   runCode();
 
-  workspace.value.addChangeListener((e) => {
+  workspace.value.addChangeListener((e: Blockly.Events.Abstract) => {
     if (e.isUiEvent) {
       return;
     }
@@ -81,7 +84,7 @@ onMounted(() => {
     save(data);
   });
 
-  workspace.value.addChangeListener((e) => {
+  workspace.value.addChangeListener((e: Blockly.Events.Abstract) => {
     if (
         e.isUiEvent ||
         e.type === Blockly.Events.FINISHED_LOADING ||
@@ -91,22 +94,15 @@ onMounted(() => {
     }
     runCode();
   });
-
-  workspace.value.addChangeListener(function (e) {
-    delete e['blocks'];
-    delete e['xml'];
-    logEvent('blocklyWorkspaceChanged', JSON.stringify(e));
-  });
-
 });
 
-const onInitWorkspaceHandler = (code) => {
+const onInitWorkspaceHandler = (code: string) => {
   Blockly.Events.disable();
   loadWorkspaceFromAssemblyCode(workspace.value, code);
   Blockly.Events.enable();
 }
 
-const loadWorkspaceFromAssemblyCode = (ws, assemblyCode) => {
+const loadWorkspaceFromAssemblyCode = (ws: WorkspaceSvg, assemblyCode: string) => {
   ws.clear()
   const startBlock = ws.newBlock('start');
   startBlock.initSvg();
@@ -114,10 +110,15 @@ const loadWorkspaceFromAssemblyCode = (ws, assemblyCode) => {
   const parser = codingWorkspaceState.archPlugin.parser;
   const parsedProgram = parser.parseCode(assemblyCode, false);
 
-  let prevBlock = startBlock;
+  let prevBlock: BlockSvg = startBlock;
   for (const instruction of parsedProgram) {
     const instructionBlocks = instruction.toBlocks(ws)
-    prevBlock.nextConnection.connect(instructionBlocks[0].previousConnection);
+
+    const prevCon = instructionBlocks[0].previousConnection
+    if (prevCon) {
+      prevBlock.nextConnection.connect(prevCon);
+    }
+
     prevBlock = instructionBlocks[instructionBlocks.length - 1];
   }
 

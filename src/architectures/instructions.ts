@@ -24,7 +24,7 @@ export class BaseInstruction {
         return "";
     }
 
-    toBlocks(_ws: Blockly.WorkspaceSvg): Array<Blockly.Block> {
+    toBlocks(_ws: Blockly.WorkspaceSvg): Array<Blockly.BlockSvg> {
         return [];
     }
 
@@ -49,7 +49,7 @@ export class MultilineComment extends BaseInstruction {
         return "";
     }
 
-    toBlocks(ws: Blockly.WorkspaceSvg): Array<Blockly.Block> {
+    toBlocks(ws: Blockly.WorkspaceSvg): Array<Blockly.BlockSvg> {
         let multilineCommentBlock = ws.newBlock('comment');
         multilineCommentBlock.initSvg();
         multilineCommentBlock.getField('text')?.setValue(this.text);
