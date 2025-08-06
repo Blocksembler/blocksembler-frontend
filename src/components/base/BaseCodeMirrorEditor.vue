@@ -1,8 +1,9 @@
-<script setup>
+<script lang="ts" setup>
 import {onMounted, ref, watch} from "vue";
 
+import {EditorView, lineNumbers} from "@codemirror/view"
+
 import {EditorState} from "@codemirror/state";
-import {EditorView, lineNumbers} from "@codemirror/view";
 
 import {oneDark} from "@codemirror/theme-one-dark";
 import {codingWorkspaceState} from "@/state";
@@ -35,7 +36,7 @@ onMounted(() => {
 
 });
 
-const loadCode = (code) => {
+const loadCode = (code: string) => {
   if (view.value) {
     view.value.dispatch({
       changes: {
