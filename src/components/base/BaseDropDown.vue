@@ -1,7 +1,16 @@
-<script setup>
+<script lang="ts" setup>
 import {computed} from "vue";
 
-const props = defineProps(["items"]);
+
+interface DropDownItem {
+  key: string,
+  label: string
+  clickEvent: (event: MouseEvent) => void;
+}
+
+const props = defineProps<{
+  items: Array<DropDownItem>;
+}>()
 
 let default_item = computed(() => {
   return props.items.filter(item => item.key === "__default__")[0];
@@ -10,7 +19,6 @@ let default_item = computed(() => {
 const button_items = computed(() => {
   return props.items.filter(elem => elem.key !== "__default__");
 })
-
 </script>
 
 <template>

@@ -7,7 +7,9 @@ declare module 'java-random' {
 }
 
 declare module '@mit-app-inventor/blockly-plugin-workspace-multiselect' {
-    export default class Multiselect {
+    export class Multiselect {
         constructor(workspace: any);
+
+        init(options: any);
     }
 }
