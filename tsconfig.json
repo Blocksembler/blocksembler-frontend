@@ -1,11 +1,11 @@
 {
   "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Node",
     "allowJs": true,
-    "target": "esnext",
     "outDir": "./dist",
     "useDefineForClassFields": true,
-    "module": "esnext",
-    "moduleResolution": "node",
     "strict": true,
     "jsx": "preserve",
     "skipLibCheck": true,
@@ -25,7 +25,8 @@
     "src/**/*.d.ts",
     "src/**/*.tsx",
     "src/**/*.vue",
-    "test/**/*.ts"
+    "test/**/*.ts",
+    "vite.config.ts"
   ],
   "exclude": [
     "node_modules",

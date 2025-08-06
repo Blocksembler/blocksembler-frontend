@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import * as bootstrap from "bootstrap";
+import {Modal} from "bootstrap";
 import {computed, onMounted, ref} from "vue";
 
 import BlocksemblerNavigation from "@/components/BlocksemblerNavigation.vue";
@@ -28,10 +28,13 @@ const currentView = computed(() => {
 onMounted(() => {
   const data = window.localStorage?.getItem("blocksembler-data-usage-consent");
 
+
   if (data && data === 'true' || data === 'false') {
     return;
   }
-  const consentModal = new bootstrap.Modal('cookieConsentBanner');
+
+  const el = document.getElementById("cookieConsentBanner");
+  const consentModal = new Modal(el as Element);
   consentModal.show();
 })
 
