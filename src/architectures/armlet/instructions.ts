@@ -240,7 +240,7 @@ export class AbstractArmletInstruction extends BaseInstruction {
         return cmd
     }
 
-    toBlocks(ws: WorkspaceSvg): Array<Block> {
+    toBlocks(ws: WorkspaceSvg): Array<BlockSvg> {
         const blocks = createLabelBlocks(ws, this.labels);
 
         let block = ws.newBlock(this.blockType);
@@ -465,7 +465,7 @@ export class DataDirective extends AbstractArmletInstruction {
             .join('')
     }
 
-    toBlocks(ws: WorkspaceSvg): Array<Block> {
+    toBlocks(ws: WorkspaceSvg): Array<BlockSvg> {
         const blocks = createLabelBlocks(ws, this.labels);
 
         if (this.args.length === 0) {
@@ -575,7 +575,7 @@ export class RandPermDirective extends AbstractArmletInstruction {
         return machineCode;
     }
 
-    toBlocks(ws: WorkspaceSvg): Array<Block> {
+    toBlocks(ws: WorkspaceSvg): Array<BlockSvg> {
 
         const blocks = createLabelBlocks(ws, this.labels);
 
@@ -639,7 +639,7 @@ export class RandDirective extends AbstractArmletInstruction {
         return machineCode;
     }
 
-    toBlocks(ws: WorkspaceSvg): Array<Block> {
+    toBlocks(ws: WorkspaceSvg): Array<BlockSvg> {
         const blocks = createLabelBlocks(ws, this.labels);
 
         let randPermBlock = ws.newBlock('rand')
