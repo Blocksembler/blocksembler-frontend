@@ -1,4 +1,4 @@
-<script setup>
+<script lang="ts" setup>
 import BaseModal from "@/components/modals/BaseModal.vue";
 import {settings} from "@/state";
 </script>

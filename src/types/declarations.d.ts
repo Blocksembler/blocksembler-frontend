@@ -13,3 +13,9 @@ declare module '@mit-app-inventor/blockly-plugin-workspace-multiselect' {
         init(options: any);
     }
 }
+
+declare module '*.vue' {
+    import {DefineComponent} from 'vue';
+    const component: DefineComponent<{}, {}, any>;
+    export default component;
+}
