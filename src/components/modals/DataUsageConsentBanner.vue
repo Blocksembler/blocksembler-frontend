@@ -14,7 +14,7 @@ const declineHandler = () => {
 </script>
 
 <template>
-  <BaseModal id="settingsModal" data-bs-backdrop="static" savable title="Settings">
+  <BaseModal savable>
     <template v-slot:default>
       <p>
         We use your browser’s <span class="fw-bold">local storage</span> to ensure the proper functionality of this
