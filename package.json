@@ -18,7 +18,7 @@
     "@codemirror/view": "^6.36.2",
     "@mit-app-inventor/blockly-plugin-workspace-multiselect": "^1.0.1",
     "@popperjs/core": "^2.11.8",
-    "blockly": "11.2.0",
+    "blockly": "12.2.0",
     "bootstrap": "^5.3.7",
     "codemirror": "^6.0.1",
     "file-saver": "^2.0.5",
