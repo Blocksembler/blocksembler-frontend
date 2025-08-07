@@ -10,7 +10,6 @@
     "test": "vitest"
   },
   "dependencies": {
-    "@blockly/block-plus-minus": "^8.0.12",
     "@blockly/field-multilineinput": "^5.0.13",
     "@blockly/shadow-block-converter": "^6.0.13",
     "@codemirror/state": "^6.5.1",
