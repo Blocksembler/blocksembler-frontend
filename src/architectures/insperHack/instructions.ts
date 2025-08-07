@@ -101,7 +101,7 @@ export class InsperHackInstruction extends BaseInstruction {
     }
 
     dereferenceARegister(e: BaseEmulator): MemoryLocation {
-        // get value of Memory
+        // get the value of Memory
         let address = e.registers["%A"].toUnsignedIntValue();
         // set value
         return e.memory[address];
