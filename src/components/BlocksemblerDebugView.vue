@@ -1,4 +1,4 @@
-<script setup>
+<script setup="ts">
 import BaseCodeMirrorEditor from "./base/BaseCodeMirrorEditor.vue";
 import DebuggerPanel from "./DebuggerPanel.vue";
 </script>

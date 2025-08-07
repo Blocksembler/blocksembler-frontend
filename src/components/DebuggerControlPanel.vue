@@ -1,6 +1,6 @@
-<script setup>
+<script lang="ts" setup>
 import {reactive} from "vue";
-import {codingWorkspaceState, settings} from "../state";
+import {codingWorkspaceState, settings} from "@/state";
 import {logEvent} from "@/logging";
 import BaseButton from "./base/BaseButton.vue";
 import BaseModal from "./modals/BaseModal.vue";
@@ -12,7 +12,6 @@ import ReplyIcon from "@/components/icons/ReplyIcon.vue";
 import TerminalIcon from "@/components/icons/TerminalIcon.vue";
 import BaseDropDown from "@/components/base/BaseDropDown.vue";
 
-
 const output = reactive(codingWorkspaceState.archPlugin.emulator.output);
 
 const assembleHandler = () => {
@@ -23,15 +22,23 @@ const assembleHandler = () => {
   try {
     parsedProgram = parser.parseCode(codingWorkspaceState.sourceCode);
   } catch (e) {
-    logEvent('parsingFailed', e.toString());
-    alert(e.message);
+    if (e instanceof Error) {
+      logEvent('parsingFailed', e.toString());
+      alert(e.message)
+    } else {
+      alert(e);
+    }
+
     return;
   }
 
   try {
     emulator.loadProgram(parsedProgram);
   } catch (e) {
-    logEvent('loadingProgramFailed', e.toString());
+    if (e instanceof Error) {
+      logEvent('loadingProgramFailed', e.toString());
+    }
+
     alert('Failed to load program to Emulator!');
   }
 
@@ -61,7 +68,7 @@ const resetButtonItems = [
   {
     key: '__default__',
     label: 'Reset All',
-    clickEvent: event => {
+    clickEvent: (event: MouseEvent): void => {
       event.preventDefault();
 
       let emulator = codingWorkspaceState.archPlugin.emulator;
@@ -75,7 +82,9 @@ const resetButtonItems = [
     }
   },
   {
-    key: 'reg-only', label: 'Reset Registers only', clickEvent: event => {
+    key: 'reg-only',
+    label: 'Reset Registers only',
+    clickEvent: (event: MouseEvent): void => {
       event.preventDefault();
 
       let emulator = codingWorkspaceState.archPlugin.emulator;
@@ -88,6 +97,7 @@ const resetButtonItems = [
     }
   },
 ];
+
 </script>
 
 <template>
@@ -95,7 +105,7 @@ const resetButtonItems = [
     <textarea
         id="output"
         class="form-control"
-        readonly=""
+        readonly
         rows="10"
         wrap="soft"
     >{{ output.join("\n") }}</textarea>
@@ -128,7 +138,7 @@ const resetButtonItems = [
         <TerminalIcon/>
         <span class="d-none d-md-none d-lg-inline ms-1">Output Console</span>
       </BaseButton>
-      <BaseDropDown :items=resetButtonItems @click="reset">
+      <BaseDropDown :items=resetButtonItems>
         <ReplyIcon/>
         <span class="d-none d-md-none d-lg-inline ms-1">Reset All</span>
       </BaseDropDown>
