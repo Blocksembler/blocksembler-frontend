@@ -5,7 +5,6 @@ import {BlockSvg, WorkspaceSvg} from "blockly";
 import {codingWorkspaceState} from "@/state";
 import {logEvent} from "@/logging";
 import {load, save} from "@/util/serialization";
-import {Multiselect} from "@mit-app-inventor/blockly-plugin-workspace-multiselect";
 
 import {shadowBlockConversionChangeListener} from "@blockly/shadow-block-converter";
 
@@ -27,9 +26,6 @@ onMounted(() => {
   workspace.value = Blockly.inject(blocklyDiv.value, options);
 
   workspace.value.addChangeListener(shadowBlockConversionChangeListener);
-
-  const multiselectPlugin = new Multiselect(workspace.value);
-  multiselectPlugin.init(options);
 
   const runCode = () => {
     try {
