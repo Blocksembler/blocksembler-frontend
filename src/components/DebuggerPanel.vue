@@ -1,4 +1,4 @@
-<script setup>
+<script lang="ts" setup>
 import DebuggerControlPanel from "./DebuggerControlPanel.vue";
 import DebuggerOpCodeList from "./DebuggerOpCodeList.vue";
 import DebuggerRegisterSpy from "./DebuggerRegisterSpy.vue";
