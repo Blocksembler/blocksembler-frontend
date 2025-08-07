@@ -1,8 +1,9 @@
-<script setup>
+<script lang="ts" setup>
 import {computed} from "vue";
 import {codingWorkspaceState} from "@/state";
+import {MemoryLocation} from "@/types/emulator";
 
-const memoryToInstructionObjects = (progMemory, highlightedLines) => {
+const memoryToInstructionObjects = (progMemory: Array<MemoryLocation>, highlightedLines: Array<number>) => {
   let instructions = [];
   let emulator = codingWorkspaceState.archPlugin.emulator;
 
