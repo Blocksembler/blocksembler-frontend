@@ -81,6 +81,7 @@ onMounted(() => {
       blocklyWorkspace: Blockly.serialization.workspaces.save(workspace.value),
     }
 
+    logEvent('blocklyWorkspaceChanged', JSON.stringify(data));
     save(data);
   });
 
