@@ -8,18 +8,14 @@ import "./style.scss";
 // noinspection ES6UnusedImports
 import * as bootstrap from "bootstrap";
 import {logEvent} from "@/logging";
-
-import {UUIDTypes, v4 as uuidv4} from 'uuid';
-
-let uuid: UUIDTypes;
+import {codingWorkspaceState} from "@/state";
 
 window.onload = () => {
-    uuid = uuidv4();
-    logEvent('windowLoaded', {sessionId: uuid});
+    logEvent('windowLoaded', {sessionId: codingWorkspaceState.uuid});
 }
 
 window.onbeforeunload = () => {
-    logEvent('windowUnloaded', {sessionId: uuid});
+    logEvent('windowUnloaded', {sessionId: codingWorkspaceState.uuid});
 }
 
 createApp(App).mount("#app");

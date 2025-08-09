@@ -6,7 +6,8 @@ import BlocksemblerNavigation from "@/components/BlocksemblerNavigation.vue";
 import BlocksemblerCodingView from "@/components/BlocksemblerCodingView.vue";
 import BlocksemblerDebugView from "@/components/BlocksemblerDebugView.vue";
 import Blocksembler404 from "@/components/Blocksembler404.vue";
-import DataUsageConsentBanner from "@/components/modals/DataUsageConsentBanner.vue";
+import {initLogSync} from "@/logging";
+import TanModal from "@/components/modals/TanModal.vue";
 
 
 const routes: Record<string, any> = {
@@ -26,22 +27,23 @@ const currentView = computed(() => {
 });
 
 onMounted(() => {
-  const data = window.localStorage?.getItem("blocksembler-data-usage-consent");
+  const data = window.localStorage?.getItem("blocksembler-tan-code");
 
-
-  if (data && data === 'true' || data === 'false') {
+  if (data && data !== '') {
     return;
   }
 
-  const el = document.getElementById("cookieConsentBanner");
-  const consentModal = new Modal(el as Element);
-  consentModal.show();
+  const el = document.getElementById("tanModal");
+  const modal = new Modal(el as Element);
+  modal.show();
 })
+
+initLogSync();
 
 </script>
 
 <template>
-  <DataUsageConsentBanner id="cookieConsentBanner" title="Cookie Consent"/>
+  <TanModal id="tanModal"></TanModal>
   <BlocksemblerNavigation/>
   <component :is="currentView"/>
 </template>
