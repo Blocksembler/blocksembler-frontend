@@ -2,7 +2,6 @@
 import {codingWorkspaceState} from "@/state";
 import {saveAs} from "file-saver";
 import {downloadLogData, logEvent} from "@/logging";
-import CloudDownloadIcon from "@/components/icons/CloudDownloadIcon.vue";
 import * as bootstrap from "bootstrap";
 import NewProjectModal from "@/components/modals/NewProjectModal.vue";
 import SettingsModal from "@/components/modals/SettingsModal.vue";
@@ -62,7 +61,7 @@ let importProject = () => {
 }
 
 let openNewProjectModal = () => {
-  logEvent('buttonClick', {'source': 'createNewProjectButton'})
+  logEvent('buttonClick', {})
 
   const el = document.getElementById('newProjectModal')
   const consentModal = new bootstrap.Modal(el as Element);
@@ -138,18 +137,9 @@ let openSettings = () => logEvent('buttonClick', {'source': 'settingsButton'});
                 Settings
               </a>
             </li>
-            <li class="nav-item d-inline d-lg-none">
-              <a class="nav-link" data-bs-target="#settingsModal" data-bs-toggle="modal" href="#" @click=openSettings>
-                Download Log Data
-              </a>
-            </li>
           </ul>
         </div>
       </div>
-      <button class="btn btn-outline-secondary text-nowrap me-2 d-none d-lg-inline" @click="exportLogData">
-        <CloudDownloadIcon/>
-        Download Log Data
-      </button>
     </nav>
 
     <!-- Modals -->
