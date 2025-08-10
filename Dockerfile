@@ -19,7 +19,10 @@ RUN apk add openssl
 EXPOSE 80
 
 COPY docker/custom_entrypoint.sh /custom_entrypoint.sh
-RUN chmod +x /custom_entrypoint.sh
+
+RUN apk add --no-cache dos2unix \
+ && dos2unix /custom_entrypoint.sh \
+ && chmod +x /custom_entrypoint.sh
 
 ENTRYPOINT ["/custom_entrypoint.sh"]
 CMD ["nginx", "-g", "daemon off;"]
