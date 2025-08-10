@@ -3,5 +3,5 @@ interface LogEvent {
     timestamp: Date,
     source: string,
     type: string,
-    payload: any
+    payload: string,
 }
