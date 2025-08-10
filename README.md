@@ -36,6 +36,15 @@ started, follow these steps:
 3. **Explore and Learn**: Start exploring the block-based programming environment and dive into learning assembler
    programming with ease!
 
+### Environment Variables
+
+| Name                                | Default    | Description                                              |
+|-------------------------------------|------------|----------------------------------------------------------|
+| `BLOCKSEMBLER_DEFAULT_ARCHITECTURE` | `anna`     | Name of the architecture plugin to load.                 |
+| `BLOCKSEMBLER_BACKEND_API_URL`      | `/api/v1/` | Base URL of the backend API.                             |
+| `BLOCKSEMBLER_LOG_SYNC_BATCH_SIZE`  | `1000`     | Maximum number of log entries to sync in a single batch. |
+| `BLOCKSEMBLER_LOG_SYNC_INTERVAL`    | `10000`    | Interval (in milliseconds) between log sync operations.  |
+
 ## Contributing
 
 Contributions to this project are welcome! If you have ideas for new features, improvements, or bug fixes, feel free to

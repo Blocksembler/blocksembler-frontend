@@ -5,6 +5,7 @@ import {setupDefaultBlocks} from "@/architectures/blocks";
 import {logEvent} from "@/logging";
 import {ArchitecturePlugin} from "@/types/plugin";
 import {WorkspaceListener} from "@/types/state";
+import {UUIDTypes, v4 as uuidv4} from "uuid";
 
 declare global {
     interface Window {
@@ -18,11 +19,14 @@ const architecturePluginKey = window.env["DEFAULT_ARCHITECTURE"] || 'anna';
 class BlocksemblerState {
     archPlugin: ArchitecturePlugin;
     sourceCode: string;
-    onInitWorkspaceListener: Array<WorkspaceListener>
+    onInitWorkspaceListener: Array<WorkspaceListener>;
+    uuid: UUIDTypes;
 
     constructor() {
         console.log(architecturePluginKey);
         setupDefaultBlocks();
+
+        this.uuid = uuidv4();
 
         this.archPlugin = this.loadPlugin(architecturePluginKey);
         this.sourceCode = "";

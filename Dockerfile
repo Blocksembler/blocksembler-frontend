@@ -1,5 +1,5 @@
 # build stage
-FROM node:lts-alpine as build-stage
+FROM node:lts-alpine AS build-stage
 WORKDIR /app
 
 COPY package*.json ./
@@ -8,7 +8,7 @@ COPY . .
 RUN npm run build
 
 # production stage
-FROM nginx:stable-alpine as production-stage
+FROM nginx:stable-alpine AS production-stage
 COPY --from=build-stage /app/dist /usr/share/nginx/html
 COPY docker/default.conf.template /etc/nginx/templates/default.conf.template
 COPY docker/custom_entrypoint.sh /custom_entrypoint.sh
@@ -17,7 +17,6 @@ RUN apk update
 RUN apk add openssl
 
 EXPOSE 80
-EXPOSE 443
 
 COPY docker/custom_entrypoint.sh /custom_entrypoint.sh
 RUN chmod +x /custom_entrypoint.sh
