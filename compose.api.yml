@@ -1,0 +1,29 @@
+services:
+  blocksembler-api:
+    image: "blocksembler/blocksembler-api:latest"
+    container_name: "blocksembler-api"
+    depends_on:
+      - blocksembler-db
+
+    ports:
+      - "8000:80"
+
+    networks:
+      - blocksembler
+
+    environment:
+      - DEBUG=True
+      - BLOCKSEMBLER_API_DB_URL=blocksembler-db
+      - BLOCKSEMBLER_API_DB_PORT=27017
+      - BLOCKSEMBLER_API_BASE_URL=/api/v1
+
+  blocksembler-db:
+    image: "mongodb/mongodb-community-server"
+    container_name: "blocksembler-db"
+
+    networks:
+      - blocksembler
+
+networks:
+  blocksembler:
+    driver: bridge
