@@ -27,15 +27,15 @@ const currentView = computed(() => {
 });
 
 onMounted(() => {
-  const data = window.localStorage?.getItem("blocksembler-tan-code");
+  const data = window.localStorage?.getItem("blocksembler-tracking-consent");
 
-  if (data && data !== '') {
+  if (data && (data === 'false' || data === 'true')) {
     return;
   }
 
-  const el = document.getElementById("tanModal");
+  const el = document.getElementById("tan-modal");
   const modal = new Modal(el as Element);
-  modal.show();
+  modal.toggle();
 })
 
 initLogSync();
@@ -43,7 +43,7 @@ initLogSync();
 </script>
 
 <template>
-  <TanModal id="tanModal"></TanModal>
+  <TanModal id="tan-modal"></TanModal>
   <BlocksemblerNavigation/>
   <component :is="currentView"/>
 </template>
