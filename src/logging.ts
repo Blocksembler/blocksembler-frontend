@@ -9,9 +9,9 @@ const SYNC_INTERVAL = window.env["LOG_SYNC_INTERVAL"] ? parseInt(window.env["LOG
 let timer: number | undefined;
 
 export const logEvent = (type: string, payload: any = {}): void => {
-    const consentGiven = window.localStorage?.getItem("blocksembler-tan-code");
+    const consentGiven = window.localStorage?.getItem("blocksembler-tracking-consent");
 
-    if (!consentGiven || consentGiven === "") {
+    if (!consentGiven || consentGiven === "false") {
         return;
     }
 

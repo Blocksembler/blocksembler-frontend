@@ -2,21 +2,84 @@
 import BaseModal from "@/components/modals/BaseModal.vue";
 import {deleteLogData} from "@/logging";
 import {Ref, ref} from "vue";
+import {Modal} from "bootstrap";
+
+let props = defineProps<{
+  id: string;
+}>();
 
 let tanCode: Ref<string> = ref<string>('');
 
 const consentHandler = (): void => {
-  window.localStorage?.setItem('blocksembler-tan-code', tanCode.value);
+  const modalElement = document.getElementById('tan-modal') as HTMLElement;
+  const modal = Modal.getInstance(modalElement);
+
+  let baseUrl = window.env['BACKEND_API_URL'] || "/api/v1";
+  if (!baseUrl.endsWith('/')) {
+    baseUrl += "/";
+  }
+
+  fetch(`${baseUrl}tan/${tanCode.value}`)
+      .then(res => {
+        if (res.status === 200) {
+          return res.json()
+        }
+        throw Error('tan not found');
+      })
+      .then(json => {
+        let valid_from: Date | undefined;
+        let valid_to: Date | undefined;
+
+        if (json.valid_from !== null) {
+          valid_from = new Date(json.valid_from);
+        }
+
+        if (json.valid_to !== null) {
+          valid_to = new Date(json.valid_to);
+        }
+
+        if (valid_from && valid_from > new Date()) {
+          let tanInput = document.getElementById("tan-input") as HTMLInputElement;
+          tanInput.classList.add("is-invalid");
+          console.error("tan code not yet valid");
+        } else if (valid_to && valid_to < new Date()) {
+          let tanInput = document.getElementById("tan-input") as HTMLInputElement;
+          tanInput.classList.add("is-invalid");
+          console.error("tan code not valid anymore");
+        } else {
+          window.localStorage?.setItem('blocksembler-tan-code', tanCode.value);
+          window.localStorage?.setItem('blocksembler-tracking-consent', 'true');
+          modal?.hide();
+        }
+      })
+      .catch(_err => {
+            console.error('could not retrieve tan code information');
+            let tanInput = document.getElementById("tan-input") as HTMLInputElement;
+            tanInput.classList.add("is-invalid");
+          }
+      );
 }
 
 const declineHandler = (): void => {
   deleteLogData()
   window.localStorage?.setItem('blocksembler-tan-code', '');
+  window.localStorage?.setItem('blocksembler-tracking-consent', 'false');
+
+
+  const modalElement = document.getElementById('tan-modal') as HTMLElement;
+  const modal = Modal.getInstance(modalElement);
+
+  modal?.hide();
 }
+
+const submitHandler = (e: Event): void => {
+  e.preventDefault();
+}
+
 </script>
 
 <template>
-  <BaseModal savable>
+  <BaseModal :id="props.id" savable>
     <template v-slot:default>
 
       <p id="tan-consent-desc" class="tan-muted">
@@ -30,18 +93,22 @@ const declineHandler = (): void => {
       <p>
         All logged data is strictly associated with your TAN only and no personal data is stored.
       </p>
-
-      <input
-          id="tan-input"
-          v-model="tanCode"
-          aria-required="true"
-          class="form-control input w-100"
-          inputmode="text"
-          name="tan"
-          placeholder="e.g. ABCD-1234"
-          required
-          type="text"
-      />
+      <form class="needs-validation w-100" novalidate @submit="submitHandler">
+        <input
+            id="tan-input"
+            v-model="tanCode"
+            aria-required="true"
+            class="form-control input w-100"
+            inputmode="text"
+            name="tan"
+            placeholder="e.g. ABCD-1234"
+            required
+            type="text"
+        />
+        <div class="invalid-feedback">
+          Please insert a valid TAN-Code
+        </div>
+      </form>
 
     </template>
     <template v-slot:header>
@@ -50,10 +117,10 @@ const declineHandler = (): void => {
       </div>
     </template>
     <template v-slot:buttons>
-      <button class="btn btn-primary" data-bs-dismiss="modal" @click="consentHandler">
+      <button class="btn btn-primary" type="submit" @click="consentHandler">
         I consent
       </button>
-      <button class="btn btn-danger" data-bs-dismiss="modal" @click="declineHandler">
+      <button class="btn btn-danger" @click="declineHandler">
         I decline
       </button>
     </template>
