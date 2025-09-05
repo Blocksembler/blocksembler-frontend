@@ -1,4 +1,4 @@
-import {ArmletEmulator} from "@/architectures/armlet/system";
+import {ArmletEmulator} from "@/architectures/armlet/emulator";
 import {setupBlocklyBlocks} from "@/architectures/armlet/blocks";
 import {toolbox} from "@/architectures/armlet/toolbox";
 import {ArmletBlocklyGenerator} from "@/architectures/armlet/generator";
