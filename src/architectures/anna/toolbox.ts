@@ -95,11 +95,11 @@ export const toolbox = {
                                 type: "r7"
                             }
                         },
-                        label: {
+                        rd: {
                             shadow: {
-                                type: "label"
+                                type: "r1"
                             }
-                        }
+                        },
                     }
                 },
                 {
