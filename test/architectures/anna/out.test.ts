@@ -1,7 +1,7 @@
 import {expect, test, vi} from "vitest";
 import {AnnaInstructionFactory, OutputInstruction} from "@/architectures/anna/instructions";
 import {Word} from "@/architectures/emulator";
-import {AnnaEmulator} from "@/architectures/anna/system";
+import {AnnaEmulator} from "@/architectures/anna/emulator";
 
 test("test output instruction to machine code", () => {
     let instruction = new OutputInstruction(["r1"]);

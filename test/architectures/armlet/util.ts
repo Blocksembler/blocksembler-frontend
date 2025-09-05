@@ -1,5 +1,5 @@
 import {Word} from "@/architectures/emulator";
-import {ArmletEmulator} from "@/architectures/armlet/system";
+import {ArmletEmulator} from "@/architectures/armlet/emulator";
 import {AbstractImmediateArmletInstruction} from "@/architectures/armlet/instructions";
 import {BaseInstruction} from "@/architectures/instructions";
 

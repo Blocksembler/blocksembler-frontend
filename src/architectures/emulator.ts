@@ -121,8 +121,9 @@ export class BaseEmulator {
 
         let nextInstruction = this.loadInstructionAt(this.registers.pc.toUnsignedIntValue());
         let instructionLength = Math.floor(nextInstruction.toMachineCode().length / this.addressSize);
-        nextInstruction.executeOn(this);
         this.registers.pc.set(this.registers.pc.addImmediate(instructionLength));
+
+        nextInstruction.executeOn(this);
     }
 
     loadInstructionAt(address: number): Instruction {

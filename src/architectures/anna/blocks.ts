@@ -430,17 +430,17 @@ export const setupBlocklyBlocks = () => Blockly.common.defineBlocksWithJsonArray
     },
     {
         type: "jalr",
-        message0: "store PC+1 to  %1 and jump to label %2",
+        message0: "store PC+1 to  %1 and jump to address in %2",
         args0: [
             {
                 type: "input_value",
                 name: "rs",
-                check: "register",
+                check: ["register"],
             },
             {
                 type: "input_value",
-                name: "label",
-                check: "label",
+                name: "rd",
+                check: ["register"],
             },
         ],
         inputsInline: true,

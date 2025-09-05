@@ -1,7 +1,7 @@
 import {expect, test} from "vitest";
 import {AnnaInstructionFactory, SubtractInstruction} from "@/architectures/anna/instructions";
 import {Word} from "@/architectures/emulator";
-import {AnnaEmulator} from "@/architectures/anna/system";
+import {AnnaEmulator} from "@/architectures/anna/emulator";
 
 test("test subtract instruction to machine code", () => {
     let instruction = new SubtractInstruction(["r1", "r2", "r3"]);
