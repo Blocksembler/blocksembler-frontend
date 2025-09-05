@@ -515,8 +515,8 @@ export class JumpAndLinkRegisterInstruction extends AnnaRTypeInstruction {
     }
 
     executeOn(system: BaseEmulator) {
-        let target = system.registers[this.rd];
-        let source = system.registers[this.rs1];
+        let target = system.registers[`r${this.rd}`];
+        let source = system.registers[`r${this.rs1}`];
 
         source.set(system.registers["pc"].add(Word.fromSignedIntValue(1)));
         system.registers["pc"].set(target);

@@ -1,7 +1,7 @@
 import {expect, test, vi} from "vitest";
 import {AnnaInstructionFactory, StoreWordInstruction} from "@/architectures/anna/instructions";
 import {Word} from "@/architectures/emulator";
-import {AnnaEmulator} from "@/architectures/anna/system";
+import {AnnaEmulator} from "@/architectures/anna/emulator";
 
 test("test create store word instruction from mnemonic", () => {
     let mnemonic = "sw";

@@ -1,4 +1,4 @@
-import {AnnaEmulator} from "@/architectures/anna/system";
+import {AnnaEmulator} from "@/architectures/anna/emulator";
 import {setupBlocklyBlocks} from "@/architectures/anna/blocks";
 import {toolbox} from "@/architectures/anna/toolbox";
 import {AnnaBlocklyGenerator} from "@/architectures/anna/generator";

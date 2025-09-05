@@ -1,7 +1,7 @@
 import {expect, test} from "vitest";
 import {AnnaInstructionFactory, JumpAndLinkRegisterInstruction} from "@/architectures/anna/instructions";
 import {Word} from "@/architectures/emulator";
-import {AnnaEmulator} from "@/architectures/anna/system";
+import {AnnaEmulator} from "@/architectures/anna/emulator";
 
 test("test jump and link register instruction to machine code", () => {
     let instruction = new JumpAndLinkRegisterInstruction(["r1", "r2"]);
@@ -42,8 +42,8 @@ test("test jump and link register instruction", () => {
 
     mockSystem.registers = {
         pc: pcWord,
-        1: reg1Word,
-        2: reg2Word,
+        r1: reg1Word,
+        r2: reg2Word,
     }
 
     let instruction = new JumpAndLinkRegisterInstruction(["r1", "r2"]);

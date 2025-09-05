@@ -1,6 +1,6 @@
 import {BaseInstruction} from "@/architectures/instructions";
 import {BaseEmulator, Word} from "@/architectures/emulator";
-import {addressSize, ArmletEmulator} from "@/architectures/armlet/system";
+import {addressSize, ArmletEmulator} from "@/architectures/armlet/emulator";
 import Random from "java-random";
 import {Block, BlockSvg, WorkspaceSvg} from "blockly";
 import {Instruction, MemoryLocation} from "@/types/emulator";

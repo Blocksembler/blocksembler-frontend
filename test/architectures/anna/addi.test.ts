@@ -1,7 +1,7 @@
 import {expect, test} from "vitest";
 import {AddImmediateInstruction, AnnaInstructionFactory} from "@/architectures/anna/instructions";
 import {Word} from "@/architectures/emulator";
-import {AnnaEmulator} from "@/architectures/anna/system";
+import {AnnaEmulator} from "@/architectures/anna/emulator";
 
 test("test add immediate instruction to machine code", () => {
     let instruction = new AddImmediateInstruction(["r1", "r2", "11"]);

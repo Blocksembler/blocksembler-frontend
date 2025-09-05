@@ -1,5 +1,5 @@
 import {expect, test} from "vitest";
-import {ArmletEmulator} from "@/architectures/armlet/system";
+import {ArmletEmulator} from "@/architectures/armlet/emulator";
 import {
     AddInstruction,
     BneImmediateInstruction,
