@@ -43,6 +43,7 @@ class BlocksemblerState {
         } catch (e: any) {
             logEvent("failedToImportSourceCode", e);
             alert("Failed to import source file.")
+            console.log(e);
         }
     }
 

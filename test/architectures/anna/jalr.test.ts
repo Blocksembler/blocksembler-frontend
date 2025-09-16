@@ -34,7 +34,7 @@ test("test create jump and link register instruction from machine code", () => {
 });
 
 test("test jump and link register instruction", () => {
-    let pcWord = Word.fromSignedIntValue(15, 16);
+    let pcWord = Word.fromSignedIntValue(16, 16);
     let reg1Word = Word.fromSignedIntValue(23, 16);
     let reg2Word = Word.fromSignedIntValue(0, 16);
 

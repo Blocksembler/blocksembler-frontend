@@ -2,6 +2,30 @@ import {BaseInstruction} from "../instructions";
 import {BaseEmulator, Word} from "../emulator";
 import {MemoryLocation} from "@/types/emulator";
 import {addressSize} from "@/architectures/anna/emulator";
+import {BlockSvg, WorkspaceSvg} from "blockly";
+
+const attachRegisterBlock = (ws: WorkspaceSvg, instructionBlock: BlockSvg, inputName: string, registerName: string) => {
+    let regConnection = instructionBlock.getInput(inputName)?.connection;
+
+    if (regConnection) {
+        const regBlock = ws.newBlock(registerName);
+        regBlock.initSvg();
+
+        regConnection.connect(regBlock.outputConnection);
+    }
+}
+
+const attachLabelBlock = (ws: WorkspaceSvg, instructionBlock: BlockSvg, inputName: string, label: string) => {
+    let labelConnection = instructionBlock.getInput(inputName)?.connection;
+
+    if (labelConnection) {
+        const labelBlock = ws.newBlock("label");
+        labelBlock.initSvg();
+        labelBlock.setFieldValue(label, "name");
+
+        labelConnection.connect(labelBlock.outputConnection);
+    }
+}
 
 export class AnnaInstructionFactory {
     createFromMnemonic(mnemonic: string, args: Array<string>): BaseInstruction {
@@ -43,16 +67,51 @@ export class AnnaInstructionFactory {
 
         throw Error(`Unknown opCode ${opCode}`);
     }
-
 }
 
 class AnnaBaseInstruction extends BaseInstruction {
+    get blockType(): string {
+        let constructor = this.constructor as typeof AnnaBaseInstruction;
+        return constructor.getMnemonic();
+    }
+
     static getOpCode(): string {
         throw Error("Not implemented");
     }
 
     static getMnemonic(): string {
         throw Error("Not implemented");
+    }
+
+    static fromMachineCode(_code: string): AnnaBaseInstruction {
+        throw Error("Not implemented");
+    }
+
+    toBlocks(ws: WorkspaceSvg): Array<BlockSvg> {
+        const blocks: Array<BlockSvg> = [];
+
+        const instructionBlock = this.getInstructionBlock(ws);
+
+        if (this.labels.length > 0) {
+            const labelBlock = ws.newBlock("labelDef");
+            labelBlock.initSvg();
+            labelBlock.setFieldValue(this.labels[0], "name");
+            labelBlock.nextConnection.connect(instructionBlock.previousConnection)
+            blocks.push(labelBlock);
+        }
+
+        blocks.push(instructionBlock);
+        return blocks;
+    }
+
+    getInstructionBlock(ws: WorkspaceSvg): BlockSvg {
+        const instructionBlock = ws.newBlock(this.blockType);
+        instructionBlock.initSvg();
+        this.setInstructionArguments(ws, instructionBlock);
+        return instructionBlock;
+    }
+
+    setInstructionArguments(_ws: WorkspaceSvg, _block: BlockSvg) {
     }
 }
 
@@ -90,6 +149,12 @@ class AnnaRTypeInstruction extends AnnaBaseInstruction {
     toString() {
         const constructor = (this.constructor as typeof AnnaRTypeInstruction);
         return `${constructor.getMnemonic()} r${this.rd} r${this.rs1} r${this.rs2}`;
+    }
+
+    setInstructionArguments(ws: WorkspaceSvg, block: BlockSvg) {
+        attachRegisterBlock(ws, block, "rd", `r${this.rd}`);
+        attachRegisterBlock(ws, block, "rs1", `r${this.rs1}`);
+        attachRegisterBlock(ws, block, "rs2", `r${this.rs2}`);
     }
 }
 
@@ -130,6 +195,14 @@ class AnnaI6TypeInstruction extends AnnaBaseInstruction {
         const constructor = (this.constructor as typeof AnnaI6TypeInstruction);
         return `${constructor.getMnemonic()} r${this.rd} r${this.rs} #${this.imm}`;
     }
+
+    setInstructionArguments(ws: WorkspaceSvg, block: BlockSvg) {
+        attachRegisterBlock(ws, block, "rd", `r${this.rd}`);
+        attachRegisterBlock(ws, block, "rs1", `r${this.rs}`);
+
+        block.setFieldValue(this.imm, "immediate");
+    }
+
 }
 
 class AnnaI8TypeInstruction extends AnnaBaseInstruction {
@@ -153,6 +226,10 @@ class AnnaI8TypeInstruction extends AnnaBaseInstruction {
 
     toMachineCode() {
         const constructor = (this.constructor as typeof AnnaI8TypeInstruction);
+
+
+        console.log("imm", this.imm);
+
         let machineInstruction =
             constructor.getOpCode() + this.rd.toString(2).padStart(3, "0");
         machineInstruction += "0";
@@ -164,6 +241,11 @@ class AnnaI8TypeInstruction extends AnnaBaseInstruction {
     toString() {
         const constructor = (this.constructor as typeof AnnaI8TypeInstruction);
         return `${constructor.getMnemonic()} r${this.rd} #${this.imm}`;
+    }
+
+    setInstructionArguments(ws: WorkspaceSvg, block: BlockSvg) {
+        attachRegisterBlock(ws, block, "rd", `r${this.rd}`);
+        block.setFieldValue(this.imm, "immediate");
     }
 }
 
@@ -367,6 +449,32 @@ export class LoadLowerImmediateInstruction extends AnnaI8TypeInstruction {
 
         target.set(target.and(mask.invert()).or(immediateWord));
     }
+
+    getInstructionBlock(ws: WorkspaceSvg): BlockSvg {
+        let instructionBlock;
+
+        if (this.args[1].startsWith("&")) {
+            instructionBlock = ws.newBlock("lli_label");
+            instructionBlock.initSvg();
+        } else {
+            instructionBlock = ws.newBlock("lli");
+            instructionBlock.initSvg();
+        }
+
+        this.setInstructionArguments(ws, instructionBlock);
+
+        return instructionBlock;
+    }
+
+    setInstructionArguments(ws: WorkspaceSvg, block: BlockSvg) {
+        attachRegisterBlock(ws, block, "rd", `r${this.rd}`);
+        if (this.args[1].startsWith("&")) {
+            attachLabelBlock(ws, block, "label", this.args[1].slice(1, this.args[1].length));
+        } else {
+            block.setFieldValue(this.imm, "immediate");
+        }
+    }
+
 }
 
 export class LoadUpperImmediateInstruction extends AnnaI8TypeInstruction {
@@ -393,6 +501,32 @@ export class LoadUpperImmediateInstruction extends AnnaI8TypeInstruction {
 
         target.set(target.and(mask).or(immediateWord));
     }
+
+    getInstructionBlock(ws: WorkspaceSvg): BlockSvg {
+        let instructionBlock;
+
+        console.log("args", this.args);
+        if (this.args[1].startsWith("&")) {
+            instructionBlock = ws.newBlock("lui_label");
+            instructionBlock.initSvg();
+        } else {
+            instructionBlock = ws.newBlock("lui");
+            instructionBlock.initSvg();
+        }
+
+        this.setInstructionArguments(ws, instructionBlock);
+
+        return instructionBlock;
+    }
+
+    setInstructionArguments(ws: WorkspaceSvg, block: BlockSvg) {
+        attachRegisterBlock(ws, block, "rd", `r${this.rd}`);
+        if (this.args[1].startsWith("&")) {
+            attachLabelBlock(ws, block, "label", this.args[1].slice(1, this.args[1].length));
+        } else {
+            block.setFieldValue(this.imm, "immediate");
+        }
+    }
 }
 
 export class LoadWordInstruction extends AnnaI6TypeInstruction {
@@ -415,7 +549,7 @@ export class LoadWordInstruction extends AnnaI6TypeInstruction {
         let source = system.registers[`r${this.rs}`];
         let offset = Number(this.imm);
 
-        target.set(system.loadFromMemory(source.toSignedIntValue() + offset));
+        target.set(system.loadFromMemory(source.toUnsignedIntValue() + offset));
     }
 }
 
@@ -439,7 +573,7 @@ export class StoreWordInstruction extends AnnaI6TypeInstruction {
         let source = system.registers[`r${this.rs}`];
         let offset = this.imm;
 
-        system.storeToMemory(source.toSignedIntValue() + offset, destination);
+        system.storeToMemory(source.toUnsignedIntValue() + offset, destination);
     }
 }
 
@@ -466,6 +600,14 @@ export class BranchEqualZeroInstruction extends AnnaI8TypeInstruction {
             system.registers["pc"].set(Word.fromSignedIntValue(pcVal + this.imm));
         }
     }
+
+    setInstructionArguments(ws: WorkspaceSvg, block: BlockSvg) {
+        let label = this.args[this.args.length - 1];
+        label = label.slice(1, label.length);
+
+        attachRegisterBlock(ws, block, "rd", `r${this.rd}`);
+        attachLabelBlock(ws, block, "label", label);
+    }
 }
 
 export class BranchGreaterZeroInstruction extends AnnaI8TypeInstruction {
@@ -490,6 +632,14 @@ export class BranchGreaterZeroInstruction extends AnnaI8TypeInstruction {
             let pcVal = system.registers["pc"].toSignedIntValue();
             system.registers["pc"].set(Word.fromSignedIntValue(pcVal + this.imm));
         }
+    }
+
+    setInstructionArguments(ws: WorkspaceSvg, block: BlockSvg) {
+        let label = this.args[this.args.length - 1];
+        label = label.slice(1, label.length);
+
+        attachRegisterBlock(ws, block, "rd", `r${this.rd}`);
+        attachLabelBlock(ws, block, "label", label);
     }
 }
 
@@ -516,11 +666,11 @@ export class JumpAndLinkRegisterInstruction extends AnnaRTypeInstruction {
     }
 
     executeOn(system: BaseEmulator) {
-        let target = system.registers[`r${this.rd}`];
+        let targetAddress = system.registers[`r${this.rd}`].toUnsignedIntValue();
         let source = system.registers[`r${this.rs1}`];
 
-        source.set(system.registers["pc"].add(Word.fromSignedIntValue(1)));
-        system.registers["pc"].set(target);
+        source.set(system.registers["pc"]);
+        system.registers["pc"].set(Word.fromSignedIntValue(targetAddress, addressSize));
     }
 }
 
@@ -590,6 +740,10 @@ export class HaltInstruction extends AnnaRTypeInstruction {
         super([])
     }
 
+    get blockType() {
+        return "halt";
+    }
+
     static getMnemonic(): string {
         return ".halt";
     }
@@ -618,6 +772,10 @@ export class HaltInstruction extends AnnaRTypeInstruction {
 }
 
 export class FillDirective extends AnnaBaseInstruction {
+    get blockType() {
+        return "fill";
+    }
+
     static getMnemonic(): string {
         return ".fill";
     }
@@ -629,6 +787,10 @@ export class FillDirective extends AnnaBaseInstruction {
     toMachineCode() {
         const immediate: number = Number.parseInt(this.args[0]);
         return Word.fromSignedIntValue(immediate, addressSize).toBitString();
+    }
+
+    setInstructionArguments(ws: WorkspaceSvg, block: BlockSvg) {
+        block.setFieldValue(this.args[0], "immediate");
     }
 }
 

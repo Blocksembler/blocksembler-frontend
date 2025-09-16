@@ -35,9 +35,10 @@ let importProject = () => {
 
     let sourceCode: string;
 
-    if (data instanceof String) {
+    if (typeof data === "string") {
       sourceCode = data as string;
     } else {
+      console.log(data);
       sourceCode = new TextDecoder().decode(data as ArrayBuffer);
     }
 
