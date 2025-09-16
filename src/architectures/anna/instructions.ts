@@ -1,6 +1,7 @@
 import {BaseInstruction} from "../instructions";
 import {BaseEmulator, Word} from "../emulator";
 import {MemoryLocation} from "@/types/emulator";
+import {addressSize} from "@/architectures/anna/emulator";
 
 export class AnnaInstructionFactory {
     createFromMnemonic(mnemonic: string, args: Array<string>): BaseInstruction {
@@ -616,6 +617,21 @@ export class HaltInstruction extends AnnaRTypeInstruction {
     }
 }
 
+export class FillDirective extends AnnaBaseInstruction {
+    static getMnemonic(): string {
+        return ".fill";
+    }
+
+    static getOpCode(): string {
+        return "";
+    }
+
+    toMachineCode() {
+        const immediate: number = Number.parseInt(this.args[0]);
+        return Word.fromSignedIntValue(immediate, addressSize).toBitString();
+    }
+}
+
 const instructionClasses: Array<typeof AnnaBaseInstruction> = [
     BranchEqualZeroInstruction,
     BranchGreaterZeroInstruction,
@@ -633,6 +649,7 @@ const instructionClasses: Array<typeof AnnaBaseInstruction> = [
     OutputInstruction,
     LoadWordInstruction,
     StoreWordInstruction,
-    HaltInstruction
+    HaltInstruction,
+    FillDirective
 ];
 

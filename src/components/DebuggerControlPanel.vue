@@ -39,6 +39,7 @@ const assembleHandler = () => {
       logEvent('loadingProgramFailed', e.toString());
     }
 
+    console.log(e);
     alert('Failed to load program to Emulator!');
   }
 

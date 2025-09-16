@@ -2,7 +2,7 @@ import {BaseEmulator, ImmutableWord, Word} from "@/architectures/emulator";
 import {AnnaInstructionFactory} from "./instructions";
 import {InterruptFunction} from "@/types/emulator";
 
-const addressSize = 16;
+export const addressSize = 16;
 
 export class AnnaEmulator extends BaseEmulator {
     constructor() {
