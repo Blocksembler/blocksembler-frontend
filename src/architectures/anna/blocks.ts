@@ -564,5 +564,24 @@ export const setupBlocklyBlocks = () => Blockly.common.defineBlocksWithJsonArray
         output: "label",
         colour: 225,
         inputsInline: true
+    },
+    {
+        type: "fill",
+        tooltip: "",
+        helpUrl: "",
+        message0: "fill this spot with value %1",
+        args0: [
+            {
+                type: "field_number",
+                name: "immediate",
+                value: 0,
+                min: -32768,
+                max: 32767
+            },
+        ],
+        previousStatement: null,
+        nextStatement: null,
+        colour: 225,
+        inputsInline: true
     }
 ]);

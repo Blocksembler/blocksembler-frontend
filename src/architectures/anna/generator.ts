@@ -178,5 +178,11 @@ export class AnnaBlocklyGenerator extends BaseBlocklyGenerator {
 
             return [`&${labelName}`, Order.ATOMIC];
         };
+
+        this.generator.forBlock["fill"] = (block, _generator) => {
+            const immediate = block.getFieldValue("immediate");
+
+            return `.fill ${immediate}`;
+        };
     }
 }

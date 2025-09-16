@@ -354,5 +354,16 @@ export const toolbox = {
                 },
             ],
         },
+        {
+            kind: "category",
+            name: "Other",
+            colour: "310",
+            contents: [
+                {
+                    kind: "block",
+                    type: "fill"
+                }
+            ]
+        }
     ],
 };
