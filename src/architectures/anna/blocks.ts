@@ -107,7 +107,7 @@ export const setupBlocklyBlocks = () => Blockly.common.defineBlocksWithJsonArray
                 name: "immediate",
                 value: 0,
                 min: -128,
-                max: 127,
+                max: 255,
             },
         ],
         previousStatement: ["instruction", "label"],
@@ -130,7 +130,7 @@ export const setupBlocklyBlocks = () => Blockly.common.defineBlocksWithJsonArray
                 name: "immediate",
                 value: 0,
                 min: -128,
-                max: 127,
+                max: 255,
             },
         ],
         previousStatement: ["instruction", "label"],
@@ -141,7 +141,7 @@ export const setupBlocklyBlocks = () => Blockly.common.defineBlocksWithJsonArray
     },
     {
         type: "lli_label",
-        message0: "load lower 8-bits of label %1 to register %2",
+        message0: "load lower 8-bits of label %1 to lower 8-bits of register %2",
         args0: [
             {
                 type: "input_value",
@@ -163,7 +163,7 @@ export const setupBlocklyBlocks = () => Blockly.common.defineBlocksWithJsonArray
     },
     {
         type: "lui_label",
-        message0: "load upper 8-bits of label %1 to register %2",
+        message0: "load upper 8-bits of label %1 to upper 8-bits of register %2",
         args0: [
             {
                 type: "input_value",
@@ -243,7 +243,7 @@ export const setupBlocklyBlocks = () => Blockly.common.defineBlocksWithJsonArray
         args0: [
             {
                 type: "input_value",
-                name: "rs",
+                name: "rs1",
                 check: "register",
             },
             {
@@ -265,7 +265,7 @@ export const setupBlocklyBlocks = () => Blockly.common.defineBlocksWithJsonArray
         args0: [
             {
                 type: "input_value",
-                name: "rs",
+                name: "rs1",
             },
             {
                 type: "field_number",
@@ -295,12 +295,12 @@ export const setupBlocklyBlocks = () => Blockly.common.defineBlocksWithJsonArray
         args0: [
             {
                 type: "input_value",
-                name: "rs",
+                name: "rs1",
                 check: "register",
             },
             {
                 type: "field_number",
-                name: "offset",
+                name: "immediate",
                 value: 0,
                 min: -32,
                 max: 31,
@@ -332,12 +332,12 @@ export const setupBlocklyBlocks = () => Blockly.common.defineBlocksWithJsonArray
             },
             {
                 type: "input_value",
-                name: "rs",
+                name: "rs1",
                 check: "register",
             },
             {
                 type: "field_number",
-                name: "offset",
+                name: "immediate",
                 value: 0,
                 min: -32,
                 max: 31,
@@ -434,7 +434,7 @@ export const setupBlocklyBlocks = () => Blockly.common.defineBlocksWithJsonArray
         args0: [
             {
                 type: "input_value",
-                name: "rs",
+                name: "rs1",
                 check: ["register"],
             },
             {
@@ -540,7 +540,7 @@ export const setupBlocklyBlocks = () => Blockly.common.defineBlocksWithJsonArray
         args0: [
             {
                 type: "field_input",
-                name: "labelName",
+                name: "name",
                 text: "loop"
             },
         ],
@@ -551,13 +551,12 @@ export const setupBlocklyBlocks = () => Blockly.common.defineBlocksWithJsonArray
     },
     {
         type: "label",
-        tooltip: "mov instruction",
         helpUrl: "",
         message0: "label: %1",
         args0: [
             {
                 type: "field_input",
-                name: "label_name",
+                name: "name",
                 text: "default"
             }
         ],
@@ -576,7 +575,7 @@ export const setupBlocklyBlocks = () => Blockly.common.defineBlocksWithJsonArray
                 name: "immediate",
                 value: 0,
                 min: -32768,
-                max: 32767
+                max: 65535
             },
         ],
         previousStatement: null,

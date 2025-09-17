@@ -90,7 +90,7 @@ export const toolbox = {
                     kind: "block",
                     type: "jalr",
                     inputs: {
-                        rs: {
+                        rs1: {
                             shadow: {
                                 type: "r7"
                             }
@@ -222,7 +222,7 @@ export const toolbox = {
                     kind: "block",
                     type: "not",
                     inputs: {
-                        rs: {
+                        rs1: {
                             shadow: {
                                 type: "r0"
                             }
@@ -238,7 +238,7 @@ export const toolbox = {
                     kind: "block",
                     type: "shf",
                     inputs: {
-                        rs: {
+                        rs1: {
                             shadow: {
                                 type: "r0"
                             }
@@ -324,7 +324,7 @@ export const toolbox = {
                     kind: "block",
                     type: "lw",
                     inputs: {
-                        rs: {
+                        rs1: {
                             shadow: {
                                 type: "r0"
                             }
@@ -340,7 +340,7 @@ export const toolbox = {
                     kind: "block",
                     type: "sw",
                     inputs: {
-                        rs: {
+                        rs1: {
                             shadow: {
                                 type: "r0"
                             }

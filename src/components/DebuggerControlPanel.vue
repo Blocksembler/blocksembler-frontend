@@ -78,6 +78,8 @@ const resetButtonItems = [
       emulator.resetMemory();
       emulator.resetRegisters();
 
+      emulator.output.splice(0, emulator.output.length);
+
       emulator.isTerminated = false;
       emulator.isPaused = true;
     }
