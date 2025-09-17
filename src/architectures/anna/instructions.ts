@@ -601,12 +601,32 @@ export class BranchEqualZeroInstruction extends AnnaI8TypeInstruction {
         }
     }
 
-    setInstructionArguments(ws: WorkspaceSvg, block: BlockSvg) {
-        let label = this.args[this.args.length - 1];
-        label = label.slice(1, label.length);
+    getInstructionBlock(ws: WorkspaceSvg): BlockSvg {
+        let instructionBlock: BlockSvg;
 
+        if (this.args[1].startsWith("&")) {
+            instructionBlock = ws.newBlock(this.blockType);
+        } else {
+            instructionBlock = ws.newBlock("bezImmediate");
+        }
+
+        instructionBlock.initSvg();
+        this.setInstructionArguments(ws, instructionBlock);
+        return instructionBlock;
+    }
+
+    setInstructionArguments(ws: WorkspaceSvg, block: BlockSvg) {
         attachRegisterBlock(ws, block, "rd", `r${this.rd}`);
-        attachLabelBlock(ws, block, "label", label);
+
+        if (this.args[1].startsWith("0x")) {
+            block.setFieldValue(parseInt(this.args[1].slice(2), 16), "immediate")
+        } else if (this.args[1].startsWith("&")) {
+            let label = this.args[this.args.length - 1];
+            label = label.slice(1, label.length);
+            attachLabelBlock(ws, block, "label", label);
+        } else {
+            block.setFieldValue(parseInt(this.args[1]), "immediate");
+        }
     }
 }
 
@@ -634,12 +654,32 @@ export class BranchGreaterZeroInstruction extends AnnaI8TypeInstruction {
         }
     }
 
-    setInstructionArguments(ws: WorkspaceSvg, block: BlockSvg) {
-        let label = this.args[this.args.length - 1];
-        label = label.slice(1, label.length);
+    getInstructionBlock(ws: WorkspaceSvg): BlockSvg {
+        let instructionBlock: BlockSvg;
 
+        if (this.args[1].startsWith("&")) {
+            instructionBlock = ws.newBlock(this.blockType);
+        } else {
+            instructionBlock = ws.newBlock("bgzImmediate");
+        }
+
+        instructionBlock.initSvg();
+        this.setInstructionArguments(ws, instructionBlock);
+        return instructionBlock;
+    }
+
+    setInstructionArguments(ws: WorkspaceSvg, block: BlockSvg) {
         attachRegisterBlock(ws, block, "rd", `r${this.rd}`);
-        attachLabelBlock(ws, block, "label", label);
+
+        if (this.args[1].startsWith("0x")) {
+            block.setFieldValue(parseInt(this.args[1].slice(2), 16), "immediate")
+        } else if (this.args[1].startsWith("&")) {
+            let label = this.args[this.args.length - 1];
+            label = label.slice(1, label.length);
+            attachLabelBlock(ws, block, "label", label);
+        } else {
+            block.setFieldValue(parseInt(this.args[1]), "immediate");
+        }
     }
 }
 

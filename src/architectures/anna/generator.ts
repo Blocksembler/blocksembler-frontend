@@ -140,6 +140,21 @@ export class AnnaBlocklyGenerator extends BaseBlocklyGenerator {
             return `bgz ${rd} ${label}`;
         };
 
+
+        this.generator.forBlock["bezImmediate"] = (block: Block) => {
+            const rd = this.generator.valueToCode(block, "rd", Order.ATOMIC);
+            const immediate = block.getFieldValue("immediate");
+
+            return `bez ${rd} ${immediate}`;
+        };
+
+        this.generator.forBlock["bgzImmediate"] = (block: Block) => {
+            const rd = this.generator.valueToCode(block, "rd", Order.ATOMIC);
+            const immediate = block.getFieldValue("immediate");
+
+            return `bgz ${rd} ${immediate}`;
+        };
+
         this.generator.forBlock["jalr"] = (block: Block) => {
             const rd = this.generator.valueToCode(block, "rd", Order.ATOMIC);
             const rs = this.generator.valueToCode(block, "rs1", Order.ATOMIC);
