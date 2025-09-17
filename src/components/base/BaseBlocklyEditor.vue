@@ -39,6 +39,7 @@ onMounted(() => {
     } catch (error) {
       if (error instanceof Error) {
         logEvent('failedToGenerateAssemblyCode', error.toString());
+        console.log(error);
       }
     }
   };

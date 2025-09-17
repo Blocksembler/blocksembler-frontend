@@ -1,4 +1,4 @@
-import {MultilineComment} from "@/architectures/instructions";
+import {BaseInstruction, MultilineComment} from "@/architectures/instructions";
 import {Instruction, InstructionFactory} from "@/types/emulator";
 
 
@@ -210,16 +210,18 @@ export class BaseParser {
         }
 
         for (const instIdx in program) {
+
             for (const argIdx in program[instIdx].args) {
                 if (this.isLabelReference(program[instIdx].args[argIdx])) {
                     let label = this.labelReferenceToName(program[instIdx].args[argIdx])
                     let labelAddress = labelAddresses[label]
+                    const instruction = program[instIdx];
 
                     if (labelAddress === undefined) {
                         throw new ParsingError(instructionAddress[instIdx] + 1, `Label "${label}" not defined.`);
                     }
 
-                    program[instIdx].args[argIdx] = this.labelToVal(labelAddress, instructionAddress[instIdx]).toString();
+                    instruction.args[argIdx] = this.labelToVal(labelAddress, instructionAddress[instIdx], instruction).toString();
                 }
             }
         }
@@ -236,7 +238,7 @@ export class BaseParser {
         return `@${label}`
     }
 
-    labelToVal(labelAddress: number, _instructionAddress: number) {
+    labelToVal(labelAddress: number, _instructionAddress: number, _instruction: BaseInstruction) {
         return labelAddress;
     }
 }

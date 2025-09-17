@@ -85,14 +85,14 @@ export class AnnaBlocklyGenerator extends BaseBlocklyGenerator {
         };
 
         this.generator.forBlock["not"] = (block: Block) => {
-            const rs = this.generator.valueToCode(block, "rs", Order.ATOMIC);
+            const rs = this.generator.valueToCode(block, "rs1", Order.ATOMIC);
             const rd = this.generator.valueToCode(block, "rd", Order.ATOMIC);
 
             return `not ${rd} ${rs}`;
         };
 
         this.generator.forBlock["shf"] = (block: Block) => {
-            const rs = this.generator.valueToCode(block, "rs", Order.ATOMIC);
+            const rs = this.generator.valueToCode(block, "rs1", Order.ATOMIC);
             const rd = this.generator.valueToCode(block, "rd", Order.ATOMIC);
             const immediate = block.getFieldValue("immediate");
 
@@ -100,8 +100,8 @@ export class AnnaBlocklyGenerator extends BaseBlocklyGenerator {
         };
 
         this.generator.forBlock["lw"] = (block: Block) => {
-            const rs = this.generator.valueToCode(block, "rs", Order.ATOMIC);
-            const offset = block.getFieldValue("offset");
+            const rs = this.generator.valueToCode(block, "rs1", Order.ATOMIC);
+            const offset = block.getFieldValue("immediate");
             const rd = this.generator.valueToCode(block, "rd", Order.ATOMIC);
 
             return `lw ${rd} ${rs} ${offset}`;
@@ -109,8 +109,8 @@ export class AnnaBlocklyGenerator extends BaseBlocklyGenerator {
 
         this.generator.forBlock["sw"] = (block: Block) => {
             const rd = this.generator.valueToCode(block, "rd", Order.ATOMIC);
-            const rs = this.generator.valueToCode(block, "rs", Order.ATOMIC);
-            const offset = block.getFieldValue("offset");
+            const rs = this.generator.valueToCode(block, "rs1", Order.ATOMIC);
+            const offset = block.getFieldValue("immediate");
             return `sw ${rd} ${rs} ${offset}`;
         };
 
@@ -142,7 +142,7 @@ export class AnnaBlocklyGenerator extends BaseBlocklyGenerator {
 
         this.generator.forBlock["jalr"] = (block: Block) => {
             const rd = this.generator.valueToCode(block, "rd", Order.ATOMIC);
-            const rs = this.generator.valueToCode(block, "rs", Order.ATOMIC);
+            const rs = this.generator.valueToCode(block, "rs1", Order.ATOMIC);
 
             return `jalr ${rd} ${rs}`;
         };
@@ -169,12 +169,12 @@ export class AnnaBlocklyGenerator extends BaseBlocklyGenerator {
         this.generator.forBlock["r7"] = generateRegister;
 
         this.generator.forBlock["labelDef"] = (block) => {
-            let label = block.getFieldValue("labelName");
+            let label = block.getFieldValue("name");
             return `${label}:`;
         };
 
         this.generator.forBlock["label"] = (block, _generator) => {
-            const labelName = block.getFieldValue("label_name");
+            const labelName = block.getFieldValue("name");
 
             return [`&${labelName}`, Order.ATOMIC];
         };

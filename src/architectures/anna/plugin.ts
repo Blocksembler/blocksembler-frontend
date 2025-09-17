@@ -8,7 +8,7 @@ import {ArchitecturePlugin} from "@/types/plugin";
 
 export default {
     name: "anna",
-    fileExtension: "asm",
+    fileExtension: "ac",
     parser: new AnnaAssemblyParser(),
     emulator: new AnnaEmulator(),
     setupBlockBlocks: setupBlocklyBlocks,
