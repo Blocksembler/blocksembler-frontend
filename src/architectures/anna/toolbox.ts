@@ -88,6 +88,28 @@ export const toolbox = {
                 },
                 {
                     kind: "block",
+                    type: "bezImmediate",
+                    inputs: {
+                        rd: {
+                            shadow: {
+                                type: "r0"
+                            }
+                        },
+                    }
+                },
+                {
+                    kind: "block",
+                    type: "bgzImmediate",
+                    inputs: {
+                        rd: {
+                            shadow: {
+                                type: "r0"
+                            }
+                        },
+                    }
+                },
+                {
+                    kind: "block",
                     type: "jalr",
                     inputs: {
                         rs1: {
