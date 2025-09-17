@@ -386,7 +386,7 @@ export const setupBlocklyBlocks = () => Blockly.common.defineBlocksWithJsonArray
     },
     {
         type: "bez",
-        message0: "if  %1 is zero, jump to label %2",
+        message0: "if  %1 equals zero, jump to label %2",
         args0: [
             {
                 type: "input_value",
@@ -419,6 +419,54 @@ export const setupBlocklyBlocks = () => Blockly.common.defineBlocksWithJsonArray
                 type: "input_value",
                 name: "label",
                 check: "label",
+            },
+        ],
+        inputsInline: true,
+        previousStatement: ["instruction", "label"],
+        nextStatement: ["instruction"],
+        colour: 230,
+        tooltip: "",
+        helpUrl: "",
+    },
+    {
+        type: "bezImmediate",
+        message0: "if  %1 equals zero, change PC register by  %2",
+        args0: [
+            {
+                type: "input_value",
+                name: "rd",
+                check: "register",
+            },
+            {
+                type: "field_number",
+                name: "immediate",
+                value: 0,
+                min: -128,
+                max: 255
+            },
+        ],
+        inputsInline: true,
+        previousStatement: ["instruction", "label"],
+        nextStatement: ["instruction"],
+        colour: 230,
+        tooltip: "",
+        helpUrl: "",
+    },
+    {
+        type: "bgzImmediate",
+        message0: "if  %1 is greater than zero, change PC register by %2",
+        args0: [
+            {
+                type: "input_value",
+                name: "rd",
+                check: "register",
+            },
+            {
+                type: "field_number",
+                name: "immediate",
+                value: 0,
+                min: -128,
+                max: 255
             },
         ],
         inputsInline: true,
