@@ -11,7 +11,7 @@ export default {
     fileExtension: "ac",
     parser: new AnnaAssemblyParser(),
     emulator: new AnnaEmulator(),
-    setupBlockBlocks: setupBlocklyBlocks,
+    setupBlocklyBlocks: setupBlocklyBlocks,
     blocklyToolbox: toolbox,
     blocklyGenerator: new AnnaBlocklyGenerator().generator,
     formatter: new AnnaCodeFormatter()

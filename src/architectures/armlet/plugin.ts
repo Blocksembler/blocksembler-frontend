@@ -11,7 +11,7 @@ export default {
     fileExtension: "s",
     parser: new ArmletAssemblyParser(),
     emulator: new ArmletEmulator(),
-    setupBlockBlocks: setupBlocklyBlocks,
+    setupBlocklyBlocks: setupBlocklyBlocks,
     blocklyToolbox: toolbox,
     blocklyGenerator: new ArmletBlocklyGenerator().generator,
     formatter: new BaseFormatter(5, 20, ':', '#')
