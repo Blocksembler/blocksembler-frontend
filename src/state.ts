@@ -57,7 +57,7 @@ class BlocksemblerState {
         }
 
         const archPlugin = pluginRegistry[pluginName];
-        archPlugin.setupBlockBlocks();
+        archPlugin.setupBlocklyBlocks();
         return archPlugin;
     }
 }

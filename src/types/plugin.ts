@@ -8,7 +8,7 @@ export interface ArchitecturePlugin {
     fileExtension: string,
     parser: BaseParser,
     emulator: BaseEmulator,
-    setupBlockBlocks: () => void,
+    setupBlocklyBlocks: () => void,
     blocklyToolbox: any,
     blocklyGenerator: Generator,
     formatter: BaseFormatter,
