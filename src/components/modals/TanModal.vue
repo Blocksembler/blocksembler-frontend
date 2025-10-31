@@ -3,6 +3,7 @@ import BaseModal from "@/components/modals/BaseModal.vue";
 import {deleteLogData} from "@/logging";
 import {Ref, ref} from "vue";
 import {Modal} from "bootstrap";
+import {BACKEND_API_URL} from "@/config";
 
 let props = defineProps<{
   id: string;
@@ -14,12 +15,7 @@ const consentHandler = (): void => {
   const modalElement = document.getElementById('tan-modal') as HTMLElement;
   const modal = Modal.getInstance(modalElement);
 
-  let baseUrl = window.env['BACKEND_API_URL'] || "/api/v1";
-  if (!baseUrl.endsWith('/')) {
-    baseUrl += "/";
-  }
-
-  fetch(`${baseUrl}tan/${tanCode.value}`)
+  fetch(`${BACKEND_API_URL}/tans/${tanCode.value}`)
       .then(res => {
         if (res.status === 200) {
           return res.json()

@@ -1,15 +1,18 @@
 import {saveAs} from "file-saver";
 import {db} from "@/db";
 import {onMounted, onUnmounted} from "vue";
+import {BACKEND_API_URL, LOG_SYNC_BATCH_SIZE, LOG_SYNC_INTERVAL} from "@/config";
 
-const BASE_URL = "api/v1/";
-const BATCH_SIZE = window.env["LOG_SYNC_BATCH_SIZE"] ? parseInt(window.env["LOG_SYNC_BATCH_SIZE"]) : 1_000;
-const SYNC_INTERVAL = window.env["LOG_SYNC_INTERVAL"] ? parseInt(window.env["LOG_SYNC_INTERVAL"]) : 10_000;
 
 let timer: number | undefined;
 
 export const logEvent = (type: string, payload: any = {}): void => {
     const consentGiven = window.localStorage?.getItem("blocksembler-tracking-consent");
+    const tanCode = window.localStorage?.getItem("blocksembler-tan-code");
+
+    if (!tanCode) {
+        return
+    }
 
     if (!consentGiven || consentGiven === "false") {
         return;
@@ -19,7 +22,14 @@ export const logEvent = (type: string, payload: any = {}): void => {
 
     let timestamp = new Date();
     let source = "";
-    let event: LogEvent = {timestamp, type, source, payload: jsonString};
+    let event: LogEvent = {
+        "tan_code": tanCode,
+        "timestamp": timestamp,
+        "type": type,
+        "source": source,
+        "payload": jsonString,
+        "exercise_id": null
+    };
 
     console.log(event);
     db.events.add(event);
@@ -45,22 +55,22 @@ async function flushOnce() {
             return;
         }
 
-        let endpoint = BASE_URL;
+        let endpoint = BACKEND_API_URL;
 
         if (!endpoint.endsWith("/")) {
             endpoint += "/";
         }
 
-        endpoint += `logging/${tan}`;
+        endpoint += `logging-events/${tan}`;
 
-        const batch: Array<LogEvent> = await db.events.orderBy('id').limit(BATCH_SIZE).toArray();
+        const batch: Array<LogEvent> = await db.events.orderBy('id').limit(LOG_SYNC_BATCH_SIZE).toArray();
 
         fetch(endpoint, {
-            method: 'POST', // HTTP method
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(batch)            // convert JS object → JSON string
+            body: JSON.stringify(batch)
         })
             .then(async response => {
                 if (!response.ok) {
@@ -79,7 +89,7 @@ async function flushOnce() {
 
 function schedule() {
     clearSchedule();
-    timer = setInterval(flushOnce, SYNC_INTERVAL) as unknown as number;
+    timer = setInterval(flushOnce, LOG_SYNC_INTERVAL) as unknown as number;
 }
 
 const clearSchedule = (): void => {
@@ -102,9 +112,9 @@ const stop = (): void => {
 export const initLogSync = (): void => {
     document.addEventListener('visibilitychange', () => {
         if (document.hidden) {
-            stop(); // Stop the interval when the tab loses focus
+            stop();
         } else {
-            start(); // Start the interval when the tab gains focus
+            start();
         }
     });
 
