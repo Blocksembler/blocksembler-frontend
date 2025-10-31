@@ -6,6 +6,7 @@ import {logEvent} from "@/logging";
 import {ArchitecturePlugin} from "@/types/plugin";
 import {WorkspaceListener} from "@/types/state";
 import {UUIDTypes, v4 as uuidv4} from "uuid";
+import {DEFAULT_ARCHITECTURE} from "@/config";
 
 declare global {
     interface Window {
@@ -13,7 +14,7 @@ declare global {
     }
 }
 
-const architecturePluginKey = window.env["DEFAULT_ARCHITECTURE"] || 'anna';
+const architecturePluginKey = DEFAULT_ARCHITECTURE;
 
 
 class BlocksemblerState {
