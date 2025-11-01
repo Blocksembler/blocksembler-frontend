@@ -8,6 +8,7 @@ import BlocksemblerDebugView from "@/components/BlocksemblerDebugView.vue";
 import Blocksembler404 from "@/components/Blocksembler404.vue";
 import {initLogSync} from "@/logging";
 import TanModal from "@/components/modals/TanModal.vue";
+import {BACKEND_API_URL} from "@/config";
 
 
 const routes: Record<string, any> = {
@@ -26,12 +27,50 @@ const currentView = computed(() => {
   return routes[currentPath.value.slice(1) || "/"] || Blocksembler404;
 });
 
-onMounted(() => {
-  const data = window.localStorage?.getItem("blocksembler-tracking-consent");
+const isValidTan = async (tanCode: string): Promise<boolean> => {
+  const tanEndpoint = `${BACKEND_API_URL}/tans/${tanCode}`;
 
-  if (data && (data === 'false' || data === 'true')) {
-    return;
+  return fetch(tanEndpoint).then(response => {
+    if (response.status !== 200) {
+      throw Error(response.statusText);
+    }
+
+    return response.json()
+  }).then(tanCode => {
+    let validFrom: Date | null = null;
+    let validTo: Date | null = null;
+
+    const now = new Date();
+
+    if ("valid_from" in tanCode && tanCode["valid_from"]) {
+      validFrom = new Date(tanCode["valid_from"]);
+      console.log("validFrom", validFrom);
+      if (validFrom > now) return false;
+    }
+
+    if ("valid_to" in tanCode && tanCode["valid_to"]) {
+      validTo = new Date(tanCode["valid_to"]);
+      console.log("validTo", validTo);
+      if (validTo < now) return false;
+    }
+
+    console.log("tan is valid");
+    return true
+  }).catch(error => {
+    console.log(error);
+    return false;
+  })
+}
+
+onMounted(async () => {
+  const tanCode = window.localStorage?.getItem("blocksembler-tan-code");
+  console.log(`tanCode: ${tanCode}`);
+
+  if (tanCode && await isValidTan(tanCode)) {
+    return
   }
+
+  window.localStorage.removeItem("blocksembler-tan-code");
 
   const el = document.getElementById("tan-modal");
   const modal = new Modal(el as Element);

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import BaseModal from "@/components/modals/BaseModal.vue";
+import BaseModal from "@/components/base/BaseModal.vue";
 import {settings} from "@/state";
 </script>
 
