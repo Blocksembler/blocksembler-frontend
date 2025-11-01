@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import BaseModal from "@/components/modals/BaseModal.vue";
+import BaseModal from "@/components/base/BaseModal.vue";
 import {deleteLogData} from "@/logging";
 import {Ref, ref} from "vue";
 import {Modal} from "bootstrap";

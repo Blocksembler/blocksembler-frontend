@@ -2,8 +2,9 @@
 import {ref} from 'vue'
 
 import BaseBlocklyEditor from "./base/BaseBlocklyEditor.vue";
-import BaseCodeMirrorEditor from "./base/BaseCodeMirrorEditor.vue";
 import {codingWorkspaceState} from "@/state";
+import BlocksemblerChallengeCard from "@/components/BlocksemblerChallengeCard.vue";
+import SubmissionModal from "@/components/modals/SubmissionModal.vue";
 
 
 let options = ref({
@@ -43,13 +44,16 @@ let options = ref({
 </script>
 
 <template>
+
+  <SubmissionModal id="submission-modal"/>
+
   <div class="container-fluid">
     <div class="row">
-      <div class="col-8 p-0">
+      <div class="col-7 p-0">
         <BaseBlocklyEditor ref="blocklyEditor" :options="options"/>
       </div>
-      <div class="col-4 p-0">
-        <BaseCodeMirrorEditor ref="codeMirrorEditor"/>
+      <div class="col-5 p-0">
+        <BlocksemblerChallengeCard/>
       </div>
     </div>
   </div>

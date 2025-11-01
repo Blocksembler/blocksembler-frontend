@@ -3,7 +3,7 @@ import {reactive} from "vue";
 import {codingWorkspaceState, settings} from "@/state";
 import {logEvent} from "@/logging";
 import BaseButton from "./base/BaseButton.vue";
-import BaseModal from "./modals/BaseModal.vue";
+import BaseModal from "./base/BaseModal.vue";
 import PlayCircleIcon from "@/components/icons/PlayCircleIcon.vue";
 import PlayIcon from "@/components/icons/PlayIcon.vue";
 import PauseIcon from "@/components/icons/PauseIcon.vue";

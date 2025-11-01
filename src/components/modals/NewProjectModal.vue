@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import BaseModal from "@/components/modals/BaseModal.vue";
+import BaseModal from "@/components/base/BaseModal.vue";
 
 const props = defineProps<{
   onCreateProject: (e: MouseEvent) => void;
