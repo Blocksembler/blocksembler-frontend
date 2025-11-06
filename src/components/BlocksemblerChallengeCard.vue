@@ -3,7 +3,7 @@
 import BaseButton from "@/components/base/BaseButton.vue";
 import TrophyIcon from "@/components/icons/TrophyIcon.vue";
 import SkipForwardIcon from "@/components/icons/SkipForwardIcon.vue";
-import {computed, onMounted, ref} from "vue";
+import {computed, onMounted, Ref, ref} from "vue";
 import {marked} from "marked";
 import {Modal} from "bootstrap";
 import ReplyIcon from "@/components/icons/ReplyIcon.vue";
@@ -28,11 +28,38 @@ let errorPage =
     "Please try reloading the page. If the problem persists, contact your system administrator.";
 
 let allowSubmission = ref(true);
-
+let skipUnlockTime: Ref<Date | null> = ref(null);
+let remainingUnlockTime: Ref<number | null> = ref(0);
+let unlockTimeInterval: Ref<number | null> = ref(null);
 let markdown = ref("");
+
+let formattedRemainingUnlockTime = computed(() => {
+  if (remainingUnlockTime.value) {
+    const seconds = remainingUnlockTime.value / 1000;
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = Math.floor(seconds % 60);
+    return `${minutes}m ${remainingSeconds}s`;
+  } else {
+    return "0m 0s";
+  }
+})
+
 let markdownToHtml = computed(() => {
   return marked(markdown.value);
 })
+
+const updateRemainingTime = () => {
+  if (skipUnlockTime.value) {
+    const remaining = skipUnlockTime.value.getTime() - new Date().getTime()
+    remainingUnlockTime.value = Math.max(0, remaining);
+  }
+
+  if (remainingUnlockTime.value == 0) {
+    if (unlockTimeInterval.value) {
+      window.clearInterval(unlockTimeInterval.value);
+    }
+  }
+}
 
 const loadCurrentExercise = async () => {
   document.getElementById("challenge-loading-spinner")?.classList.remove("d-none");
@@ -50,12 +77,23 @@ const loadCurrentExercise = async () => {
     return {"markdown": errorPage};
   }).then(challenge => {
     document.getElementById("challenge-loading-spinner")?.classList.toggle("d-none");
+
+    skipUnlockTime.value = new Date(challenge.skip_unlock_time);
+    if (unlockTimeInterval.value) {
+      clearInterval(unlockTimeInterval.value);
+    }
+
+    updateRemainingTime();
+    unlockTimeInterval.value = window.setInterval(updateRemainingTime, 1000);
+
     markdown.value = challenge.markdown;
+
     document.getElementById("challenge-description")?.classList.toggle("d-none");
   }).catch(error => {
     console.log(error);
   });
 }
+
 
 onMounted(async () => {
   await loadCurrentExercise();
@@ -65,6 +103,19 @@ const submitSolution = () => {
   const el = document.getElementById("submission-modal");
   const modal = new Modal(el as Element);
   modal.toggle();
+}
+
+const skipExercise = () => {
+  const tan_code = window.localStorage?.getItem("blocksembler-tan-code");
+  fetch(`${BACKEND_API_URL}/exercises/current/skip?tan_code=${tan_code}`, {method: "POST"})
+      .then(async res => {
+        if (res.status === 204) {
+          loadCurrentExercise();
+        } else {
+          console.error(await res.text());
+          alert("Skipping exercise failed. Please try again later.");
+        }
+      });
 }
 
 </script>
@@ -80,9 +131,9 @@ const submitSolution = () => {
         <TrophyIcon/>
         Submit Current Solution
       </BaseButton>
-      <BaseButton disabled>
+      <BaseButton :disabled="remainingUnlockTime !== null && remainingUnlockTime > 0" @click="skipExercise">
         <SkipForwardIcon/>
-        Skip Exercise
+        Skip Exercise ({{ formattedRemainingUnlockTime }})
       </BaseButton>
     </div>
     <div id="challenge-loading-spinner" class="d-flex align-items-center justify-content-center">
