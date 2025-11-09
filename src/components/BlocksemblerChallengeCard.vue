@@ -27,36 +27,73 @@ let errorPage =
     "\n" +
     "Please try reloading the page. If the problem persists, contact your system administrator.";
 
-let allowSubmission = ref(true);
-let skipUnlockTime: Ref<Date | null> = ref(null);
-let remainingUnlockTime: Ref<number | null> = ref(0);
-let unlockTimeInterval: Ref<number | null> = ref(null);
+let allowSubmission = computed(() => {
+  return remainingTimeToNextSubmission.value === 0;
+});
+
+let allowSkip = computed(() => {
+  return !(remainingTimeToNextSkip.value === null || remainingTimeToNextSkip.value > 0);
+})
+
+let nextSkipAllowedAt: Ref<Date | null> = ref(null);
+let remainingTimeToNextSkip: Ref<number | null> = ref(0);
+let timeToNextSkipTimer: Ref<number | null> = ref(null);
+
+let nextSubmissionAllowedAt: Ref<Date> = ref(new Date(Date.now() + 1000 * 60 * 60 * 24 * 7));
+let remainingTimeToNextSubmission: Ref<number> = ref(0);
+let timeToNextSubmissionTimer: Ref<number | null> = ref(null);
+
 let markdown = ref("");
 
-let formattedRemainingUnlockTime = computed(() => {
-  if (remainingUnlockTime.value) {
-    const seconds = remainingUnlockTime.value / 1000;
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = Math.floor(seconds % 60);
-    return `${minutes}m ${remainingSeconds}s`;
-  } else {
-    return "0m 0s";
+let formatTime = (timeInMs: number) => {
+  const seconds = timeInMs / 1000;
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = Math.floor(seconds % 60);
+  return `${minutes}m ${remainingSeconds}s`;
+}
+
+let formattedTimeToNextSkip = computed(() => {
+  if (remainingTimeToNextSkip.value) {
+    return formatTime(remainingTimeToNextSkip.value);
   }
+
+  return "0m 0s";
+})
+
+let formattedTimeToNextSubmission = computed(() => {
+  if (remainingTimeToNextSubmission.value) {
+    return formatTime(remainingTimeToNextSubmission.value);
+  }
+
+  return "0m 0s";
 })
 
 let markdownToHtml = computed(() => {
   return marked(markdown.value);
 })
 
-const updateRemainingTime = () => {
-  if (skipUnlockTime.value) {
-    const remaining = skipUnlockTime.value.getTime() - new Date().getTime()
-    remainingUnlockTime.value = Math.max(0, remaining);
+const updateRemainingtimeToNextSkip = () => {
+  if (nextSkipAllowedAt.value) {
+    const remaining = nextSkipAllowedAt.value.getTime() - new Date().getTime()
+    remainingTimeToNextSkip.value = Math.max(0, remaining);
   }
 
-  if (remainingUnlockTime.value == 0) {
-    if (unlockTimeInterval.value) {
-      window.clearInterval(unlockTimeInterval.value);
+  if (remainingTimeToNextSkip.value == 0) {
+    if (timeToNextSkipTimer.value) {
+      window.clearInterval(timeToNextSkipTimer.value);
+    }
+  }
+}
+
+const updateRemainingTimeToNextSubmission = () => {
+  if (nextSubmissionAllowedAt.value) {
+    const remaining = nextSubmissionAllowedAt.value.getTime() - new Date().getTime()
+    remainingTimeToNextSubmission.value = Math.max(0, remaining);
+  }
+
+  if (remainingTimeToNextSubmission.value == 0) {
+    if (timeToNextSubmissionTimer.value) {
+      window.clearInterval(timeToNextSubmissionTimer.value);
     }
   }
 }
@@ -68,23 +105,30 @@ const loadCurrentExercise = async () => {
   const tan = window.localStorage?.getItem("blocksembler-tan-code");
   fetch(`${BACKEND_API_URL}/exercises/current?tan_code=${tan}`).then(res => {
     if (res.status === 200) {
-      allowSubmission.value = true;
       return res.json();
     } else if (res.status === 204) {
-      allowSubmission.value = false;
       return {"markdown": allExercisesSolvedPage}
     }
     return {"markdown": errorPage};
   }).then(challenge => {
     document.getElementById("challenge-loading-spinner")?.classList.toggle("d-none");
 
-    skipUnlockTime.value = new Date(challenge.skip_unlock_time);
-    if (unlockTimeInterval.value) {
-      clearInterval(unlockTimeInterval.value);
+    if (timeToNextSkipTimer.value) clearInterval(timeToNextSkipTimer.value);
+    if (timeToNextSubmissionTimer.value) clearInterval(timeToNextSubmissionTimer.value);
+
+    if (challenge.skip_unlock_time) {
+      nextSkipAllowedAt.value = new Date(challenge.skip_unlock_time);
     }
 
-    updateRemainingTime();
-    unlockTimeInterval.value = window.setInterval(updateRemainingTime, 1000);
+    if (challenge.next_grading_allowed_at) {
+      nextSubmissionAllowedAt.value = new Date(challenge.next_grading_allowed_at);
+    }
+
+    updateRemainingtimeToNextSkip();
+    timeToNextSkipTimer.value = window.setInterval(updateRemainingtimeToNextSkip, 1000);
+
+    updateRemainingTimeToNextSubmission();
+    timeToNextSubmissionTimer.value = window.setInterval(updateRemainingTimeToNextSubmission, 1000);
 
     markdown.value = challenge.markdown;
 
@@ -129,11 +173,11 @@ const skipExercise = () => {
       </BaseButton>
       <BaseButton :disabled="!allowSubmission" @click="submitSolution">
         <TrophyIcon/>
-        Submit Current Solution
+        Submit Solution <span v-if="!allowSubmission">({{ formattedTimeToNextSubmission }})</span>
       </BaseButton>
-      <BaseButton :disabled="remainingUnlockTime !== null && remainingUnlockTime > 0" @click="skipExercise">
+      <BaseButton :disabled="!allowSkip" @click="skipExercise">
         <SkipForwardIcon/>
-        Skip Exercise ({{ formattedRemainingUnlockTime }})
+        Skip Exercise <span v-if="!allowSkip">({{ formattedTimeToNextSkip }})</span>
       </BaseButton>
     </div>
     <div id="challenge-loading-spinner" class="d-flex align-items-center justify-content-center">
