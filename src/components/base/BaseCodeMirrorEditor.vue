@@ -1,7 +1,9 @@
 <script lang="ts" setup>
-import {onMounted, ref, watch} from "vue";
+import {onMounted, ref} from "vue";
 
-import {EditorView, lineNumbers} from "@codemirror/view"
+import {EditorView, keymap, lineNumbers} from "@codemirror/view"
+import {defaultKeymap, history, historyKeymap, indentWithTab} from "@codemirror/commands";
+import {indentUnit} from "@codemirror/language";
 
 import {EditorState} from "@codemirror/state";
 
@@ -18,14 +20,23 @@ onMounted(() => {
     extensions: [
       oneDark,
       lineNumbers(),
-      EditorView.editable.of(false),
-      EditorState.readOnly.of(true),
+      keymap.of([...defaultKeymap, ...historyKeymap, indentWithTab,]),
+      history(),
+      indentUnit.of("          "),
+      EditorView.editable.of(true),
       EditorView.theme({
         "&": {
           height: "calc(100vh - 66px)",
           width: "100%",
         },
       }),
+      EditorView.updateListener.of((update) => {
+
+        if (update.docChanged) {
+          console.log(update.state.doc.toString());
+          codingWorkspaceState.sourceCode = update.state.doc.toString();
+        }
+      })
     ],
   });
 
@@ -47,9 +58,6 @@ const loadCode = (code: string) => {
     });
   }
 }
-
-watch(() => codingWorkspaceState.sourceCode, code => loadCode(code));
-
 </script>
 
 <template>

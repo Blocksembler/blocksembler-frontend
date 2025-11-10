@@ -74,12 +74,24 @@ let createNewProject = () => {
   codingWorkspaceState.initWorkspace("");
 }
 
-let editCode = () => logEvent('buttonClick', {'source': 'editCodeButton'});
-
-let debugCode = () => logEvent('buttonClick', {'source': 'debugCodeButton'});
-
 let openSettings = () => logEvent('buttonClick', {'source': 'settingsButton'});
 
+let onModeChangeHandler = (e: Event) => {
+  e.preventDefault();
+  const switchElement = e.target as HTMLInputElement;
+
+  if (switchElement.checked) {
+    try {
+      codingWorkspaceState.initWorkspace(codingWorkspaceState.sourceCode);
+    } catch (err) {
+      alert('Failed to translate code to blocks!');
+      console.error(err);
+      switchElement.checked = !switchElement.checked;
+    }
+  }
+
+  codingWorkspaceState.blocksEnabled = switchElement.checked;
+}
 </script>
 <template>
 
@@ -124,21 +136,18 @@ let openSettings = () => logEvent('buttonClick', {'source': 'settingsButton'});
               </ul>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/#/editor" @click=editCode>
-                Edit Code
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/#/debugger" @click=debugCode>
-                Run Code
-              </a>
-            </li>
-            <li class="nav-item">
               <a class="nav-link" data-bs-target="#settingsModal" data-bs-toggle="modal" href="#" @click=openSettings>
                 Settings
               </a>
             </li>
           </ul>
+        </div>
+        <div>
+          <div class="form-check form-switch">
+            <label class="form-check-label text-white" for="switchCheckDefault">Blockbased Mode</label>
+            <input id="switchCheckDefault" class="form-check-input" role="switch" type="checkbox"
+                   @change="onModeChangeHandler">
+          </div>
         </div>
       </div>
     </nav>
