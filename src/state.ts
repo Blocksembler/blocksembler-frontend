@@ -22,6 +22,7 @@ class BlocksemblerState {
     sourceCode: string;
     onInitWorkspaceListener: Array<WorkspaceListener>;
     uuid: UUIDTypes;
+    blocksEnabled: boolean = false;
 
     constructor() {
         console.log(architecturePluginKey);
@@ -43,8 +44,8 @@ class BlocksemblerState {
             this.onInitWorkspaceListener.forEach(callback => callback(this.sourceCode))
         } catch (e: any) {
             logEvent("failedToImportSourceCode", e);
-            alert("Failed to import source file.")
             console.log(e);
+            throw e;
         }
     }
 
