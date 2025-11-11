@@ -145,7 +145,7 @@ let onModeChangeHandler = (e: Event) => {
         <div>
           <div class="form-check form-switch">
             <label class="form-check-label text-white" for="switchCheckDefault">Blockbased Mode</label>
-            <input id="switchCheckDefault" class="form-check-input" role="switch" type="checkbox"
+            <input id="switchCheckDefault" checked class="form-check-input" role="switch" type="checkbox"
                    @change="onModeChangeHandler">
           </div>
         </div>

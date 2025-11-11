@@ -116,32 +116,33 @@ const resetButtonItems = [
 
   <div class="py-3 m-0 navbar sticky-top background-white">
     <div>
-      <BaseButton @click="assembleHandler">
+      <BaseButton class="pt-1" @click="assembleHandler">
         <PlayCircleIcon/>
         <span class="d-none d-md-none d-lg-inline ms-1">Load to Memory</span>
       </BaseButton>
-      <BaseButton v-if="codingWorkspaceState.archPlugin.emulator.isPaused" @click="runProgram">
+      <BaseButton v-if="codingWorkspaceState.archPlugin.emulator.isPaused" class="pt-1" @click="runProgram">
         <PlayIcon/>
         <span class="d-none d-md-none d-lg-inline ms-1">Run</span>
       </BaseButton>
-      <BaseButton v-else @click="pauseProgram">
+      <BaseButton v-else class="pt-1" @click="pauseProgram">
         <PauseIcon/>
         <span class="d-none d-md-none d-lg-inline ms-1">Pause</span>
       </BaseButton>
-      <BaseButton @click="executeNext">
+      <BaseButton class="pt-1" @click="executeNext">
         <ArrowRightSquareIcon/>
         <span class="d-none d-md-none d-lg-inline ms-1">Execute & Fetch Next</span>
       </BaseButton>
       <BaseButton
           v-if="codingWorkspaceState.archPlugin.emulator.hasConsole"
           :notification-count="output.length"
+          class="pt-1"
           data-bs-target="#outputConsole"
           data-bs-toggle="modal"
       >
         <TerminalIcon/>
         <span class="d-none d-md-none d-lg-inline ms-1">Output Console</span>
       </BaseButton>
-      <BaseDropDown :items=resetButtonItems>
+      <BaseDropDown :items=resetButtonItems class="pt-1">
         <ReplyIcon/>
         <span class="d-none d-md-none d-lg-inline ms-1">Reset All</span>
       </BaseDropDown>

@@ -22,7 +22,7 @@ class BlocksemblerState {
     sourceCode: string;
     onInitWorkspaceListener: Array<WorkspaceListener>;
     uuid: UUIDTypes;
-    blocksEnabled: boolean = false;
+    blocksEnabled: boolean = true;
 
     constructor() {
         console.log(architecturePluginKey);
