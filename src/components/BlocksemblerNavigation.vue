@@ -140,6 +140,24 @@ let onModeChangeHandler = (e: Event) => {
                 Settings
               </a>
             </li>
+            <li class="nav-item dropdown">
+              <a aria-expanded="false" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#"
+                 role="button">
+                Resources
+              </a>
+              <ul class="dropdown-menu">
+                <li>
+                  <a class="dropdown-item" href="https://blocksembler.github.io/assets/anna.pdf" target="_blank">
+                    ANNA Architecture Reference
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="https://blocksembler.github.io/assets/cheatsheet.pdf" target="_blank">
+                    ANNA Cheatsheet
+                  </a>
+                </li>
+              </ul>
+            </li>
             <li class="nav-item">
               <a class="nav-link"
                  href="https://docs.google.com/forms/d/e/1FAIpQLScf_F_Jq61wh2SElnpfhNgk_Pd9uAp8-mkSCPU_pt6vyF-jXw/viewform?usp=sharing&ouid=117497244955646718775">
