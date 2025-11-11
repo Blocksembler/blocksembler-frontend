@@ -8,7 +8,7 @@ import BlocksemblerDebugView from "@/components/BlocksemblerDebugView.vue";
 import Blocksembler404 from "@/components/Blocksembler404.vue";
 import {initLogSync} from "@/logging";
 import TanModal from "@/components/modals/TanModal.vue";
-import {BACKEND_API_URL} from "@/config";
+import {BACKEND_API_URL, BACKEND_DISABLED} from "@/config";
 
 
 const routes: Record<string, any> = {
@@ -63,6 +63,8 @@ const isValidTan = async (tanCode: string): Promise<boolean> => {
 }
 
 onMounted(async () => {
+  if (BACKEND_DISABLED) return;
+
   const tanCode = window.localStorage?.getItem("blocksembler-tan-code");
   console.log(`tanCode: ${tanCode}`);
 

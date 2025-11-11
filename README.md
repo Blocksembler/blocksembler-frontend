@@ -38,12 +38,13 @@ started, follow these steps:
 
 ### Environment Variables
 
-| Name                                | Default    | Description                                              |
-|-------------------------------------|------------|----------------------------------------------------------|
-| `BLOCKSEMBLER_DEFAULT_ARCHITECTURE` | `anna`     | Name of the architecture plugin to load.                 |
-| `BLOCKSEMBLER_BACKEND_API_URL`      | `/api/v1/` | Base URL of the backend API.                             |
-| `BLOCKSEMBLER_LOG_SYNC_BATCH_SIZE`  | `1000`     | Maximum number of log entries to sync in a single batch. |
-| `BLOCKSEMBLER_LOG_SYNC_INTERVAL`    | `10000`    | Interval (in milliseconds) between log sync operations.  |
+| Name                                | Default    | Description                                               |
+|-------------------------------------|------------|-----------------------------------------------------------|
+| `BLOCKSEMBLER_BACKEND_DISABLED`     | `false`    | When true, the application disables all backend requests. |
+| `BLOCKSEMBLER_DEFAULT_ARCHITECTURE` | `anna`     | Name of the architecture plugin to load.                  |
+| `BLOCKSEMBLER_BACKEND_API_URL`      | `/api/v1/` | Base URL of the backend API.                              |
+| `BLOCKSEMBLER_LOG_SYNC_BATCH_SIZE`  | `1000`     | Maximum number of log entries to sync in a single batch.  |
+| `BLOCKSEMBLER_LOG_SYNC_INTERVAL`    | `10000`    | Interval (in milliseconds) between log sync operations.   |
 
 ## Contributing
 

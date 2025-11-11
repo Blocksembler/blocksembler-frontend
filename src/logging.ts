@@ -1,7 +1,7 @@
 import {saveAs} from "file-saver";
 import {db} from "@/db";
 import {onMounted, onUnmounted} from "vue";
-import {BACKEND_API_URL, LOG_SYNC_BATCH_SIZE, LOG_SYNC_INTERVAL} from "@/config";
+import {BACKEND_API_URL, BACKEND_DISABLED, LOG_SYNC_BATCH_SIZE, LOG_SYNC_INTERVAL} from "@/config";
 
 
 let timer: number | undefined;
@@ -47,6 +47,8 @@ export const downloadLogData = (): void => {
 }
 
 async function flushOnce() {
+    if (BACKEND_DISABLED) return;
+
     try {
         const tan = window.localStorage?.getItem("blocksembler-tan-code")
 
