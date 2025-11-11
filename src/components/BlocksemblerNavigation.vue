@@ -140,6 +140,12 @@ let onModeChangeHandler = (e: Event) => {
                 Settings
               </a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link"
+                 href="https://docs.google.com/forms/d/e/1FAIpQLScf_F_Jq61wh2SElnpfhNgk_Pd9uAp8-mkSCPU_pt6vyF-jXw/viewform?usp=sharing&ouid=117497244955646718775">
+                Feedback
+              </a>
+            </li>
           </ul>
         </div>
         <div>
