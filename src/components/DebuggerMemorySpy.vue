@@ -3,7 +3,7 @@ import {computed, ref} from "vue";
 import {codingWorkspaceState} from "@/state.js";
 
 const startAddress = ref<number>(0);
-const sliceSize = ref<number>(0);
+const sliceSize = ref<number>(10);
 
 const MAX: number = 30;
 
@@ -23,7 +23,7 @@ const memory = computed(() => {
     start = 0;
     end = 10;
   } else if (end > 2 ** emulator.addressSize) {
-    end = 2 ** emulator.addressSize - 1;
+    end = 2 ** emulator.addressSize;
   }
 
   console.log(start, end);
