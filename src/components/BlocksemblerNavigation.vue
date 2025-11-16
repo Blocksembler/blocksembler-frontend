@@ -5,6 +5,10 @@ import {downloadLogData, logEvent} from "@/logging";
 import * as bootstrap from "bootstrap";
 import NewProjectModal from "@/components/modals/NewProjectModal.vue";
 import SettingsModal from "@/components/modals/SettingsModal.vue";
+import {ref} from "vue";
+import {RESOURCE_LINKS} from "@/config";
+
+let resources = ref(RESOURCE_LINKS);
 
 let exportProject = () => {
   let fileExtension = "asm";
@@ -146,23 +150,12 @@ let onModeChangeHandler = (e: Event) => {
                 Resources
               </a>
               <ul class="dropdown-menu">
-                <li>
-                  <a class="dropdown-item" href="https://blocksembler.github.io/assets/anna.pdf" target="_blank">
-                    ANNA Architecture Reference
-                  </a>
-                </li>
-                <li>
-                  <a class="dropdown-item" href="https://blocksembler.github.io/assets/cheatsheet.pdf" target="_blank">
-                    ANNA Cheatsheet
+                <li v-for="resource in resources">
+                  <a class="dropdown-item" :href="resource.url" target="_blank">
+                    {{ resource.name }}
                   </a>
                 </li>
               </ul>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link"
-                 href="https://docs.google.com/forms/d/e/1FAIpQLScf_F_Jq61wh2SElnpfhNgk_Pd9uAp8-mkSCPU_pt6vyF-jXw/viewform?usp=sharing&ouid=117497244955646718775">
-                Feedback
-              </a>
             </li>
           </ul>
         </div>
