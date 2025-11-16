@@ -15,6 +15,7 @@ COPY docker/custom_entrypoint.sh /custom_entrypoint.sh
 
 RUN apk update
 RUN apk add openssl
+RUN apk add jq
 
 EXPOSE 80
 
