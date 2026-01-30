@@ -56,18 +56,6 @@ const consentHandler = (): void => {
       );
 }
 
-const declineHandler = (): void => {
-  deleteLogData()
-  window.localStorage?.setItem('blocksembler-tan-code', '');
-  window.localStorage?.setItem('blocksembler-tracking-consent', 'false');
-
-
-  const modalElement = document.getElementById('tan-modal') as HTMLElement;
-  const modal = Modal.getInstance(modalElement);
-
-  modal?.hide();
-}
-
 const submitHandler = (e: Event): void => {
   e.preventDefault();
 }
@@ -75,7 +63,7 @@ const submitHandler = (e: Event): void => {
 </script>
 
 <template>
-  <BaseModal :id="props.id" savable>
+  <BaseModal :id="props.id" data-bs-backdrop="static" data-bs-keyboard="false" savable>
     <template v-slot:default>
 
       <p id="tan-consent-desc" class="tan-muted">
@@ -115,9 +103,6 @@ const submitHandler = (e: Event): void => {
     <template v-slot:buttons>
       <button class="btn btn-primary" type="submit" @click="consentHandler">
         I consent
-      </button>
-      <button class="btn btn-danger" @click="declineHandler">
-        I decline
       </button>
     </template>
   </BaseModal>
