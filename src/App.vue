@@ -1,31 +1,18 @@
 <script lang="ts" setup>
 import {Modal} from "bootstrap";
-import {computed, onMounted, ref} from "vue";
+import {onMounted, ref} from "vue";
 
 import BlocksemblerNavigation from "@/components/BlocksemblerNavigation.vue";
 import BlocksemblerCodingView from "@/components/BlocksemblerCodingView.vue";
-import BlocksemblerDebugView from "@/components/BlocksemblerDebugView.vue";
-import Blocksembler404 from "@/components/Blocksembler404.vue";
 import {initLogSync} from "@/logging";
 import TanModal from "@/components/modals/TanModal.vue";
 import {BACKEND_API_URL, BACKEND_DISABLED} from "@/config";
 import {codingWorkspaceState} from "@/state";
 
-
-const routes: Record<string, any> = {
-  "/": BlocksemblerCodingView,
-  "/editor": BlocksemblerCodingView,
-  "/debugger": BlocksemblerDebugView,
-};
-
 const currentPath = ref(window.location.hash);
 
 window.addEventListener("hashchange", () => {
   currentPath.value = window.location.hash;
-});
-
-const currentView = computed(() => {
-  return routes[currentPath.value.slice(1) || "/"] || Blocksembler404;
 });
 
 const isValidTan = async (tanCode: string): Promise<boolean> => {
@@ -88,7 +75,7 @@ initLogSync();
 <template>
   <TanModal id="tan-modal"></TanModal>
   <BlocksemblerNavigation/>
-  <component :is="currentView"/>
+  <BlocksemblerCodingView/>
 </template>
 
 <style></style>
