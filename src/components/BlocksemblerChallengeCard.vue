@@ -8,6 +8,7 @@ import {marked} from "marked";
 import {Modal} from "bootstrap";
 import ReplyIcon from "@/components/icons/ReplyIcon.vue";
 import {BACKEND_API_URL} from "@/config";
+import SubmissionModal from "@/components/modals/SubmissionModal.vue";
 
 let allExercisesSolvedPage = "# 🎉 Congratulations! 🎉\n" +
     "\n" +
@@ -165,6 +166,7 @@ const skipExercise = () => {
 </script>
 
 <template>
+  <SubmissionModal id="submission-modal" @gradingReceived="() => {loadCurrentExercise();}"/>
   <div class="challenge-card">
     <div id="challenge-card-actions">
       <BaseButton @click="loadCurrentExercise">

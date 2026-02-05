@@ -5,12 +5,15 @@ import {onMounted, ref} from "vue";
 import {codingWorkspaceState} from "@/state";
 import {BACKEND_API_URL} from "@/config";
 
-const gradingEndpoint = `${BACKEND_API_URL}/grading-jobs`
-let gradingStatusText = ref(
-    "<div class=\"spinner-border text-dark me-2\" role=\"status\">" +
+const emit = defineEmits(["gradingReceived"])
+
+const initialStatusText: string = ("<div class=\"spinner-border text-dark me-2\" role=\"status\">" +
     "<span class=\"visually-hidden\">Loading...</span></div>" +
     "Your submission is being graded. Please wait."
-);
+)
+
+const gradingEndpoint = `${BACKEND_API_URL}/grading-jobs`
+let gradingStatusText = ref(initialStatusText);
 
 interface GradingJob {
   id: string,
@@ -64,6 +67,8 @@ const pollJobStatus = async (jobId: string) => {
         "Some test cases didn’t pass yet " +
         "— take another look and try to fix the remaining issues."
   }
+
+  emit("gradingReceived");
 }
 
 const getCurrentExerciseId = async (tanCode: string): Promise<number | null> => {
@@ -82,10 +87,13 @@ const onShown = async () => {
   const currentSolution = codingWorkspaceState.sourceCode;
   const tanCode = window.localStorage?.getItem("blocksembler-tan-code");
 
+  gradingStatusText.value = initialStatusText;
+
   if (!tanCode) {
     console.error("tan code not found");
     return;
   }
+
 
   const exerciseId = await getCurrentExerciseId(tanCode);
   console.log(`Current Exercise: ${exerciseId}`);
