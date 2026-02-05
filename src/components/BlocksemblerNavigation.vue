@@ -139,6 +139,19 @@ let onModeChangeHandler = (e: Event) => {
                 </li>
               </ul>
             </li>
+
+            <li class="nav-item">
+              <a aria-controls="debuggerFlyout" class="nav-link" data-bs-target="#challengeCardFlyout"
+                 data-bs-toggle="offcanvas"
+                 href="#">Open Current Task</a>
+            </li>
+
+            <li class="nav-item">
+              <a aria-controls="debuggerFlyout" class="nav-link" data-bs-target="#debuggerFlyout"
+                 data-bs-toggle="offcanvas"
+                 href="#">Open Debugger</a>
+            </li>
+
             <li class="nav-item">
               <a class="nav-link" data-bs-target="#settingsModal" data-bs-toggle="modal" href="#" @click=openSettings>
                 Settings
