@@ -9,6 +9,7 @@ import Blocksembler404 from "@/components/Blocksembler404.vue";
 import {initLogSync} from "@/logging";
 import TanModal from "@/components/modals/TanModal.vue";
 import {BACKEND_API_URL, BACKEND_DISABLED} from "@/config";
+import {codingWorkspaceState} from "@/state";
 
 
 const routes: Record<string, any> = {
@@ -69,6 +70,7 @@ onMounted(async () => {
   console.log(`tanCode: ${tanCode}`);
 
   if (tanCode && await isValidTan(tanCode)) {
+    codingWorkspaceState.blocksEnabled = tanCode.startsWith("bbp");
     return
   }
 

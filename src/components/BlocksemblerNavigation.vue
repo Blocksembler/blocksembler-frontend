@@ -6,7 +6,7 @@ import * as bootstrap from "bootstrap";
 import NewProjectModal from "@/components/modals/NewProjectModal.vue";
 import SettingsModal from "@/components/modals/SettingsModal.vue";
 import {ref} from "vue";
-import {RESOURCE_LINKS} from "@/config";
+import {BACKEND_DISABLED, RESOURCE_LINKS} from "@/config";
 
 let resources = ref(RESOURCE_LINKS);
 
@@ -151,7 +151,7 @@ let onModeChangeHandler = (e: Event) => {
               </a>
               <ul class="dropdown-menu">
                 <li v-for="resource in resources">
-                  <a class="dropdown-item" :href="resource.url" target="_blank">
+                  <a :href="resource.url" class="dropdown-item" target="_blank">
                     {{ resource.name }}
                   </a>
                 </li>
@@ -160,7 +160,7 @@ let onModeChangeHandler = (e: Event) => {
           </ul>
         </div>
         <div>
-          <div class="form-check form-switch">
+          <div v-if="BACKEND_DISABLED" class="form-check form-switch">
             <label class="form-check-label text-white" for="switchCheckDefault">Blockbased Mode</label>
             <input id="switchCheckDefault" checked class="form-check-input" role="switch" type="checkbox"
                    @change="onModeChangeHandler">

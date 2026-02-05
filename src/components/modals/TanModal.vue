@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import BaseModal from "@/components/base/BaseModal.vue";
-import {deleteLogData} from "@/logging";
 import {Ref, ref} from "vue";
 import {Modal} from "bootstrap";
 import {BACKEND_API_URL} from "@/config";
+import {codingWorkspaceState} from "@/state";
 
 let props = defineProps<{
   id: string;
@@ -45,6 +45,7 @@ const consentHandler = (): void => {
         } else {
           window.localStorage?.setItem('blocksembler-tan-code', tanCode.value);
           window.localStorage?.setItem('blocksembler-tracking-consent', 'true');
+          codingWorkspaceState.blocksEnabled = tanCode.value.startsWith("bbp");
           modal?.hide();
         }
       })
