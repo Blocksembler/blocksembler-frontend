@@ -12,7 +12,7 @@ const initialStatusText: string = ("<div class=\"spinner-border text-dark me-2\"
     "Your submission is being graded. Please wait."
 )
 
-const gradingEndpoint = `${BACKEND_API_URL}/grading-jobs`
+const gradingEndpoint = `${BACKEND_API_URL}/grading-jobs/`
 let gradingStatusText = ref(initialStatusText);
 
 interface GradingJob {
