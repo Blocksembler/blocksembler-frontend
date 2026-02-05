@@ -55,7 +55,6 @@ let options = ref({
     <BaseCodeMirrorEditor v-if="!codingWorkspaceState.blocksEnabled" :highlightedLine="0"/>
   </div>
 
-  <!-- Offcanvas Flyout -->
   <div id="debuggerFlyout" aria-labelledby="debuggerFlyoutLabel" class="offcanvas offcanvas-end w-75" tabindex="-1">
     <div class="offcanvas-header">
       <h2 id="debuggerFlyoutLabel" class="offcanvas-title">Debugger</h2>
