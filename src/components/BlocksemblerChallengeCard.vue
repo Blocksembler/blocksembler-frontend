@@ -28,7 +28,7 @@ let errorPage =
     "Please try reloading the page. If the problem persists, contact your system administrator.";
 
 let allowSubmission = computed(() => {
-  return remainingTimeToNextSubmission.value === 0;
+  return remainingTimeToNextSubmission.value !== null && remainingTimeToNextSubmission.value === 0;
 });
 
 let allowSkip = computed(() => {
@@ -36,11 +36,11 @@ let allowSkip = computed(() => {
 })
 
 let nextSkipAllowedAt: Ref<Date | null> = ref(null);
-let remainingTimeToNextSkip: Ref<number | null> = ref(0);
+let remainingTimeToNextSkip: Ref<number | null> = ref(null);
 let timeToNextSkipTimer: Ref<number | null> = ref(null);
 
 let nextSubmissionAllowedAt: Ref<Date> = ref(new Date(Date.now() + 1000 * 60 * 60 * 24 * 7));
-let remainingTimeToNextSubmission: Ref<number> = ref(0);
+let remainingTimeToNextSubmission: Ref<number | null> = ref(null);
 let timeToNextSubmissionTimer: Ref<number | null> = ref(null);
 
 let markdown = ref("");
@@ -195,7 +195,6 @@ const skipExercise = () => {
 
 <style scoped>
 .challenge-card {
-  background-color: lightgray;
   height: calc(100vh - 66px);
   width: 100%;
   margin: 0;
