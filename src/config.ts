@@ -1,5 +1,5 @@
-export const BACKEND_DISABLED = window.env["BACKEND_DISABLED"] === "true";
-export const BACKEND_API_URL = window.env["BACKEND_API_URL"] || "http://localhost";
+export const BACKEND_DISABLED = window.env["BACKEND_DISABLED"] === "false";
+export const BACKEND_API_URL = window.env["BACKEND_API_URL"] || "http://localhost:8081";
 export const DEFAULT_ARCHITECTURE = window.env["DEFAULT_ARCHITECTURE"] || "anna";
 export const LOG_SYNC_BATCH_SIZE = window.env["LOG_SYNC_BATCH_SIZE"] ? parseInt(window.env["LOG_SYNC_BATCH_SIZE"]) : 1_000;
 export const LOG_SYNC_INTERVAL = window.env["LOG_SYNC_INTERVAL"] ? parseInt(window.env["LOG_SYNC_INTERVAL"]) : 10_000;

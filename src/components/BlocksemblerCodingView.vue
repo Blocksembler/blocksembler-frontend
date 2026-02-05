@@ -47,9 +47,7 @@ let options = ref({
 </script>
 
 <template>
-
-  <SubmissionModal id="submission-modal"/>
-
+  <SubmissionModal id="submission-modal" @gradingReceived="() => {console.log('hi')}"/>
   <div class="container-fluid m-0 p-0">
     <BaseBlocklyEditor v-if="codingWorkspaceState.blocksEnabled" ref="blocklyEditor" :options="options"/>
     <BaseCodeMirrorEditor v-if="!codingWorkspaceState.blocksEnabled" :highlightedLine="0"/>
