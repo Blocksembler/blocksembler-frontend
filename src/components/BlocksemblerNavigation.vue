@@ -107,7 +107,7 @@ let onModeChangeHandler = (e: Event) => {
             class="navbar-brand"
             height="50px"
             href="/#"
-            src="https://github.com/Blocksembler/blocksembler-frontend/raw/main/img/logo.png"/>
+            src="/public/logo.png"/>
         <button aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"
                 class="navbar-toggler"
                 data-bs-target="#navbarSupportedContent" data-bs-toggle="collapse" type="button">
