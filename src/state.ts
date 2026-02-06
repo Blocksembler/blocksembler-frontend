@@ -7,6 +7,7 @@ import {ArchitecturePlugin} from "@/types/plugin";
 import {WorkspaceListener} from "@/types/state";
 import {UUIDTypes, v4 as uuidv4} from "uuid";
 import {DEFAULT_ARCHITECTURE} from "@/config";
+import {Exercise} from "@/api/exercises";
 
 declare global {
     interface Window {
@@ -23,6 +24,7 @@ class BlocksemblerState {
     onInitWorkspaceListener: Array<WorkspaceListener>;
     uuid: UUIDTypes;
     blocksEnabled: boolean = true;
+    currentExercise: Exercise | null = null;
 
     constructor() {
         console.log(architecturePluginKey);

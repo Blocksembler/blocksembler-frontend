@@ -1,40 +1,13 @@
 <script lang="ts" setup>
 
 import BaseButton from "@/components/base/BaseButton.vue";
-import TrophyIcon from "@/components/icons/TrophyIcon.vue";
-import SkipForwardIcon from "@/components/icons/SkipForwardIcon.vue";
 import {computed, onMounted, Ref, ref} from "vue";
 import {marked} from "marked";
-import {Modal} from "bootstrap";
 import ReplyIcon from "@/components/icons/ReplyIcon.vue";
-import {BACKEND_API_URL} from "@/config";
-import SubmissionModal from "@/components/modals/SubmissionModal.vue";
-
-let allExercisesSolvedPage = "# 🎉 Congratulations! 🎉\n" +
-    "\n" +
-    "You did it — you have successfully solved **all exercises** in this competition! 🏆  \n\n" +
-    "Thank you for participating!  \n" +
-    "Keep learning, keep exploring — and see you in the next competition. 🚀  ";
-
-let errorPage =
-    "# ⚠️ Exercise Unavailable\n" +
-    "\n" +
-    "Sorry, this exercise **can’t be loaded right now.** 😕\n" +
-    "\n" +
-    "This might be due to one of the following reasons:\n" +
-    "- The TAN code stored in your browser is invalid\n" +
-    "- The competition has ended or is currently locked\n" +
-    "- A temporary connection or server issue occurred\n" +
-    "\n" +
-    "Please try reloading the page. If the problem persists, contact your system administrator.";
-
-let allowSubmission = computed(() => {
-  return remainingTimeToNextSubmission.value !== null && remainingTimeToNextSubmission.value === 0;
-});
-
-let allowSkip = computed(() => {
-  return !(remainingTimeToNextSkip.value === null || remainingTimeToNextSkip.value > 0);
-})
+import BlocksemblerCodeSubmissionButton from "@/components/BlocksemblerCodeSubmissionButton.vue";
+import {codingWorkspaceState} from "@/state";
+import {getCurrentExercise} from "@/api/exercises";
+import BlocksemblerChallengeSkipButton from "@/components/BlocksemblerChallengeSkipButton.vue";
 
 let nextSkipAllowedAt: Ref<Date | null> = ref(null);
 let remainingTimeToNextSkip: Ref<number | null> = ref(null);
@@ -44,33 +17,17 @@ let nextSubmissionAllowedAt: Ref<Date> = ref(new Date(Date.now() + 1000 * 60 * 6
 let remainingTimeToNextSubmission: Ref<number | null> = ref(null);
 let timeToNextSubmissionTimer: Ref<number | null> = ref(null);
 
-let markdown = ref("");
-
-let formatTime = (timeInMs: number) => {
-  const seconds = timeInMs / 1000;
-  const minutes = Math.floor(seconds / 60);
-  const remainingSeconds = Math.floor(seconds % 60);
-  return `${minutes}m ${remainingSeconds}s`;
-}
-
-let formattedTimeToNextSkip = computed(() => {
-  if (remainingTimeToNextSkip.value) {
-    return formatTime(remainingTimeToNextSkip.value);
-  }
-
-  return "0m 0s";
+onMounted(async () => {
+  await loadCurrentExercise();
 })
 
-let formattedTimeToNextSubmission = computed(() => {
-  if (remainingTimeToNextSubmission.value) {
-    return formatTime(remainingTimeToNextSubmission.value);
-  }
-
-  return "0m 0s";
-})
 
 let markdownToHtml = computed(() => {
-  return marked(markdown.value);
+  if (codingWorkspaceState.currentExercise === null) {
+    return ""
+  }
+
+  return marked(codingWorkspaceState.currentExercise.markdown);
 })
 
 const updateRemainingtimeToNextSkip = () => {
@@ -100,95 +57,131 @@ const updateRemainingTimeToNextSubmission = () => {
 }
 
 const loadCurrentExercise = async () => {
-  document.getElementById("challenge-loading-spinner")?.classList.remove("d-none");
-  document.getElementById("challenge-description")?.classList.add("d-none");
+  codingWorkspaceState.currentExercise = await getCurrentExercise();
+  const challenge = codingWorkspaceState.currentExercise;
 
-  const tan = window.localStorage?.getItem("blocksembler-tan-code");
-  fetch(`${BACKEND_API_URL}/exercises/current?tan_code=${tan}`).then(res => {
-    if (res.status === 200) {
-      return res.json();
-    } else if (res.status === 204) {
-      return {"markdown": allExercisesSolvedPage}
-    }
-    return {"markdown": errorPage};
-  }).then(challenge => {
-    document.getElementById("challenge-loading-spinner")?.classList.toggle("d-none");
+  if (timeToNextSkipTimer.value) clearInterval(timeToNextSkipTimer.value);
+  if (timeToNextSubmissionTimer.value) clearInterval(timeToNextSubmissionTimer.value);
 
-    if (timeToNextSkipTimer.value) clearInterval(timeToNextSkipTimer.value);
-    if (timeToNextSubmissionTimer.value) clearInterval(timeToNextSubmissionTimer.value);
+  if (challenge.skip_unlock_time) {
+    nextSkipAllowedAt.value = new Date(challenge.skip_unlock_time);
+  }
 
-    if (challenge.skip_unlock_time) {
-      nextSkipAllowedAt.value = new Date(challenge.skip_unlock_time);
-    }
+  if (challenge.next_grading_allowed_at) {
+    nextSubmissionAllowedAt.value = new Date(challenge.next_grading_allowed_at);
+  }
 
-    if (challenge.next_grading_allowed_at) {
-      nextSubmissionAllowedAt.value = new Date(challenge.next_grading_allowed_at);
-    }
+  updateRemainingtimeToNextSkip();
+  timeToNextSkipTimer.value = window.setInterval(updateRemainingtimeToNextSkip, 1000);
 
-    updateRemainingtimeToNextSkip();
-    timeToNextSkipTimer.value = window.setInterval(updateRemainingtimeToNextSkip, 1000);
-
-    updateRemainingTimeToNextSubmission();
-    timeToNextSubmissionTimer.value = window.setInterval(updateRemainingTimeToNextSubmission, 1000);
-
-    markdown.value = challenge.markdown;
-
-    document.getElementById("challenge-description")?.classList.toggle("d-none");
-  }).catch(error => {
-    console.log(error);
-  });
+  updateRemainingTimeToNextSubmission();
+  timeToNextSubmissionTimer.value = window.setInterval(updateRemainingTimeToNextSubmission, 1000);
 }
 
+const testsPassed = async () => {
+  const alertEl = document.getElementById("testsPassedAlert");
 
-onMounted(async () => {
+  if (!alertEl) return;
+
+  alertEl.classList.remove("d-none");
+
+  setTimeout(() => {
+    loadCurrentExercise();
+  }, 1000);
+
+  setTimeout(() => {
+    alertEl.classList.add("d-none");
+  }, 10000);
+};
+
+const testsFailed = async () => {
+  const alertEl = document.getElementById("testsFailedAlert");
+  if (!alertEl) return;
+
+  alertEl.classList.remove("d-none");
+  alertEl.classList.add("show");
+
+  setTimeout(() => {
+    alertEl.classList.remove("show");
+    alertEl.classList.add("d-none");
+  }, 10000);
+
   await loadCurrentExercise();
-})
+};
 
-const submitSolution = () => {
-  const el = document.getElementById("submission-modal");
-  const modal = new Modal(el as Element);
-  modal.toggle();
+const submissionFailed = async () => {
+  const alertEl = document.getElementById("submissionFailedAlert");
+  if (!alertEl) return;
+
+  alertEl.classList.remove("d-none");
+  alertEl.classList.add("show");
+
+  setTimeout(() => {
+    alertEl.classList.remove("show");
+    alertEl.classList.add("d-none");
+  }, 10000);
+};
+
+const skipSuccessful = () => {
+  loadCurrentExercise();
 }
 
-const skipExercise = () => {
-  const tan_code = window.localStorage?.getItem("blocksembler-tan-code");
-  fetch(`${BACKEND_API_URL}/exercises/current/skip?tan_code=${tan_code}`, {method: "POST"})
-      .then(async res => {
-        if (res.status === 204) {
-          loadCurrentExercise();
-        } else {
-          console.error(await res.text());
-          alert("Skipping exercise failed. Please try again later.");
-        }
-      });
+const skipFailed = () => {
+  const alertEl = document.getElementById("skipFailedAlert");
+  if (!alertEl) return;
+
+  alertEl.classList.remove("d-none");
+  alertEl.classList.add("show");
+
+  setTimeout(() => {
+    alertEl.classList.remove("show");
+    alertEl.classList.add("d-none");
+  }, 10000);
 }
 
 </script>
 
 <template>
-  <SubmissionModal id="submission-modal" @gradingReceived="() => {loadCurrentExercise();}"/>
   <div class="challenge-card">
     <div id="challenge-card-actions">
       <BaseButton @click="loadCurrentExercise">
         <ReplyIcon/>
-        Reload
+        Reload Task
       </BaseButton>
-      <BaseButton :disabled="!allowSubmission" @click="submitSolution">
-        <TrophyIcon/>
-        Submit Solution <span v-if="!allowSubmission">({{ formattedTimeToNextSubmission }})</span>
-      </BaseButton>
-      <BaseButton :disabled="!allowSkip" @click="skipExercise">
-        <SkipForwardIcon/>
-        Skip Exercise <span v-if="!allowSkip">({{ formattedTimeToNextSkip }})</span>
-      </BaseButton>
+
+      <BlocksemblerCodeSubmissionButton :remainingTime="remainingTimeToNextSubmission"
+                                        @submissionFailed="submissionFailed"
+                                        @testsFailed="testsFailed"
+                                        @testsPassed="testsPassed"/>
+
+      <BlocksemblerChallengeSkipButton :remainingTime="remainingTimeToNextSkip"
+                                       @skipFailed="skipFailed"
+                                       @skipSuccessful="skipSuccessful"/>
     </div>
-    <div id="challenge-loading-spinner" class="d-flex align-items-center justify-content-center">
+
+    <div>
+      <div id="testsPassedAlert" class="alert alert-success d-none" role="alert">
+        ✅ Submission successful!
+      </div>
+      <div id="testsFailedAlert" class="alert alert-warning d-none" role="alert">
+        ⚠️ The submitted code did not pass the tests! Keep up your efford, you are nearly there!
+      </div>
+      <div id="submissionFailedAlert" class="alert alert-danger d-none" role="alert">
+        ❌ Failed to submit code!
+      </div>
+      <div id="skipFailedAlert" class="alert alert-danger d-none" role="alert">
+        ❌ Failed to skip exercise!
+      </div>
+    </div>
+
+    <div v-if="!codingWorkspaceState.currentExercise" id="challenge-loading-spinner"
+         class="d-flex align-items-center justify-content-center">
       <span class="m-4">Loading next challenge</span>
       <div class="spinner-border text-dark" role="status">
         <span class="visually-hidden">Loading...</span>
       </div>
     </div>
-    <div id="challenge-description" class="d-none">
+    <div v-if="codingWorkspaceState.currentExercise" id="challenge-description">
       <div v-html="markdownToHtml">
       </div>
     </div>
