@@ -73,7 +73,7 @@ const pollJobStatus = async (jobId: string) => {
     <TrophyIcon v-if="!isSubmitting"/>
     <span v-if="isSubmitting" aria-hidden="true" class="spinner-border spinner-border-sm me-2" role="status"></span>
     <span> Submit Solution</span>
-    <span v-if="!allowSubmission">({{ formatTime(remainingTime) }})</span>
+    <span v-if="!allowSubmission && codingWorkspaceState.currentExercise?.id !== FINAL_EXERCISE.id">({{ formatTime(remainingTime) }})</span>
   </BaseButton>
 </template>
 
