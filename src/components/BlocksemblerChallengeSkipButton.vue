@@ -30,7 +30,7 @@ let skip = async () => {
 <template>
   <BaseButton :disabled="!allowSkip || codingWorkspaceState.currentExercise?.id === FINAL_EXERCISE.id" @click="skip">
     <SkipForwardIcon/>
-    Skip Exercise <span v-if="!allowSkip">({{ formatTime(remainingTime) }})</span>
+    Skip Exercise <span v-if="!allowSkip && codingWorkspaceState.currentExercise?.id !== FINAL_EXERCISE.id">({{ formatTime(remainingTime) }})</span>
   </BaseButton>
 </template>
 
