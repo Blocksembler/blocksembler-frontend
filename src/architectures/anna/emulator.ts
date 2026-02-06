@@ -27,6 +27,10 @@ export class AnnaEmulator extends BaseEmulator {
 
     static setUpInterrupts(): Record<string, InterruptFunction> {
         return {
+            "alert": (_emulator: BaseEmulator, value): string => {
+                alert(value);
+                return "";
+            },
             "input": (_emulator: BaseEmulator): string => {
                 let userInput = prompt("Enter a value");
                 if (userInput === null) {
@@ -39,7 +43,7 @@ export class AnnaEmulator extends BaseEmulator {
                 return "";
             },
             "halt": (emulator: BaseEmulator): string => {
-                alert("The program terminated");
+                emulator.output.push("The program terminated");
                 emulator.halt();
                 return "";
             },

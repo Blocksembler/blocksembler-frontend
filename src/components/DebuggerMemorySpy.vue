@@ -7,6 +7,12 @@ const sliceSize = ref<number>(10);
 
 const MAX: number = 30;
 
+let collapsed = ref(false);
+
+let hideButtonClickHandler = () => {
+  collapsed.value = !collapsed.value;
+}
+
 const memory = computed(() => {
   const emulator = codingWorkspaceState.archPlugin.emulator;
 
@@ -33,17 +39,28 @@ const memory = computed(() => {
 
 </script>
 <template>
+
   <div class="card">
-    <div class="card-header"><h4>Memory Inspector</h4></div>
-    <div class="card-body overflow-auto">
+    <div class="card-header">
+      <div class="d-flex justify-content-between">
+        <span>Memory View</span>
+        <button @click=hideButtonClickHandler>
+          <span v-if="collapsed">Show</span>
+          <span v-else>Hide</span>
+        </button>
+      </div>
+    </div>
+    <div v-if="!collapsed" class="card-body">
       <form>
-        <div class="mb-3">
-          <label class="form-label" for="startAddress">Start Address</label>
-          <input id="startAddress" v-model="startAddress" class="form-control">
-        </div>
-        <div class="mb-3">
-          <label class="form-label" for="size">Size (in Bytes)</label>
-          <input id="size" v-model="sliceSize" class="form-control">
+        <div class="row">
+          <div class="col-3 mb-3">
+            <label class="form-label fw-bold" for="startAddress">Start Address</label>
+            <input id="startAddress" v-model="startAddress" class="form-control">
+          </div>
+          <div class="col-9 mb-3">
+            <label class="form-label fw-bold" for="size">Size (in Bytes)</label>
+            <input id="size" v-model="sliceSize" class="form-control">
+          </div>
         </div>
       </form>
       <table class="table">
@@ -71,5 +88,6 @@ const memory = computed(() => {
         </tbody>
       </table>
     </div>
+
   </div>
 </template>
