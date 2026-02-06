@@ -15,6 +15,12 @@ let view = ref();
 
 
 onMounted(() => {
+  let loadedCode = window.localStorage.getItem("blocksembler-source-code")
+
+  if (loadedCode) {
+    codingWorkspaceState.sourceCode = loadedCode
+  }
+
   let state = EditorState.create({
     doc: codingWorkspaceState.sourceCode,
     extensions: [
@@ -35,6 +41,7 @@ onMounted(() => {
         if (update.docChanged) {
           console.log(update.state.doc.toString());
           codingWorkspaceState.sourceCode = update.state.doc.toString();
+          window.localStorage.setItem("blocksembler-source-code", update.state.doc.toString());
         }
       })
     ],
