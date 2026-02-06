@@ -7,6 +7,7 @@ import SubmissionModal from "@/components/modals/SubmissionModal.vue";
 import DebuggerPanel from "@/components/DebuggerPanel.vue";
 import BaseCodeMirrorEditor from "@/components/base/BaseCodeMirrorEditor.vue";
 import BlocksemblerChallengeCard from "@/components/BlocksemblerChallengeCard.vue";
+import DebuggerControlPanel from "@/components/DebuggerControlPanel.vue";
 
 let blocksEnabled = ref(true);
 
@@ -55,7 +56,7 @@ let options = ref({
 
   <div id="debuggerFlyout" aria-labelledby="debuggerFlyoutLabel" class="offcanvas offcanvas-end w-75" tabindex="-1">
     <div class="offcanvas-header">
-      <h2 id="debuggerFlyoutLabel" class="offcanvas-title">Debugger</h2>
+      <DebuggerControlPanel/>
       <button aria-label="Close" class="btn-close text-reset" data-bs-dismiss="offcanvas" type="button"></button>
     </div>
 
@@ -79,4 +80,10 @@ let options = ref({
 </template>
 
 <style scoped>
+
+.offcanvas-header {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
 </style>
