@@ -3,7 +3,6 @@ import {ref} from 'vue'
 
 import BaseBlocklyEditor from "./base/BaseBlocklyEditor.vue";
 import {codingWorkspaceState} from "@/state";
-import SubmissionModal from "@/components/modals/SubmissionModal.vue";
 import DebuggerPanel from "@/components/DebuggerPanel.vue";
 import BaseCodeMirrorEditor from "@/components/base/BaseCodeMirrorEditor.vue";
 import BlocksemblerChallengeCard from "@/components/BlocksemblerChallengeCard.vue";
@@ -48,7 +47,6 @@ let options = ref({
 </script>
 
 <template>
-  <SubmissionModal id="submission-modal" @gradingReceived="() => {console.log('hi')}"/>
   <div class="container-fluid m-0 p-0">
     <BaseBlocklyEditor v-if="codingWorkspaceState.blocksEnabled" ref="blocklyEditor" :options="options"/>
     <BaseCodeMirrorEditor v-if="!codingWorkspaceState.blocksEnabled" :highlightedLine="0"/>
@@ -68,8 +66,7 @@ let options = ref({
   <div id="challengeCardFlyout" aria-labelledby="challengeCardFlyoutLabel" class="offcanvas offcanvas-end w-50"
        tabindex="-1">
     <div class="offcanvas-header">
-      <h2 id="challengeCardLabel" class="offcanvas-title">Exercise</h2>
-      <button aria-label="Close" class="btn-close text-reset" data-bs-dismiss="offcanvas" type="button"></button>
+      <button aria-label="Close" class="btn-close text-reset mt-2" data-bs-dismiss="offcanvas" type="button"></button>
     </div>
 
     <div class="offcanvas-body">
