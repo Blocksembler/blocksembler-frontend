@@ -10,6 +10,7 @@ import BlocksemblerCodeSubmissionButton from "@/components/BlocksemblerCodeSubmi
 import {codingWorkspaceState} from "@/state";
 import {getCurrentExercise} from "@/api/exercises";
 import BlocksemblerChallengeSkipButton from "@/components/BlocksemblerChallengeSkipButton.vue";
+import TranslateIcon from "@/components/icons/TranslateIcon.vue";
 
 let nextSkipAllowedAt: Ref<Date | null> = ref(null);
 let remainingTimeToNextSkip: Ref<number | null> = ref(null);
@@ -18,6 +19,8 @@ let timeToNextSkipTimer: Ref<number | null> = ref(null);
 let nextSubmissionAllowedAt: Ref<Date> = ref(new Date(Date.now() + 1000 * 60 * 60 * 24 * 7));
 let remainingTimeToNextSubmission: Ref<number | null> = ref(null);
 let timeToNextSubmissionTimer: Ref<number | null> = ref(null);
+
+let language = ref("en");
 
 onMounted(async () => {
   marked.use(
@@ -31,11 +34,20 @@ onMounted(async () => {
 
 
 let markdownToHtml = computed(() => {
-  if (codingWorkspaceState.currentExercise === null) {
-    return ""
+  let currentMarkdown = "";
+
+  if (!codingWorkspaceState.currentExercise) {
+    return "";
   }
 
-  return marked(codingWorkspaceState.currentExercise.markdown);
+  if (language.value === "en") {
+    currentMarkdown = codingWorkspaceState.currentExercise.markdown
+  } else {
+    currentMarkdown = codingWorkspaceState.currentExercise.markdown_de;
+  }
+
+  return marked.parse(currentMarkdown);
+
 })
 
 const updateRemainingtimeToNextSkip = () => {
@@ -147,6 +159,14 @@ const skipFailed = () => {
   }, 10000);
 }
 
+const changeLanguage = () => {
+  if (language.value === "en") {
+    language.value = "de";
+  } else {
+    language.value = "en";
+  }
+}
+
 </script>
 
 <template>
@@ -165,6 +185,11 @@ const skipFailed = () => {
       <BlocksemblerChallengeSkipButton :remainingTime="remainingTimeToNextSkip"
                                        @skipFailed="skipFailed"
                                        @skipSuccessful="skipSuccessful"/>
+
+      <BaseButton @click="changeLanguage">
+        <TranslateIcon/>
+        <span v-if="language==='en'"> English</span><span v-else> Deutsch</span>
+      </BaseButton>
     </div>
 
     <div>
