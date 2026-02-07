@@ -3,6 +3,8 @@
 import BaseButton from "@/components/base/BaseButton.vue";
 import {computed, onMounted, Ref, ref} from "vue";
 import {marked} from "marked";
+import katexExtension from "marked-katex-extension";
+import "katex/dist/katex.min.css";
 import ReplyIcon from "@/components/icons/ReplyIcon.vue";
 import BlocksemblerCodeSubmissionButton from "@/components/BlocksemblerCodeSubmissionButton.vue";
 import {codingWorkspaceState} from "@/state";
@@ -18,6 +20,12 @@ let remainingTimeToNextSubmission: Ref<number | null> = ref(null);
 let timeToNextSubmissionTimer: Ref<number | null> = ref(null);
 
 onMounted(async () => {
+  marked.use(
+      katexExtension({
+        throwOnError: false,
+      })
+  );
+
   await loadCurrentExercise();
 })
 
@@ -182,7 +190,7 @@ const skipFailed = () => {
       </div>
     </div>
     <div v-if="codingWorkspaceState.currentExercise" id="challenge-description">
-      <div v-html="markdownToHtml">
+      <div class="markdown-div" v-html="markdownToHtml">
       </div>
     </div>
   </div>
@@ -208,6 +216,19 @@ const skipFailed = () => {
   padding: 1rem;
 
   overflow-y: scroll;
+}
+
+.markdown-div :deep(pre) {
+  background: #444444;
+  padding: 12px 16px;
+  border-radius: 6px;
+  overflow-x: auto;
+}
+
+.markdown-div :deep(pre, code) {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.9em;
+  color: white;
 }
 
 </style>
