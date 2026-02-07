@@ -3,6 +3,20 @@ import {AnnaInstructionFactory, HaltInstruction} from "@/architectures/anna/inst
 import {Word} from "@/architectures/emulator";
 import {AnnaEmulator} from "@/architectures/anna/emulator";
 
+test("test .halt constructor with valid args", () => {
+    let args: string[] = [];
+    new HaltInstruction(args);
+});
+
+test("test .halt constructor with wrong number of args", () => {
+    let tooManyArgs: string[] = ['r1'];
+
+    expect(() => {
+        new HaltInstruction(tooManyArgs);
+    }).toThrow(new Error('.halt does not expect any arguments!'));
+})
+
+
 test("test halt instruction to machine code", () => {
     let instruction = new HaltInstruction();
     let expectedCode = "1111000000000000";

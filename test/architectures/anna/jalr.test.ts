@@ -3,6 +3,71 @@ import {AnnaInstructionFactory, JumpAndLinkRegisterInstruction} from "@/architec
 import {Word} from "@/architectures/emulator";
 import {AnnaEmulator} from "@/architectures/anna/emulator";
 
+test("test jalr constructor with valid args", () => {
+    let args: string[] = ['r1', 'r2'];
+    new JumpAndLinkRegisterInstruction(args);
+});
+
+test("test jalr constructor with wrong number of args", () => {
+    let tooLessArgs: string[] = ['r1'];
+    let tooManyArgs: string[] = ['r1', 'r2', 'r3'];
+
+    expect(() => {
+        new JumpAndLinkRegisterInstruction(tooLessArgs);
+    }).toThrow(new Error('Instruction "jalr" requires three arguments!'));
+
+    expect(() => {
+        new JumpAndLinkRegisterInstruction(tooManyArgs);
+    }).toThrow(new Error('Instruction "jalr" requires three arguments!'));
+})
+
+test("test jalr constructor with first arg invalid", () => {
+    let firstArgTooShort: string[] = ['r', 'r2'];
+    let firstArgTooLong: string[] = ['r12', 'r2'];
+    let firstArgDoesNotStartWithR: string[] = ['1', 'r2'];
+    let firstArgNumberTooHigh: string[] = ['r9', 'r2'];
+
+    expect(() => {
+        new JumpAndLinkRegisterInstruction(firstArgTooShort);
+    }).toThrow(new Error('Invalid argument "r"!'));
+
+    expect(() => {
+        new JumpAndLinkRegisterInstruction(firstArgTooLong);
+    }).toThrow(new Error('Invalid argument "r12"!'));
+
+    expect(() => {
+        new JumpAndLinkRegisterInstruction(firstArgDoesNotStartWithR);
+    }).toThrow(new Error('Invalid argument "1"!'));
+
+    expect(() => {
+        new JumpAndLinkRegisterInstruction(firstArgNumberTooHigh);
+    }).toThrow(new Error('Invalid argument "r9"!'));
+});
+
+test("test jalr constructor with second arg invalid", () => {
+    let secondArgTooShort: string[] = ['r1', 'r'];
+    let secondArgTooLong: string[] = ['r1', 'r12'];
+    let secondArgDoesNotStartWithR: string[] = ['r1', '1'];
+    let secondArgNumberTooHigh: string[] = ['r1', 'r9'];
+
+    expect(() => {
+        new JumpAndLinkRegisterInstruction(secondArgTooShort);
+    }).toThrow(new Error('Invalid argument "r"!'));
+
+    expect(() => {
+        new JumpAndLinkRegisterInstruction(secondArgTooLong);
+    }).toThrow(new Error('Invalid argument "r12"!'));
+
+    expect(() => {
+        new JumpAndLinkRegisterInstruction(secondArgDoesNotStartWithR);
+    }).toThrow(new Error('Invalid argument "1"!'));
+
+    expect(() => {
+        new JumpAndLinkRegisterInstruction(secondArgNumberTooHigh);
+    }).toThrow(new Error('Invalid argument "r9"!'));
+});
+
+
 test("test jump and link register instruction to machine code", () => {
     let instruction = new JumpAndLinkRegisterInstruction(["r1", "r2"]);
     let expectedCode = "1101001010000000";

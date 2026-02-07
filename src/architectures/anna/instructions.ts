@@ -3,6 +3,7 @@ import {BaseEmulator, Word} from "../emulator";
 import {MemoryLocation} from "@/types/emulator";
 import {addressSize} from "@/architectures/anna/emulator";
 import {BlockSvg, WorkspaceSvg} from "blockly";
+import {isDecimal, isHex} from "@/util/number";
 
 const attachRegisterBlock = (ws: WorkspaceSvg, instructionBlock: BlockSvg, inputName: string, registerName: string) => {
     let regConnection = instructionBlock.getInput(inputName)?.connection;
@@ -137,6 +138,21 @@ class AnnaRTypeInstruction extends AnnaBaseInstruction {
         return [`r${rd}`, `r${rs1}`, `r${rs2}`];
     }
 
+    checkArgList(): void {
+        const constructor = (this.constructor as typeof AnnaRTypeInstruction);
+        const mnemonic = constructor.getMnemonic();
+
+        if (this.args.length != 3) {
+            throw new Error(`Instruction "${mnemonic}" requires three arguments!`);
+        }
+
+        for (let arg of this.args) {
+            if (arg.length != 2 || arg[0] != 'r' || parseInt(arg[1]) > 7) {
+                throw new Error(`Invalid argument "${arg}"!`);
+            }
+        }
+    }
+
     toMachineCode() {
         const constructor = (this.constructor as typeof AnnaRTypeInstruction);
         let machineInstruction = constructor.getOpCode() + this.rd.toString(2).padStart(3, "0");
@@ -182,6 +198,29 @@ class AnnaI6TypeInstruction extends AnnaBaseInstruction {
         return [`r${rd}`, `r${rs}`, `${imm}`];
     }
 
+    checkArgList(): void {
+        const constructor = (this.constructor as typeof AnnaRTypeInstruction);
+        const mnemonic = constructor.getMnemonic();
+
+        if (this.args.length != 3) {
+            throw new Error(`Instruction "${mnemonic}" requires three arguments!`);
+        }
+
+        if (this.args[0].length != 2 || this.args[0][0] != 'r' || parseInt(this.args[0][1]) > 7) {
+            throw new Error(`Invalid argument "${this.args[0]}"!`);
+        }
+
+        if (this.args[1].length != 2 || this.args[1][0] != 'r' || parseInt(this.args[1][1]) > 7) {
+            throw new Error(`Invalid argument "${this.args[1]}"!`);
+        }
+
+        if (isHex(this.args[2])) {
+            this.args[2] = parseInt(this.args[2], 16).toString(10);
+        } else if (!isDecimal(this.args[2]) && this.args[2][0] !== '&') {
+            throw new Error(`Invalid argument "${this.args[2]}"!`);
+        }
+    }
+
     toMachineCode(): string {
         const constructor = (this.constructor as typeof AnnaI6TypeInstruction);
         let machineInstruction =
@@ -224,9 +263,27 @@ class AnnaI8TypeInstruction extends AnnaBaseInstruction {
         return [`r${rd}`, `${imm}`];
     }
 
+    checkArgList(): void {
+        const constructor = (this.constructor as typeof AnnaRTypeInstruction);
+        const mnemonic = constructor.getMnemonic();
+
+        if (this.args.length != 2) {
+            throw new Error(`Instruction "${mnemonic}" requires two arguments!`);
+        }
+
+        if (this.args[0].length != 2 || this.args[0][0] != 'r' || parseInt(this.args[0][1]) > 7) {
+            throw new Error(`Invalid argument "${this.args[0]}"!`);
+        }
+
+        if (isHex(this.args[1])) {
+            this.args[1] = parseInt(this.args[1], 16).toString(10);
+        } else if (!isDecimal(this.args[1]) && this.args[1][0] !== '&') {
+            throw new Error(`Invalid argument "${this.args[1]}"!`);
+        }
+    }
+
     toMachineCode() {
         const constructor = (this.constructor as typeof AnnaI8TypeInstruction);
-
 
         console.log("imm", this.imm);
 
@@ -391,6 +448,21 @@ export class NotInstruction extends AnnaRTypeInstruction {
         let rs1 = parseInt(code.slice(7, 10), 2);
 
         return [`r${rd}`, `r${rs1}`];
+    }
+
+    checkArgList() {
+        const constructor = (this.constructor as typeof AnnaRTypeInstruction);
+        const mnemonic = constructor.getMnemonic();
+
+        if (this.args.length != 2) {
+            throw new Error(`Instruction "${mnemonic}" requires three arguments!`);
+        }
+
+        for (let arg of this.args) {
+            if (arg.length != 2 || arg[0] != 'r' || parseInt(arg[1]) > 7) {
+                throw new Error(`Invalid argument "${arg}"!`);
+            }
+        }
     }
 
     executeOn(system: BaseEmulator) {
@@ -705,6 +777,21 @@ export class JumpAndLinkRegisterInstruction extends AnnaRTypeInstruction {
         return [`r${rd}`, `r${rs1}`];
     }
 
+    checkArgList() {
+        const constructor = (this.constructor as typeof AnnaRTypeInstruction);
+        const mnemonic = constructor.getMnemonic();
+
+        if (this.args.length != 2) {
+            throw new Error(`Instruction "${mnemonic}" requires three arguments!`);
+        }
+
+        for (let arg of this.args) {
+            if (arg.length != 2 || arg[0] != 'r' || parseInt(arg[1]) > 7) {
+                throw new Error(`Invalid argument "${arg}"!`);
+            }
+        }
+    }
+
     executeOn(system: BaseEmulator) {
         let targetAddress = system.registers[`r${this.rd}`].toUnsignedIntValue();
         let source = system.registers[`r${this.rs1}`];
@@ -733,6 +820,20 @@ export class InputInstruction extends AnnaRTypeInstruction {
         let rd = parseInt(code.slice(4, 7), 2);
 
         return [`r${rd}`];
+    }
+
+    checkArgList() {
+        const constructor = (this.constructor as typeof AnnaRTypeInstruction);
+        const mnemonic = constructor.getMnemonic();
+
+        if (this.args.length != 1) {
+            throw new Error(`Instruction "${mnemonic}" requires three arguments!`);
+        }
+
+        if (this.args[0].length != 2 || this.args[0][0] != 'r' || parseInt(this.args[0][1]) > 7) {
+            throw new Error(`Invalid argument "${this.args[0]}"!`);
+        }
+
     }
 
     executeOn(system: BaseEmulator) {
@@ -767,6 +868,20 @@ export class OutputInstruction extends AnnaRTypeInstruction {
         return [`r${rd}`];
     }
 
+    checkArgList() {
+        const constructor = (this.constructor as typeof AnnaRTypeInstruction);
+        const mnemonic = constructor.getMnemonic();
+
+        if (this.args.length != 1) {
+            throw new Error(`Instruction "${mnemonic}" requires three arguments!`);
+        }
+
+        if (this.args[0].length != 2 || this.args[0][0] != 'r' || parseInt(this.args[0][1]) > 7) {
+            throw new Error(`Invalid argument "${this.args[0]}"!`);
+        }
+
+    }
+
     executeOn(system: BaseEmulator) {
         let source = system.registers[`r${this.rd}`];
 
@@ -775,10 +890,6 @@ export class OutputInstruction extends AnnaRTypeInstruction {
 }
 
 export class HaltInstruction extends AnnaRTypeInstruction {
-
-    constructor() {
-        super([])
-    }
 
     get blockType() {
         return "halt";
@@ -800,6 +911,12 @@ export class HaltInstruction extends AnnaRTypeInstruction {
         let rd = parseInt(code.slice(4, 7), 2);
 
         return [`r${rd}`];
+    }
+
+    checkArgList() {
+        if (this.args.length > 0) {
+            throw new Error(".halt does not expect any arguments!")
+        }
     }
 
     executeOn(system: BaseEmulator) {

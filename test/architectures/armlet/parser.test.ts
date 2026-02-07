@@ -2,7 +2,9 @@ import {expect, test} from "vitest";
 import {ArmletAssemblyParser} from "@/architectures/armlet/parser";
 import {
     AddImmediateInstruction,
+    AddInstruction,
     AndImmediateInstruction,
+    AndInstruction,
     AsrImmediateInstruction,
     AsrInstruction,
     BabImmediateInstruction,
@@ -43,13 +45,13 @@ import {
     MovInstruction,
     NegInstruction,
     NopInstruction,
+    NotInstruction,
     RandDirective,
     RandPermDirective,
     StoInstruction,
     SubImmediateInstruction,
     SubInstruction
 } from "@/architectures/armlet/instructions";
-import {AddInstruction, AndInstruction, NotInstruction} from "@/architectures/anna/instructions";
 import {ParsingError} from "@/architectures/parser";
 
 import {MultilineComment} from "@/architectures/instructions";
@@ -125,7 +127,7 @@ test('test error on invalid instruction', () => {
     let parser = new ArmletAssemblyParser();
 
     expect(() => parser.parseCode(sourceCode.join('\n')))
-        .toThrow(new ParsingError(2, 'Failed to parse instruction at line 2'));
+        .toThrow(new ParsingError(2, 'Unknown instruction: mo'));
 });
 
 test('test parsing program with all instructions', () => {
