@@ -10,10 +10,15 @@ export class BaseInstruction {
         this.args = args;
         this.labels = labels;
         this.comment = comment;
+
+        this.checkArgList();
     }
 
     static fromMachineCode(_code: string): BaseInstruction {
         throw Error("Not implemented");
+    }
+
+    checkArgList(): void {
     }
 
     toString(): string {

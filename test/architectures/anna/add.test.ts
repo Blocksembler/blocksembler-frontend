@@ -3,6 +3,90 @@ import {AddInstruction, AnnaInstructionFactory} from "@/architectures/anna/instr
 import {Word} from "@/architectures/emulator";
 import {AnnaEmulator} from "@/architectures/anna/emulator";
 
+test("test add constructor with valid args", () => {
+    let args: string[] = ['r1', 'r2', 'r3'];
+    new AddInstruction(args);
+});
+
+test("test add constructor with wrong number of args", () => {
+    let tooLessArgs: string[] = ['r1', 'r2'];
+    let tooManyArgs: string[] = ['r1', 'r2', 'r3', 'r4'];
+    expect(() => {
+        new AddInstruction(tooLessArgs);
+    }).toThrow(new Error('Instruction "add" requires three arguments!'));
+
+    expect(() => {
+        new AddInstruction(tooManyArgs);
+    }).toThrow(new Error('Instruction "add" requires three arguments!'));
+})
+
+test("test add constructor with first arg invalid", () => {
+    let firstArgTooShort: string[] = ['r', 'r2', 'r3'];
+    let firstArgTooLong: string[] = ['r12', 'r2', 'r3'];
+    let firstArgDoesNotStartWithR: string[] = ['1', 'r2', 'r3'];
+    let firstArgNumberTooHigh: string[] = ['r9', 'r2', 'r3'];
+    expect(() => {
+        new AddInstruction(firstArgTooShort);
+    }).toThrow(new Error('Invalid argument "r"!'));
+
+    expect(() => {
+        new AddInstruction(firstArgTooLong);
+    }).toThrow(new Error('Invalid argument "r12"!'));
+
+    expect(() => {
+        new AddInstruction(firstArgDoesNotStartWithR);
+    }).toThrow(new Error('Invalid argument "1"!'));
+
+    expect(() => {
+        new AddInstruction(firstArgNumberTooHigh);
+    }).toThrow(new Error('Invalid argument "r9"!'));
+});
+
+
+test("test add constructor with second arg invalid", () => {
+    let secondArgTooShort: string[] = ['r1', 'r', 'r3'];
+    let secondArgTooLong: string[] = ['r1', 'r12', 'r3'];
+    let secondArgDoesNotStartWithR: string[] = ['r1', '2', 'r3'];
+    let secondArgNumberTooHigh: string[] = ['r1', 'r9', 'r3'];
+    expect(() => {
+        new AddInstruction(secondArgTooShort);
+    }).toThrow(new Error('Invalid argument "r"!'));
+
+    expect(() => {
+        new AddInstruction(secondArgTooLong);
+    }).toThrow(new Error('Invalid argument "r12"!'));
+
+    expect(() => {
+        new AddInstruction(secondArgDoesNotStartWithR);
+    }).toThrow(new Error('Invalid argument "2"!'));
+
+    expect(() => {
+        new AddInstruction(secondArgNumberTooHigh);
+    }).toThrow(new Error('Invalid argument "r9"!'));
+});
+
+test("test add constructor with third arg invalid", () => {
+    let thirdArgTooShort: string[] = ['r1', 'r2', 'r'];
+    let thirdArgTooLong: string[] = ['r1', 'r2', 'r12'];
+    let thirdArgDoesNotStartWithR: string[] = ['r1', 'r2', '3'];
+    let thirdArgNumberTooHigh: string[] = ['r1', 'r3', 'r9'];
+    expect(() => {
+        new AddInstruction(thirdArgTooShort);
+    }).toThrow(new Error('Invalid argument "r"!'));
+
+    expect(() => {
+        new AddInstruction(thirdArgTooLong);
+    }).toThrow(new Error('Invalid argument "r12"!'));
+
+    expect(() => {
+        new AddInstruction(thirdArgDoesNotStartWithR);
+    }).toThrow(new Error('Invalid argument "3"!'));
+
+    expect(() => {
+        new AddInstruction(thirdArgNumberTooHigh);
+    }).toThrow(new Error('Invalid argument "r9"!'));
+});
+
 test("test add instruction to machine code", () => {
     let instruction = new AddInstruction(["r1", "r2", "r3"]);
     let expectedCode = "0000001010011000";

@@ -74,6 +74,9 @@ export class BaseParser {
             inst.comment = line.comment;
             return inst;
         } catch (e) {
+            if (e instanceof Error) {
+                throw new ParsingError(line.lineNumber, e.message);
+            }
             throw new ParsingError(line.lineNumber, `Failed to parse instruction at line ${line.lineNumber}`);
         }
     }
@@ -173,6 +176,13 @@ export class BaseParser {
         let currentLabels: Array<string> = []
 
         for (const line of lines) {
+
+            for (let label of line.labels) {
+                if (label.startsWith('&')) {
+                    throw new ParsingError(line.lineNumber, "Labels must not start with '&'!");
+                }
+            }
+
             if (line.labels) {
                 currentLabels = currentLabels.concat(line.labels);
             }
