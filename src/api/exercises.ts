@@ -6,6 +6,7 @@ const EXERCISES_ENDPOINT = `${BACKEND_API_URL}/exercises/`
 export interface Exercise {
     title: string,
     markdown: string,
+    markdown_de: string,
     skip_delay: number,
     next_exercise_id: number | null,
     id: number,
@@ -19,9 +20,17 @@ let allExercisesSolvedPage = "# 🎉 Congratulations! 🎉\n" +
     "Thank you for participating!  \n" +
     "Keep learning, keep exploring — and see you in the next competition. 🚀  ";
 
+let allExercisesSolvedPageDe = "# 🎉 Glückwunsch! 🎉\n" +
+    "\n" +
+    "Du hast es geschafft — du hast erfolgreich **alle Aufgaben** in diesem Wettbewerb gelöst! 🏆  \n\n" +
+    "Vielen Dank für deine Teilnahme!  \n" +
+    "Lerne weiter, entdecke weiter — und wir sehen uns im nächsten Wettbewerb. 🚀  ";
+
+
 export const FINAL_EXERCISE: Exercise = {
     title: "🚀 Congratulations, you finished all exercises!",
     markdown: allExercisesSolvedPage,
+    markdown_de: allExercisesSolvedPageDe,
     skip_delay: 0,
     next_exercise_id: null,
     id: -1,
