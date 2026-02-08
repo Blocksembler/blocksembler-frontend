@@ -1,6 +1,7 @@
 import {BaseEmulator, ImmutableWord, Word} from "@/architectures/emulator";
 import {AnnaInstructionFactory} from "./instructions";
 import {InterruptFunction} from "@/types/emulator";
+import {isDecimal, isHex} from "@/util/number";
 
 export const addressSize = 16;
 
@@ -36,6 +37,13 @@ export class AnnaEmulator extends BaseEmulator {
                 if (userInput === null) {
                     return "0";
                 }
+
+                if (isHex(userInput)) {
+                    userInput = parseInt(userInput, 16).toString();
+                } else if (!isDecimal(userInput)) {
+                    userInput = "0";
+                }
+
                 return userInput;
             },
             "output": (emulator: BaseEmulator, value: string): string => {
