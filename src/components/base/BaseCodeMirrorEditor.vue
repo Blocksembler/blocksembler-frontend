@@ -17,6 +17,8 @@ let view = ref();
 onMounted(() => {
   let loadedCode = window.localStorage.getItem("blocksembler-source-code")
 
+  codingWorkspaceState.addOnInitWorkspaceListener(loadCode);
+
   if (loadedCode) {
     codingWorkspaceState.sourceCode = loadedCode
   }
